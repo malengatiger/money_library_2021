@@ -1,0 +1,52 @@
+name: money_library_2021
+description: MoneyPlatform Flutter Library
+version: 0.0.1
+
+
+environment:
+  sdk: ">=2.7.0 <3.0.0"
+  flutter: ">=1.17.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons:
+  responsive_builder:
+  shared_preferences:
+  firebase_core:
+  firebase_auth:
+  firebase_messaging:
+  cloud_firestore:
+  firebase_storage:
+  intl:
+  http:
+  uuid:
+  flutter_dotenv:
+  animations:
+  page_transition:
+  google_fonts:
+  cached_network_image:
+  stellarplugin:
+  flutter_email_sender:
+  image_picker:
+  mobmongo:
+  contacts_service:
+  mime_type:
+  qrscan:
+  circular_profile_avatar:
+  autocomplete_textfield:
+  permission_handler:
+  qr_flutter:
+  dots_indicator:
+  camera:
+  file_picker:
+  webview_flutter:
+  url_launcher:
+  introduction_screen:
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+flutter:
+
