@@ -1,10 +1,7 @@
 import 'dart:math';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart' as DotEnv;
-import 'package:money_library_2021/models/anchor.dart';
 
 Future<String> getBaseUrl() async {
   await DotEnv.load(fileName: '.env');
@@ -176,26 +173,6 @@ Future<bool> isProductionMode() async {
 }
 
 bool firebaseInitialized = false;
-FirebaseFirestore _firestore;
-Future<String> getAnchorId() async {
-//  await DotEnv.load(fileName: '.env');
-//  String anchorId = DotEnv.env['anchorId'];
-//
-//
-  if (!firebaseInitialized) {
-    await Firebase.initializeApp();
-    p('🔵 🔵 🔵 🔵 🔵 🔵 🔵 🔵 Firebase has been initialized 🍎');
-    _firestore = FirebaseFirestore.instance;
-    firebaseInitialized = true;
-  }
-  var qs = await _firestore.collection('anchors').get();
-  if (qs.docs.isEmpty) {
-    throw Exception('Anchor not found');
-  }
-  var anchor = Anchor.fromJson(qs.docs.first.data());
-  p('🔵 🔵 Anchor found on Firestore; 🔆 anchor: ${anchor.toJson()} 🔵 🔆  🔵 🔵 ');
-  return anchor.anchorId;
-}
 
 String lorem =
     "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.";

@@ -1,6 +1,8 @@
+import 'package:money_library_2021/util/util.dart';
+
 class StellarAccountBag {
   String accountId;
-  List<Balances> balances;
+  List<Balance> balances;
   String name, date, userId, userType;
 
   StellarAccountBag(
@@ -12,6 +14,7 @@ class StellarAccountBag {
       this.userType});
 
   StellarAccountBag.fromJson(Map<String, dynamic> json) {
+    p(' 🌽 json: $json ');
     accountId = json['accountId'];
     name = json['name'];
     date = json['date'];
@@ -21,7 +24,7 @@ class StellarAccountBag {
     if (json['balances'] != null) {
       balances = [];
       json['balances'].forEach((v) {
-        balances.add(new Balances.fromJson(v));
+        balances.add(new Balance.fromJson(v));
       });
     }
   }
@@ -40,7 +43,7 @@ class StellarAccountBag {
   }
 }
 
-class Balances {
+class Balance {
   String assetType;
   String assetCode;
   String assetIssuer;
@@ -54,7 +57,7 @@ class Balances {
   bool authorized;
   bool authorizedToMaintainLiabilities;
 
-  Balances(
+  Balance(
       {this.assetType,
       this.assetCode,
       this.assetIssuer,
@@ -68,7 +71,7 @@ class Balances {
       this.authorized,
       this.authorizedToMaintainLiabilities});
 
-  Balances.fromJson(Map<String, dynamic> json) {
+  Balance.fromJson(Map<String, dynamic> json) {
     assetType = json['assetType'];
     assetCode = json['assetCode'];
     assetIssuer = json['assetIssuer'];

@@ -8,10 +8,9 @@ import 'package:money_library_2021/api/anchor_db.dart';
 import 'package:money_library_2021/api/net.dart';
 import 'package:money_library_2021/models/agent.dart';
 import 'package:money_library_2021/models/anchor.dart';
-import 'package:money_library_2021/models/balance.dart';
-import 'package:money_library_2021/models/balances.dart';
 import 'package:money_library_2021/models/client.dart';
 import 'package:money_library_2021/models/payment_request.dart';
+import 'package:money_library_2021/models/stellar_account_bag.dart';
 import 'package:money_library_2021/util/prefs.dart';
 import 'package:money_library_2021/util/util.dart';
 
@@ -27,13 +26,13 @@ class AgentBloc {
   StreamController<List<Agent>> _agentController = StreamController.broadcast();
   StreamController<List<Client>> _clientController =
       StreamController.broadcast();
-  StreamController<List<Balances>> _balancesController =
+  StreamController<List<StellarAccountBag>> _balancesController =
       StreamController.broadcast();
 
   List<String> _errors = [];
   List<bool> _busies = [];
   List<Client> _clients = [];
-  List<Balances> _balances = [];
+  List<StellarAccountBag> _balances = [];
 
   StreamController<List<String>> _errorController =
       StreamController.broadcast();
@@ -48,7 +47,8 @@ class AgentBloc {
 
   Stream<List<Client>> get clientStream => _clientController.stream;
 
-  Stream<List<Balances>> get balancesStream => _balancesController.stream;
+  Stream<List<StellarAccountBag>> get balancesStream =>
+      _balancesController.stream;
 
   List<Agent> get agents => _agents;
 
@@ -59,6 +59,7 @@ class AgentBloc {
   List<Agent> _agents = [];
   Anchor _anchor;
   AnchorUser _anchorUser;
+  static const cc = 'AgentBloc: 🎁 🎁 🎁 ';
 
   Future<Anchor> getAnchor() async {
     _anchor = await Prefs.getAnchor();
@@ -68,8 +69,7 @@ class AgentBloc {
     return _anchor;
   }
 
-// public PaymentRequest sendPayment(PaymentRequest paymentRequest) throws Exception {
-  Future<Balances> sendMoneyToAgent(
+  Future<StellarAccountBag> sendMoneyToAgent(
       {@required Agent agent,
       @required String amount,
       @required String assetCode}) async {
@@ -88,7 +88,7 @@ class AgentBloc {
         apiRoute: 'fundAgent', bag: fundRequest.toJson(), mTimeOut: 9000);
     p(result);
     p("💧 💧 💧 💧 💧 refreshing agent account balances after payment. check balance of 🌼 $assetCode ....");
-    return await _readRemoteBalances(agent.stellarAccountId);
+    return await getBalances(accountId: agent.stellarAccountId);
   }
 
   Future<AnchorUser> getAnchorUser() async {
@@ -98,26 +98,21 @@ class AgentBloc {
 
   Future<List<Agent>> getAgents({String anchorId, bool refresh = false}) async {
     try {
-      p("💧 💧 💧 💧 💧 refreshing ... getAgents .... 💧 💧 refresh: $refresh");
-
+      p("$cc refreshing ... getAgents .... 💧💧 refresh: $refresh");
       _agents.clear();
       if (refresh) {
-        _agents = await _readAgentsFromDatabase(anchorId);
+        _agents = await _readAgentsFromDatabase();
       } else {
         _agents = await AnchorLocalDB.getAgents();
-        p('🌿 🌿 🌿 Agents found locally : 🎁  ${_agents.length} 🎁 ');
-        p('🌿 🌿 🌿 Agents to be put in stream : 🎁  ${_agents.length} 🎁 ... returning after that!');
+        p('$cc 🌿 🌿 🌿 Agents found locally : 🎁  ${_agents.length} 🎁 ');
+        if (_agents.isEmpty) {
+          _agents = await _readAgentsFromDatabase();
+          p('$cc 🌿 🌿 🌿 Agents found remotely: 🎁  ${_agents.length} 🎁 ');
+          _agents.forEach((element) async {
+            await AnchorLocalDB.addAgent(element);
+          });
+        }
         _agentController.sink.add(_agents);
-        return _agents;
-      }
-
-      if (_agents.isEmpty) {
-        _agents = await _readAgentsFromDatabase(anchorId);
-        p('🌿 🌿 🌿 Agents found remotely : 🎁  ${_agents.length} 🎁 ');
-        p('🌿 🌿 🌿 Agents to be put in stream : 🎁  ${_agents.length} 🎁 ');
-        _agentController.sink.add(_agents);
-      } else {
-        p('🌿 🌿 🌿 Agents should be in the fucking stream!!!! : 🎁  ${_agents.length} 🎁 ');
       }
     } catch (e) {
       p(e);
@@ -128,20 +123,10 @@ class AgentBloc {
     return _agents;
   }
 
-  Future _readAgentsFromDatabase(String anchorId) async {
-    p('🌿 🌿 🌿 _readAgentsFromDatabase : 🎁  $anchorId 🎁 ');
-    var qs = await firestore
-        .collection('agents')
-        .where('anchorId', isEqualTo: anchorId)
-        .get();
-
-    _agents.clear();
-    qs.docs.forEach((doc) {
-      _agents.add(Agent.fromJson(doc.data()));
-    });
-    _agents.forEach((element) async {
-      await AnchorLocalDB.addAgent(agent: element);
-    });
+  Future _readAgentsFromDatabase() async {
+    p('$cc 🌿 🌿 🌿 _readAgentsFromDatabase : 🎁 ');
+    _agents = await NetUtil.getAgents();
+    _agentController.sink.add(_agents);
     return _agents;
   }
 
@@ -151,12 +136,13 @@ class AgentBloc {
       p("🔵 🔵 🔵 🔵 Getting agents clients from local or remote db ... agentId: $agentId");
       if (refresh) {
         await _getRemoteClients(agentId);
+        p('🌿 🌿 🌿 Agent\'s clients found on REMOTE database : 🎁  ${_clients.length} 🎁 agentId: $agentId');
       } else {
         _clients = await AnchorLocalDB.getClientsByAgent(agentId);
-        _clientController.sink.add(_clients);
-        p('🔵 🔵 🔵 🔵  Agent\'s clients found on LOCAL cache : 🎁  ${_clients.length} 🎁 ');
-        if (clients.isEmpty) {
+        p('🌿 🌿 🌿 Agent\'s clients found on LOCAL database : 🎁  ${_clients.length} 🎁 agentId: $agentId');
+        if (_clients.isEmpty) {
           await _getRemoteClients(agentId);
+          p('🌿 🌿 🌿 Agent\'s clients found on REMOTE database : 🎁  ${_clients.length} 🎁 agentId: $agentId');
         }
       }
     } catch (e) {
@@ -165,99 +151,46 @@ class AgentBloc {
       _errors.add('Firestore agent query failed');
       _errorController.sink.add(_errors);
     }
+    _clientController.sink.add(_clients);
     return _clients;
   }
 
-  Future _getRemoteClients(String agentId) async {
+  Future<List<Client>> _getRemoteClients(String agentId) async {
     p('🔵 🔵 🔵 🔵 Getting agents clients from REMOTE database ...');
-    var qs = await firestore
-        .collection('clients')
-        .where('agentIds', arrayContains: agentId)
-        .get();
-    _clients.clear();
-    qs.docs.forEach((doc) {
-      _clients.add(Client.fromJson(doc.data()));
-    });
-
+    _clients = await NetUtil.getAgentClients(agentId);
     _clientController.sink.add(_clients);
-    p('🌿 🌿 🌿 Agent\'s clients found on REMOTE database : 🎁  ${_clients.length} 🎁 agentId: $agentId');
-    _clients.forEach((element) async {
-      await AnchorLocalDB.addClient(client: element);
-    });
+    return _clients;
   }
 
-  Future<Balances> _readRemoteBalances(String accountId) async {
-    var result = await NetUtil.get(
-        apiRoute: 'getAccountUsingAccountId?accountId=$accountId',
-        mTimeOut: 9000);
-
-    p('\n🔆 🔆 🔆 AgentBloc:_readRemoteBalances ️️❤️  printing the result from the get call ...');
-    p(result);
-    List list = result;
-    var balls = Balances(balances: []);
-    list.forEach((element) {
-      balls.balances.add(Balance.fromJson(element));
-    });
-
-    await AnchorLocalDB.addBalance(balances: balls);
-
-    Balances newBal = _processAssetCodes(balls);
-    p('👌 New Balances after processing native to XLM: 👌 ${newBal.toJson()} 👌');
-    return newBal;
-  }
-
-  Future<Balances> getLocalBalances(String accountId) async {
-    Balances mBalances;
+  Future<StellarAccountBag> getBalances(
+      {String accountId, bool refresh}) async {
+    StellarAccountBag bag;
     try {
-      _busies.add(true);
-      _busyController.sink.add(_busies);
-      p('🍎 AgentBloc: getLocalBalances .... $accountId ..... ');
-      mBalances = await AnchorLocalDB.getLastBalances(accountId);
-      if (mBalances == null) {
-        return null;
-      }
-      _doBalancesStream(mBalances);
-    } catch (e) {
-      p(e);
-      _balanceError();
-    }
-    Balances newBal = _processAssetCodes(mBalances);
-    return newBal;
-  }
-
-  Balances _processAssetCodes(Balances mBalances) {
-    var newBal = Balances();
-
-    newBal.balances = [];
-    mBalances.balances.forEach((element) {
-      if (element.assetCode == null) {
-        element.assetCode = 'XLM';
-      }
-      newBal.balances.add(element);
-    });
-
-    p('_processAssetCodes: 🔆 🔆 🔆 ${newBal.toJson()}');
-    return newBal;
-  }
-
-  Future<Balances> getRemoteBalances(String accountId) async {
-    Balances mBalances;
-    try {
-      //todo - get balances
-      mBalances = await _readRemoteBalances(accountId);
-      mBalances.balances.sort((a, b) => a.assetCode.compareTo(b.assetCode));
-      if (mBalances != null) {
-        await AnchorLocalDB.addBalance(balances: mBalances);
+      if (refresh) {
+        p('🍎 AgentBloc: NetUtil.getAccountBalances .... $accountId ..... ');
+        bag = await NetUtil.getAccountBalances(accountId);
       } else {
-        return null;
+        p('🍎 AgentBloc: getLocalBalances .... $accountId ..... ');
+        bag = await AnchorLocalDB.getLastBalances(accountId);
+        if (bag == null) {
+          bag = await NetUtil.getAccountBalances(accountId);
+        }
       }
-      _doBalancesStream(mBalances);
+      p('🌿 🌿 🌿 Balances found on database : 🎁 in stream: '
+          '${bag.balances.length} 🎁 ');
+      if (bag != null) {
+        AnchorLocalDB.addBalance(bag: bag, accountId: accountId);
+      }
+      _balances.clear();
+      _balances.add(bag);
+      _balancesController.sink.add(_balances);
     } catch (e) {
       p(e);
       _balanceError();
+      return null;
     }
 
-    return mBalances;
+    return bag;
   }
 
   void _balanceError() {
@@ -269,14 +202,6 @@ class AgentBloc {
     throw Exception(msg);
   }
 
-  void _doBalancesStream(Balances mBalances) {
-    _balances.clear();
-    _balances.add(mBalances);
-    _balancesController.sink.add(_balances);
-
-    p('🌿 🌿 🌿 Balances found on database : 🎁 in stream: ${_balances.length} 🎁 ');
-  }
-
   closeStreams() {
     _agentController.close();
     _errorController.close();
@@ -285,7 +210,7 @@ class AgentBloc {
     _balancesController.close();
   }
 
-  final FirebaseMessaging fcm = FirebaseMessaging();
+  final FirebaseMessaging fcm = FirebaseMessaging.instance;
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
 
   void _subscribeToArrivalsFCM() async {

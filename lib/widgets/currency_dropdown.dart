@@ -1,26 +1,25 @@
 import 'package:flutter/material.dart';
-import 'package:money_library_2021/models/balance.dart';
-import 'package:money_library_2021/models/balances.dart';
+import 'package:money_library_2021/models/stellar_account_bag.dart';
 import 'package:money_library_2021/util/image_handler/currency_icons.dart';
 import 'package:money_library_2021/util/util.dart';
 
 class CurrencyDropDown extends StatelessWidget {
-  final Balances balances;
+  final StellarAccountBag bag;
   final bool showXLM;
   final CurrencyDropDownListener listener;
 
   const CurrencyDropDown(
       {Key key,
-      @required this.balances,
+      @required this.bag,
       @required this.listener,
       this.showXLM = false})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    assert(balances != null);
-    var items = List<DropdownMenuItem<Balance>>();
-    balances.balances.forEach((balance) {
+    assert(bag != null);
+    var items = <DropdownMenuItem<Balance>>[];
+    bag.balances.forEach((balance) {
       p('🌼 .... Balance to be put into dropDown menu: ${balance.assetCode} ${balance.balance}');
       var imagePath = CurrencyIcons.getCurrencyImagePath(balance.assetCode);
       p('🌼 .... imagePath: $imagePath');

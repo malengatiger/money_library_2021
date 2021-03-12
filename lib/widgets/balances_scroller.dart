@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:money_library_2021/models/balances.dart';
+import 'package:money_library_2021/models/stellar_account_bag.dart';
 import 'package:money_library_2021/util/functions.dart';
 import 'package:money_library_2021/util/image_handler/currency_icons.dart';
 import 'package:money_library_2021/util/util.dart';
 
 class BalancesScroller extends StatelessWidget {
   final Axis direction;
-  final Balances balances;
+  final StellarAccountBag bag;
 
   const BalancesScroller(
-      {Key key, @required this.direction, @required this.balances})
+      {Key key, @required this.direction, @required this.bag})
       : super(key: key);
   @override
   Widget build(BuildContext context) {
-    if (balances == null) {
+    if (bag == null) {
       return Container(
         child: Text(
           'No balances found',
@@ -21,23 +21,18 @@ class BalancesScroller extends StatelessWidget {
         ),
       );
     }
-    balances.balances.forEach((element) {
-      if (element.assetCode == null) {
-        element.assetCode = 'XLM';
-      }
-    });
-    balances.balances.sort((a, b) => a.assetCode.compareTo(b.assetCode));
+
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: ListView.builder(
-          itemCount: balances == null ? 0 : balances.balances.length,
+          itemCount: bag == null ? 0 : bag.balances.length,
           scrollDirection: direction,
           itemBuilder: (context, index) {
-            var currency = 'XLM';
-            if (balances.balances.elementAt(index).assetCode == null) {
+            var currency;
+            if (bag.balances.elementAt(index).assetCode == null) {
               currency = 'XLM';
             } else {
-              currency = balances.balances.elementAt(index).assetCode;
+              currency = bag.balances.elementAt(index).assetCode;
             }
             var imagePath = CurrencyIcons.getCurrencyImagePath(currency);
             return Padding(
@@ -57,7 +52,7 @@ class BalancesScroller extends StatelessWidget {
                   ),
                   Text(
                     getFormattedAmount(
-                        balances.balances.elementAt(index).balance, context),
+                        bag.balances.elementAt(index).balance, context),
                     style: Styles.tealBoldSmall,
                   ),
                 ],

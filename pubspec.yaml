@@ -10,37 +10,31 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  cupertino_icons:
+
+  cupertino_icons: ^1.0.2
+  firebase_auth: ^1.0.1
+  firebase_core: ^1.0.1
+  firebase_messaging: ^9.0.0
+  cloud_firestore: ^1.0.1
+  hive: ^2.0.0
+
   responsive_builder:
   shared_preferences:
-  firebase_core:
-  firebase_auth:
-  firebase_messaging:
-  cloud_firestore:
-  firebase_storage:
   intl:
-  http:
+  http: ^0.13.0
   uuid:
   flutter_dotenv:
   animations:
   page_transition:
   google_fonts:
   cached_network_image:
-  stellarplugin:
-  flutter_email_sender:
   image_picker:
-  mobmongo:
-  contacts_service:
-  mime_type:
   qrscan:
   circular_profile_avatar:
   autocomplete_textfield:
-  permission_handler:
   qr_flutter:
   dots_indicator:
-  camera:
   file_picker:
-  webview_flutter:
   url_launcher:
   introduction_screen:
 

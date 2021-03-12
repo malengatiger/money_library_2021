@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:money_library_2021/bloc/agent_bloc.dart';
 import 'package:money_library_2021/models/agent.dart';
 import 'package:money_library_2021/models/client.dart';
 import 'package:money_library_2021/util/functions.dart';
-import 'package:money_library_2021/util/image_handler/random_image.dart';
 import 'package:money_library_2021/util/util.dart';
 import 'package:money_library_2021/widgets/avatar.dart';
 import 'package:money_library_2021/widgets/round_number.dart';
@@ -40,9 +38,9 @@ class _AgentClientListState extends State<AgentClientList>
   }
 
   _getClients() async {
-    clients = await agentBloc.getClients(agentId: widget.agent.agentId);
-    imageList = RandomImage.getImageList(clients.length);
-    p(' 🔆 🔆 🔆 ${imageList.length} images in the list');
+    // clients = await agentBloc.getClients(agentId: widget.agent.agentId);
+    // imageList = RandomImage.getImageList(clients.length);
+    // p(' 🔆 🔆 🔆 ${imageList.length} images in the list');
 
     controller.forward();
     setState(() {});

@@ -1,8 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:money_library_2021/models/stokvel.dart';
 
-import 'db.dart';
-
 class ListAPI {
   static FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
@@ -45,7 +43,7 @@ class ListAPI {
       }
     });
     if (stokvel != null) {
-      await StokvelLocalDB.addStokvel(stokvel: stokvel);
+      // await StokvelLocalDB.addStokvel(stokvel: stokvel);
     }
     return stokvel;
   }

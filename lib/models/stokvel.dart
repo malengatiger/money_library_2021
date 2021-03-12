@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:stellarplugin/data_models/account_response.dart';
 
 class Stokvel {
   String name, date, stokvelId, accountId;
@@ -404,12 +403,7 @@ class StokvelPayments {
 
 //todo - expand StokvelGoal ideas and code ... saving money for something (sports, trips, volunteering, group purchase, crowd funding etc.
 class StokvelGoal {
-  String name,
-      date,
-      targetDate,
-      stokvelGoalId,
-      targetAmount,
-      description;
+  String name, date, targetDate, stokvelGoalId, targetAmount, description;
   List<StokvelPayment> payments;
   List<String> imageUrls;
   Stokvel stokvel;
@@ -423,7 +417,8 @@ class StokvelGoal {
       this.targetDate,
       this.targetAmount,
       this.payments,
-      this.stokvel, this.imageUrls,
+      this.stokvel,
+      this.imageUrls,
       this.stokvelGoalId,
       this.description,
       this.isActive});
@@ -488,27 +483,6 @@ class StokvelGoal {
       'isActive': isActive,
       'beneficiaries': bList,
       'stokvel': stokvel == null ? null : stokvel.toJson(),
-    };
-    return map;
-  }
-}
-
-class AccountResponseCache {
-  String date;
-  AccountResponse accountResponse;
-
-  AccountResponseCache(this.date, this.accountResponse);
-  AccountResponseCache.fromJson(Map map) {
-    if (map['accountResponse'] != null) {
-      this.accountResponse = AccountResponse.fromJson(map['accountResponse']);
-    }
-    this.date = map['date'];
-  }
-  Map<String, dynamic> toJson() {
-    Map<String, dynamic> map = {
-      'accountResponse':
-          accountResponse == null ? null : accountResponse.toJson(),
-      'date': date,
     };
     return map;
   }

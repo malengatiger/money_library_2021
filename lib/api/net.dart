@@ -4,19 +4,93 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart' as DotEnv;
 import 'package:http/http.dart' as http;
+import 'package:money_library_2021/api/anchor_db.dart';
+import 'package:money_library_2021/models/agent.dart';
+import 'package:money_library_2021/models/anchor.dart';
+import 'package:money_library_2021/models/client.dart';
 import 'package:money_library_2021/models/owzo_request.dart';
+import 'package:money_library_2021/models/stellar_account_bag.dart';
 import 'package:money_library_2021/util/functions.dart';
+import 'package:money_library_2021/util/prefs.dart';
 import 'package:money_library_2021/util/util.dart';
 
 import 'auth.dart';
 
 class NetUtil {
+  static var client = http.Client();
   static const Map<String, String> xHeaders = {
     'Content-type': 'application/json',
     'Accept': '*/*',
   };
 
   static const timeOutInSeconds = 30;
+
+  static Future<Anchor> getAnchor() async {
+    p('$bb getAnchor starting ....');
+    var resp = await get(apiRoute: "getAnchor", mTimeOut: 9000);
+    var anchor = Anchor.fromJson(resp);
+    await Prefs.saveAnchor(anchor);
+    return anchor;
+  }
+
+  static Future<AnchorUser> getAnchorUser(String uid) async {
+    p('$bb getAnchor starting ....');
+    var resp = await get(apiRoute: "getAnchorUser?uid=$uid", mTimeOut: 9000);
+    var anchorUser = AnchorUser.fromJson(resp);
+    await Prefs.saveAnchorUser(anchorUser);
+    return anchorUser;
+  }
+
+  static Future<Agent> getAgent(String agentId) async {
+    p('$bb getAgent starting ....');
+    var resp = await get(apiRoute: "getAgent", mTimeOut: 9000);
+    var agent = Agent.fromJson(resp);
+    await Prefs.saveAgent(agent);
+    return agent;
+  }
+
+  static Future<List<Agent>> getAgents() async {
+    p('$bb getAgents starting ....');
+    List<Agent> agents = [];
+    List resp = await get(apiRoute: "getAgents", mTimeOut: 9000);
+    resp.forEach((element) {
+      var agent = Agent.fromJson(element);
+      agents.add(agent);
+    });
+    return agents;
+  }
+
+  static Future<Client> getClient(String clientId) async {
+    p('$bb getClient starting ....');
+    var resp =
+        await get(apiRoute: "getClient?clientId=$clientId", mTimeOut: 9000);
+    var client = Client.fromJson(resp);
+    await Prefs.saveClient(client);
+    return client;
+  }
+
+  static Future<List<Client>> getAgentClients(String agentId) async {
+    p('$bb getClient starting ....');
+    List resp =
+        await get(apiRoute: "getAgentClients?agentId=$agentId", mTimeOut: 9000);
+    List<Client> list = [];
+    resp.forEach((element) async {
+      var client = Client.fromJson(element);
+      list.add(client);
+      await AnchorLocalDB.addClient(client);
+    });
+
+    return list;
+  }
+
+  static Future<StellarAccountBag> getAccountBalances(String accountId) async {
+    p('$bb $bb  getAccountBalances starting ....');
+    var resp = await get(
+        apiRoute: "getAccountBalances?accountId=$accountId", mTimeOut: 9000);
+    var client = StellarAccountBag.fromJson(resp);
+    await AnchorLocalDB.addBalance(accountId: accountId, bag: client);
+    return client;
+  }
 
   static Future<String> getOwzoHash(
       {OwzoPaymentRequest request, BuildContext context}) async {
@@ -78,26 +152,26 @@ class NetUtil {
     }
     p('$bb  🍏 🍏 requestBody: $requestBody  🍏 🍏');
     var start = DateTime.now();
-    http.Response httpResponse = await http
-        .post(
-          url,
-          headers: headers,
-          body: requestBody,
-        )
-        .timeout(dur);
-
-    var end = DateTime.now();
-    p('$bb RESPONSE: 💙💙  status: ${httpResponse.statusCode} 💙 body: ${httpResponse.body} 🔆 elapsed: ${end.difference(start).inSeconds} seconds 🔆');
-    if (httpResponse.statusCode == 200) {
-      p('$bb momoPost.... : 💙 statusCode: 👌👌👌 ${httpResponse.statusCode} 👌👌👌 💙 '
-          'for $url 🔆 elapsed: ${end.difference(start).inSeconds} seconds 🔆');
-      var mJson = json.decode(httpResponse.body);
-      return mJson;
-    } else {
-      p('$bb 🚨🚨🚨🚨🚨🚨 mmoPost failed: ${httpResponse.body}');
-      throw Exception(
-          '🚨🚨 Status Code 🚨 ${httpResponse.statusCode} 🚨 ${httpResponse.body}');
-    }
+    // http.Response httpResponse = await http
+    //     .post(
+    //       url,
+    //       headers: headers,
+    //       body: requestBody,
+    //     )
+    //     .timeout(dur);
+    //
+    // var end = DateTime.now();
+    // p('$bb RESPONSE: 💙💙  status: ${httpResponse.statusCode} 💙 body: ${httpResponse.body} 🔆 elapsed: ${end.difference(start).inSeconds} seconds 🔆');
+    // if (httpResponse.statusCode == 200) {
+    //   p('$bb momoPost.... : 💙 statusCode: 👌👌👌 ${httpResponse.statusCode} 👌👌👌 💙 '
+    //       'for $url 🔆 elapsed: ${end.difference(start).inSeconds} seconds 🔆');
+    //   var mJson = json.decode(httpResponse.body);
+    //   return mJson;
+    // } else {
+    //   p('$bb 🚨🚨🚨🚨🚨🚨 mmoPost failed: ${httpResponse.body}');
+    //   throw Exception(
+    //       '🚨🚨 Status Code 🚨 ${httpResponse.statusCode} 🚨 ${httpResponse.body}');
+    // }
   }
 
   static Future post(
@@ -105,7 +179,7 @@ class NetUtil {
       @required Map bag,
       @required int mTimeOut}) async {
     var url = await getBaseUrl();
-    String token = 'notavailable';
+    String token = 'availableNot';
     try {
       token = await Auth.getAuthToken();
     } catch (e) {
@@ -117,44 +191,40 @@ class NetUtil {
     };
     var dur = Duration(seconds: mTimeOut == null ? timeOutInSeconds : mTimeOut);
     apiRoute = url + apiRoute;
-    print('🏈 🏈 NetUtil: POST:  ................................... 🔵 '
-        '🔆 🔆 🔆 🔆 calling backend:  ......................................   💙  '
-        '$apiRoute  💙  🏈 🏈 ');
+    print('$bb: POST:  ................................... 🔵 '
+        '🔆 calling backend: 💙 $apiRoute 💙');
     var mBag;
     if (bag != null) {
       mBag = jsonEncode(bag);
     }
     if (mBag == null) {
-      print(
-          '🔵 🔵 👿 Bad moon rising? :( - 🔵 🔵 👿 bag is null, may not be a problem ');
+      p('$bb 👿 Bad moon rising? 👿 bag is null, may not be a problem ');
     }
     p(mBag);
     var start = DateTime.now();
-    http.Response httpResponse = await http
-        .post(
-          apiRoute,
-          headers: mHeaders,
-          body: mBag,
-        )
-        .timeout(dur);
-
-    var end = DateTime.now();
-    print(
-        'RESPONSE: 💙  💙  status: ${httpResponse.statusCode} 💙 body: ${httpResponse.body}');
-    if (httpResponse.statusCode == 200) {
-      p('❤️️❤️  NetUtil: POST.... : 💙 statusCode: 👌👌👌 ${httpResponse.statusCode} 👌👌👌 💙 '
-          'for $apiRoute 🔆 elapsed: ${end.difference(start).inSeconds} seconds 🔆');
-      var mJson = json.decode(httpResponse.body);
-      return mJson;
-    } else {
+    try {
+      var uriResponse =
+          await client.post(Uri.parse(url), body: mBag, headers: mHeaders);
       var end = DateTime.now();
-      p('🔵 🔵  NetUtil: POST .... : 🔆 statusCode: 🔵 🔵  ${httpResponse.statusCode} 🔆🔆🔆 '
-          'for $apiRoute  🔆 elapsed: ${end.difference(start).inSeconds} seconds 🔆 ... '
-          'throwing exception .....................');
-      p('🔵 🔵  NetUtil.post .... : 🔆 statusCode: 🔵 🔵  ${httpResponse.statusCode} 🔆🔆🔆 '
-          'for $apiRoute  🔆 elapsed: ${end.difference(start).inSeconds} seconds 🔆');
-      throw Exception(
-          '🚨 🚨 Status Code 🚨 ${httpResponse.statusCode} 🚨 ${httpResponse.body}');
+      p('$bb RESPONSE: 💙 status: ${uriResponse.statusCode} 💙 body: ${uriResponse.body}');
+
+      if (uriResponse.statusCode == 200) {
+        p('$bb 💙 statusCode: 👌👌👌 ${uriResponse.statusCode} 👌👌👌 💙 '
+            'for $apiRoute 🔆 elapsed: ${end.difference(start).inSeconds} seconds 🔆');
+        try {
+          var mJson = json.decode(uriResponse.body);
+          return mJson;
+        } catch (e) {
+          return uriResponse.body;
+        }
+      } else {
+        p('$bb 👿👿👿👿👿👿👿👿👿 Bad moon rising ...POST failed! 👿👿  fucking status code: '
+            '👿👿 ${uriResponse.statusCode} 👿👿');
+        throw Exception(
+            '🚨 🚨 Status Code 🚨 ${uriResponse.statusCode} 🚨 body: ${uriResponse.body}');
+      }
+    } finally {
+      client.close();
     }
   }
 
@@ -166,28 +236,33 @@ class NetUtil {
       'Content-Type': 'application/json'
     };
     apiRoute = url + apiRoute;
-    print('🏈 🏈 NetUtil GET:  ................................... 🔵 '
-        '🔆 🔆 🔆 🔆 calling backend:  ......................................   💙  '
-        '$apiRoute  💙  🏈 🏈 ');
+    p('$bb GET:  🔵 '
+        '🔆 calling backend: 💙 $apiRoute  💙');
     var start = DateTime.now();
     var dur = Duration(seconds: mTimeOut == null ? timeOutInSeconds : mTimeOut);
-    http.Response httpResponse =
-        await http.get(apiRoute, headers: mHeaders).timeout(dur);
-    var end = DateTime.now();
-    print(
-        'RESPONSE: 💙  💙  status: ${httpResponse.statusCode} 💙 body: ${httpResponse.body}');
-    if (httpResponse.statusCode == 200) {
-      p('️️❤️  NetUtil: GET: .... : 💙 statusCode: 👌👌👌 ${httpResponse.statusCode} 👌👌👌 💙 for $apiRoute 🔆 elapsed: ${end.difference(start).inSeconds} seconds 🔆');
-      var mJson = json.decode(httpResponse.body);
-      return mJson;
-    } else {
+    try {
+      var uriResponse =
+          await client.get(Uri.parse(apiRoute), headers: mHeaders);
       var end = DateTime.now();
-      p('👿👿👿 NetUtil: POST: .... : 🔆 statusCode: 👿👿👿 ${httpResponse.statusCode} 🔆🔆🔆 '
-          'for $apiRoute  🔆 elapsed: ${end.difference(start).inSeconds} seconds 🔆 ... '
-          'throwing exception .....................');
-      p('👿👿👿 NetUtil: POST: .... : 🔆 statusCode: 👿👿👿 ${httpResponse.statusCode} 🔆🔆🔆 for $apiRoute  🔆 elapsed: ${end.difference(start).inSeconds} seconds 🔆');
-      throw Exception(
-          '🚨 🚨 Status Code 🚨 ${httpResponse.statusCode} 🚨 ${httpResponse.body}');
+      p('$bb RESPONSE: 💙 status: ${uriResponse.statusCode} 💙 body: ${uriResponse.body}');
+
+      if (uriResponse.statusCode == 200) {
+        p('$bb 💙 statusCode: 👌👌👌 ${uriResponse.statusCode} 👌👌👌 💙 '
+            'for $apiRoute 🔆 elapsed: ${end.difference(start).inSeconds} seconds 🔆');
+        try {
+          var mJson = json.decode(uriResponse.body);
+          return mJson;
+        } catch (e) {
+          return uriResponse.body;
+        }
+      } else {
+        p('$bb 👿👿👿👿👿👿👿 Bad moon rising ....GET failed! 👿👿 fucking status code: '
+            '👿👿 ${uriResponse.statusCode} 👿👿');
+        throw Exception(
+            '🚨 🚨 Status Code 🚨 ${uriResponse.statusCode} 🚨 body: ${uriResponse.body}');
+      }
+    } finally {
+      client.close();
     }
   }
 
@@ -196,32 +271,30 @@ class NetUtil {
     var url = await getBaseUrl();
     var mHeaders = {'Content-Type': 'application/json'};
     apiRoute = url + apiRoute;
-    p('🏈 🏈 NetUtil getWithNoAuth:  ................................... 🔵 '
-        '🔆 🔆 🔆 🔆 calling backend:  ............apiRoute: 💙 '
-        '$apiRoute  💙  🏈 🏈 ');
+    p('$bb getWithNoAuth:  🔆 calling backend:  ............apiRoute: 💙 '
+        '$apiRoute  💙');
     var start = DateTime.now();
-    var dur = Duration(seconds: mTimeOut == null ? timeOutInSeconds : mTimeOut);
-    http.Response httpResponse =
-        await http.get(apiRoute, headers: mHeaders).timeout(dur);
-    var end = DateTime.now();
-    p('RESPONSE: 💙💙  status: ${httpResponse.statusCode} 💙 body: ${httpResponse.body}');
-    if (httpResponse.statusCode == 200) {
-      p('️️❤️  NetUtil: GET: .... : 💙 statusCode: 👌👌👌 ${httpResponse.statusCode} 👌👌👌 💙 for $apiRoute 🔆 elapsed: ${end.difference(start).inSeconds} seconds 🔆');
-      try {
-        var mJson = json.decode(httpResponse.body);
-        return mJson;
-      } catch (e) {
-        p('👿👿👿 NetUtil: POST:this is not json, returning string');
-        return httpResponse.body;
-      }
-    } else {
+    try {
+      var uriResponse = await client.get(Uri.parse(url), headers: mHeaders);
       var end = DateTime.now();
-      p('👿👿👿 NetUtil: POST: .... : 🔆 statusCode: 👿👿👿 ${httpResponse.statusCode} 🔆🔆🔆 '
-          'for $apiRoute  🔆 elapsed: ${end.difference(start).inSeconds} seconds 🔆 ... '
-          'throwing exception .....................');
-      p('👿👿👿 NetUtil: POST: .... : 🔆 statusCode: 👿👿👿 ${httpResponse.statusCode} 🔆🔆🔆 for $apiRoute  🔆 elapsed: ${end.difference(start).inSeconds} seconds 🔆');
-      throw Exception(
-          '🚨 🚨 Status Code 🚨 ${httpResponse.statusCode} 🚨 ${httpResponse.body}');
+      p('$bb RESPONSE: 💙 status: ${uriResponse.statusCode} 💙 body: ${uriResponse.body}');
+      if (uriResponse.statusCode == 200) {
+        p('$bb 💙 statusCode: 👌👌👌 ${uriResponse.statusCode} 👌👌👌 💙 '
+            'for $apiRoute 🔆 elapsed: ${end.difference(start).inSeconds} seconds 🔆');
+        try {
+          var mJson = json.decode(uriResponse.body);
+          return mJson;
+        } catch (e) {
+          return uriResponse.body;
+        }
+      } else {
+        p('$bb 👿👿👿👿👿👿👿👿👿 Bad moon rising ....  fucking status code: '
+            '👿👿 ${uriResponse.statusCode} 👿👿');
+        throw Exception(
+            '🚨 🚨 Status Code 🚨 ${uriResponse.statusCode} 🚨 body: ${uriResponse.body}');
+      }
+    } finally {
+      client.close();
     }
   }
 

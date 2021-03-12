@@ -1,17 +1,11 @@
-import 'dart:convert';
-
-import 'package:flutter/foundation.dart';
-import 'package:flutter/services.dart';
-import 'package:mobmongo/carrier.dart';
-import 'package:mobmongo/mobmongo.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:hive/hive.dart';
 import 'package:money_library_2021/models/agent.dart';
-import 'package:money_library_2021/models/balances.dart';
 import 'package:money_library_2021/models/client.dart';
 import 'package:money_library_2021/models/loan.dart';
-import 'package:money_library_2021/util/functions.dart';
+import 'package:money_library_2021/models/stellar_account_bag.dart';
 import 'package:money_library_2021/util/util.dart';
-
-import 'constants.dart';
+import 'package:path_provider/path_provider.dart' as path_provider;
 
 class AnchorLocalDB {
   static const APP_ID = 'anchorAppID';
@@ -19,278 +13,130 @@ class AnchorLocalDB {
   static int cnt = 0;
 
   static String databaseName = 'anchor001a';
+  static Box agentBox;
+  static Box clientBox;
+  static Box balanceBox;
+  static Box loanApplicationBox;
 
-  static Future _connectToLocalDB() async {
-    if (dbConnected) {
-      return null;
-    }
+  static const aa = 'AnchorLocalDB: 🦠🦠🦠🦠🦠 ';
 
-    try {
-      await MobMongo.setAppID({
-        'appID': APP_ID,
-        'type': MobMongo.LOCAL_DATABASE,
-      });
-      await _createIndices();
-      dbConnected = true;
-      print(
-          '👌 Connected to MongoDB Mobile. 🥬 DATABASE: $databaseName  🥬 APP_ID: $APP_ID  👌 👌 👌 '
-          ' necessary indices created for all models 🧩 🧩 🧩 \n');
-      return null;
-    } on PlatformException catch (e) {
-      print('👿👿👿👿👿👿👿👿👿👿 ${e.message}  👿👿👿👿');
-      throw Exception(e);
+  static Future _connectLocalDB() async {
+    if (agentBox == null) {
+      p('$aa Connecting to Hive, getting document directory on device ... ');
+      final appDocumentDirectory =
+          await path_provider.getApplicationDocumentsDirectory();
+      Hive.init(appDocumentDirectory.path);
+      p('$aa Hive local data will be stored here ... '
+          ' 🍎 🍎 ${appDocumentDirectory.path}');
+      agentBox = await Hive.openBox("agentBox");
+      p('$aa Hive agentBox:  🔵  ....agentBox.isOpen: ${agentBox.isOpen}');
+      clientBox = await Hive.openBox("clientBox");
+      p('$aa Hive clientBox:  🔵  ....clientBox.isOpen: ${clientBox.isOpen}');
+      balanceBox = await Hive.openBox("balanceBox");
+      p('$aa Hive balanceBox:  🔵  ....balanceBox.isOpen: ${balanceBox.isOpen}');
+      loanApplicationBox = await Hive.openBox("loanApplicationBox");
+      p('$aa Hive loanApplicationBox:  🔵  ....loanApplicationBox.isOpen: ${loanApplicationBox.isOpen}');
+      p('$aa Hive local data ready to rumble ....$aa');
     }
   }
 
-  static Future _createIndices() async {
-    var carr1 = Carrier(
-        db: databaseName,
-        collection: Constants.STOKVELS,
-        index: {"stokvelId": 1});
-    await MobMongo.createIndex(carr1);
+  static Future addAgent(Agent agent) async {
+    await _connectLocalDB();
+    agentBox.put(agent.agentId, agent.toJson());
+    p('$aa Agent added: ${agent.toJson()}');
+  }
 
-    var carr3 = Carrier(
-        db: databaseName,
-        collection: Constants.MEMBERS,
-        index: {"memberId": 1});
-    await MobMongo.createIndex(carr3);
-
-    var carr4 = Carrier(
-        db: databaseName,
-        collection: Constants.STOKVEL_PAYMENTS_RECEIVED,
-        index: {"stokvel.stokvelId": 1});
-    await MobMongo.createIndex(carr4);
-
-    var carr5 = Carrier(
-        db: databaseName,
-        collection: Constants.MEMBER_PAYMENTS,
-        index: {"fromMember.memberId": 1});
-    await MobMongo.createIndex(carr5);
-
-    var carr5a = Carrier(
-        db: databaseName,
-        collection: Constants.MEMBER_PAYMENTS,
-        index: {"toMember.memberId": 1});
-    await MobMongo.createIndex(carr5a);
-
-    var carr6 = Carrier(
-        db: databaseName, collection: Constants.CREDS, index: {"stokvelId": 1});
-    await MobMongo.createIndex(carr6);
-
-    var carr7 = Carrier(
-        db: databaseName,
-        collection: Constants.MEMBER_ACCOUNT_RESPONSES,
-        index: {"accountId": 1});
-    await MobMongo.createIndex(carr7);
-
-    var carr8 = Carrier(
-        db: databaseName,
-        collection: Constants.STOKVEL_ACCOUNT_RESPONSES,
-        index: {"accountId": 1});
-    await MobMongo.createIndex(carr8);
+  static Future addClient(Client client) async {
+    await _connectLocalDB();
+    clientBox.put(client.clientId, client.toJson());
+    p('$aa Client added: ${client.toJson()}');
   }
 
   static Future<List<Agent>> getAgents() async {
-    await _connectToLocalDB();
+    await _connectLocalDB();
     List<Agent> mList = [];
-    Carrier carrier = Carrier(
-      db: databaseName,
-      collection: Constants.AGENTS,
-    );
-    List result = await MobMongo.getAll(carrier);
-    result.forEach((r) {
-      mList.add(Agent.fromJson(jsonDecode(r)));
+    var values = agentBox.values;
+
+    values.forEach((element) {
+      mList.add(Agent.fromJson(element));
     });
-    p(' 🥬  Agents retrieved from local MongoDB:  🍎 ${mList.length}');
+
+    p('$aa 🥬 Agents retrieved from local Hive: 🍎 ${mList.length}');
     return mList;
   }
 
+  //
   static Future<List<Client>> getClientsByAgent(String agentId) async {
-    List<Client> mList = await getAllClients();
-    List<Client> sList = [];
-    mList.forEach((m) {
-      m.agentIds.forEach((id) {
-        if (id == agentId) {
-          sList.add(m);
+    await _connectLocalDB();
+    List<Client> clientList = await getAllClients();
+
+    clientList.forEach((client) {
+      client.agentIds.forEach((mId) {
+        if (agentId == mId) {
+          clientList.add(client);
         }
       });
     });
 
-    p('AnchorLocalDB: 🦠🦠🦠🦠🦠 getClientsByAgent found 🔵 ${mList.length}');
-    return sList;
+    p('$aa getClientsByAgent found 🔵 ${clientList.length}');
+    return clientList;
   }
 
   static Future<List<Client>> getAllClients() async {
-    await _connectToLocalDB();
-    List<Client> mList = [];
-    Carrier carrier = Carrier(
-      db: databaseName,
-      collection: Constants.CLIENTS,
-    );
-    List result = await MobMongo.getAll(carrier);
-    p('AnchorLocalDB: 🦠🦠🦠🦠🦠  💙 getAllClients raw - found 🔵 ${result.length} 💙');
-    result.forEach((r) {
-      mList.add(Client.fromJson(jsonDecode(r)));
+    await _connectLocalDB();
+    List<Client> clientList = [];
+    clientBox.values.forEach((element) {
+      clientList.add(Client.fromJson(element));
     });
-    p('AnchorLocalDB: 🦠🦠🦠🦠🦠  💙 getAllClients found 🔵 ${mList.length} 💙');
-    return mList;
+
+    p('$aa getAllClients found 🔵 ${clientList.length}');
+    return clientList;
   }
 
   static Future<Client> getClient(String clientId) async {
-    await _connectToLocalDB();
-    Carrier carrier =
-        Carrier(db: databaseName, collection: Constants.MEMBERS, query: {
-      "eq": {"memberId": clientId}
-    });
-    List results = await MobMongo.query(carrier);
-    List<Client> list = List();
-    results.forEach((r) {
-      var mm = Client.fromJson(jsonDecode(r));
-      list.add(mm);
-    });
-    if (list.isEmpty) {
+    await _connectLocalDB();
+    var map = clientBox.get(clientId);
+    return Client.fromJson(map);
+  }
+
+  static Future addBalance(
+      {@required String accountId, @required StellarAccountBag bag}) async {
+    await _connectLocalDB();
+    balanceBox.put(accountId, bag.toJson());
+    p('$aa 🍎 addBalance: 🌼 ${bag.balances.length} added... 🔵 🔵 ');
+    return 0;
+  }
+
+  static Future<StellarAccountBag> getLastBalances(String accountId) async {
+    await _connectLocalDB();
+    var bal = balanceBox.get(accountId);
+    if (bal == null) {
       return null;
     }
-    return list.first;
+    return StellarAccountBag.fromJson(bal);
   }
 
-  static Future<int> addAgent({@required Agent agent}) async {
-    await _connectToLocalDB();
-    var start = DateTime.now();
-    Carrier c = Carrier(db: databaseName, collection: Constants.AGENTS, id: {
-      'field': 'agentId',
-      'value': agent.agentId,
-    });
-    var resDelete = await MobMongo.delete(c);
-    print('🦠  Result of Agent delete: 🍎 $resDelete 🍎 ');
-
-    Carrier ca = Carrier(
-        db: databaseName, collection: Constants.AGENTS, data: agent.toJson());
-    var res = await MobMongo.insert(ca);
-    print('🦠  Result of Agent insert: 🍎 $res 🍎 ');
-    var end = DateTime.now();
-    var elapsedSecs = end.difference(start).inMilliseconds;
-    print(
-        '🍎 addAgent: 🌼 1 added...: ${agent.personalKYCFields.getFullName()} 🔵 🔵  elapsed: $elapsedSecs milliseconds 🔵 🔵 ');
-    return 0;
-  }
-
-  static Future<int> addBalance({@required Balances balances}) async {
-    await _connectToLocalDB();
-    var start = DateTime.now();
-    Carrier ca = Carrier(
-        db: databaseName,
-        collection: Constants.BALANCES,
-        data: balances.toJson());
-    var res = await MobMongo.insert(ca);
-    print('🦠  Result of Balances insert: 🍎 $res 🍎 ');
-    var end = DateTime.now();
-    var elapsedSecs = end.difference(start).inMilliseconds;
-    print(
-        '🍎 addBalance: 🌼 1 added... 🔵 🔵  elapsed: $elapsedSecs milliseconds 🔵 🔵 ');
-    return 0;
-  }
-
-  static Future<Balances> getLastBalances(String accountId) async {
-    p(' 🔆 🔆 🔆 🔵 AnchorLocalDB: getLastBalances .... $accountId ,,,');
-    List<Balances> mList = await getAllBalances();
-    List<Balances> acctList = [];
-    mList.forEach((element) {
-      acctList.add(element);
-    });
-    p(' 🔆 🔆 🔆 🔵 getLastBalances .... $accountId ... found : ${acctList.length}');
-    if (acctList.isNotEmpty) {
-      return acctList.last;
-    }
-    return null;
-  }
-
-  static Future<List<Balances>> getAllBalances(
-      {bool descendingOrder = true}) async {
-    await _connectToLocalDB();
-    p(' 🔆 🔆 🔆 🦠🦠🦠🦠🦠 AnchorLocalDB: getAllBalances .... ,,, 1');
-    List<Balances> mList = [];
-    Carrier carrier = Carrier(
-      db: databaseName,
-      collection: Constants.BALANCES,
-    );
-    List result = await MobMongo.getAll(carrier);
-    if (result == null) {
-      return [];
-    }
-    p(' 🔆 🔆 🔆 🦠🦠🦠🦠🦠 AnchorLocalDB: getAllBalances .... ,,, 2');
-    result.forEach((r) {
-      mList.add(Balances.fromJson(jsonDecode(r)));
+  static Future<List<StellarAccountBag>> getAllBalances() async {
+    await _connectLocalDB();
+    List<StellarAccountBag> mList = [];
+    balanceBox.values.forEach((element) {
+      var bal = StellarAccountBag.fromJson(element);
+      mList.add(bal);
     });
 
-    p(' 🔆 🔆 🔆 🦠🦠🦠🦠🦠 getAllBalances .... found local shit:  🍎 ${mList.length}');
     return mList;
   }
 
-  static Future<int> addClient({@required Client client}) async {
-    await _connectToLocalDB();
-    prettyPrint(client.toJson(),
-        ",,,,,,,,,,,,,,,,,,,,,,, CLIENT TO BE ADDED TO local DB, check name etc.");
-
-    var start = DateTime.now();
-    Carrier c = Carrier(db: databaseName, collection: Constants.CLIENTS, id: {
-      'field': 'clientId',
-      'value': client.clientId,
-    });
-    var resDelete = await MobMongo.delete(c);
-    print('🦠  Result of client delete: 🍎 $resDelete 🍎 ');
-
-    Carrier ca = Carrier(
-        db: databaseName, collection: Constants.CLIENTS, data: client.toJson());
-    var res = await MobMongo.insert(ca);
-    print('🦠  Result of client insert: 🍎 $res 🍎 ');
-    var end = DateTime.now();
-    var elapsedSecs = end.difference(start).inMilliseconds;
-    print(
-        '🍎 addClient: 🌼 1 added...: ${client.personalKYCFields.getFullName()} 🔵 🔵  elapsed: $elapsedSecs milliseconds 🔵 🔵 ');
-    return 0;
-  }
-
-  static Future<int> addLoanApplication(
+  static Future addLoanApplication(
       {@required LoanApplication loanApplication}) async {
-    await _connectToLocalDB();
-    var start = DateTime.now();
-    Carrier c =
-        Carrier(db: databaseName, collection: Constants.LOAN_APPLICATIONS, id: {
-      'field': 'loanId',
-      'value': loanApplication.loanId,
-    });
-    var resDelete = await MobMongo.delete(c);
-    print('🦠  Result of LoanApplication delete: 🍎 $resDelete 🍎 ');
-
-    Carrier ca = Carrier(
-        db: databaseName,
-        collection: Constants.LOAN_APPLICATIONS,
-        data: loanApplication.toJson());
-    await MobMongo.insert(ca);
-    var end = DateTime.now();
-    var elapsedSecs = end.difference(start).inMilliseconds;
-    print(
-        '🍎 addLoanApplication: 🌼 1 added...: ${loanApplication.date} 🔵 🔵  elapsed: $elapsedSecs milliseconds 🔵 🔵 ');
+    await _connectLocalDB();
+    loanApplicationBox.put(loanApplication.loanId, loanApplication.toJson());
     return 0;
   }
 
   static Future<Agent> getAgentById(String agentId) async {
-    await _connectToLocalDB();
-    Carrier carrier =
-        Carrier(db: databaseName, collection: Constants.AGENTS, query: {
-      "eq": {"agentId": agentId}
-    });
-    List results = await MobMongo.query(carrier);
-    List<Agent> list = List();
-    results.forEach((r) {
-      var mm = Agent.fromJson(jsonDecode(r));
-      list.add(mm);
-    });
-    if (list.isEmpty) {
-      return null;
-    }
-
-    return list.first;
+    await _connectLocalDB();
+    var data = agentBox.get(agentId);
+    return Agent.fromJson(data);
   }
 }

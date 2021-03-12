@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:money_library_2021/api/net.dart';
 import 'package:money_library_2021/models/agent.dart';
 import 'package:money_library_2021/models/client.dart';
@@ -77,13 +76,13 @@ class _ProofOfResidenceUploadState extends State<ProofOfResidenceUpload> {
   // }
 
   Future _takeImageUsingCamera() async {
-    _proofOfResidenceFile =
-        await ImagePicker.pickImage(source: ImageSource.camera);
-
-    if (_proofOfResidenceFile != null) {
-      _clientCache.proofOfResidencePath = _proofOfResidenceFile.path;
-      Prefs.saveClientCache(_clientCache);
-    }
+    // _proofOfResidenceFile =
+    //     await ImagePicker.pickImage(source: ImageSource.camera);
+    //
+    // if (_proofOfResidenceFile != null) {
+    //   _clientCache.proofOfResidencePath = _proofOfResidenceFile.path;
+    //   Prefs.saveClientCache(_clientCache);
+    // }
     setState(() {});
   }
 
