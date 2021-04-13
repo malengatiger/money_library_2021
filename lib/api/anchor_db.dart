@@ -85,7 +85,8 @@ class AnchorLocalDB {
   static Future<List<Client>> getAllClients() async {
     await _connectLocalDB();
     List<Client> clientList = [];
-    clientBox.values.forEach((element) {
+    List values = clientBox.values.toList();
+    values.forEach((element) {
       clientList.add(Client.fromJson(element));
     });
 

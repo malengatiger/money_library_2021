@@ -32,7 +32,7 @@ class CurrencyDropDown extends StatelessWidget {
                 children: <Widget>[
                   Image.asset(imagePath, height: 40, width: 40),
                   SizedBox(width: 8),
-                  Text(balance.assetCode),
+                  Text(balance.assetCode == null ? "XLM" : balance.assetCode),
                 ],
               ),
             )));

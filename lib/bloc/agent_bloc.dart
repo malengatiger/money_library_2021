@@ -84,11 +84,11 @@ class AgentBloc {
         userId: _anchorUser.userId);
     p('agentBloc:  🏈  🏈  🏈 sendMoneyToAgent ... check asset code is not null: ${fundRequest.toJson()}');
 
-    var result = await NetUtil.post(
-        apiRoute: 'fundAgent', bag: fundRequest.toJson(), mTimeOut: 9000);
+    var result =
+        await NetUtil.post(apiRoute: 'fundAgent', bag: fundRequest.toJson());
     p(result);
     p("💧 💧 💧 💧 💧 refreshing agent account balances after payment. check balance of 🌼 $assetCode ....");
-    return await getBalances(accountId: agent.stellarAccountId);
+    return await getBalances(accountId: agent.stellarAccountId, refresh: true);
   }
 
   Future<AnchorUser> getAnchorUser() async {
@@ -101,12 +101,12 @@ class AgentBloc {
       p("$cc refreshing ... getAgents .... 💧💧 refresh: $refresh");
       _agents.clear();
       if (refresh) {
-        _agents = await _readAgentsFromDatabase();
+        _agents = await _readAgentsFromDatabase(anchorId);
       } else {
         _agents = await AnchorLocalDB.getAgents();
         p('$cc 🌿 🌿 🌿 Agents found locally : 🎁  ${_agents.length} 🎁 ');
         if (_agents.isEmpty) {
-          _agents = await _readAgentsFromDatabase();
+          _agents = await _readAgentsFromDatabase(anchorId);
           p('$cc 🌿 🌿 🌿 Agents found remotely: 🎁  ${_agents.length} 🎁 ');
           _agents.forEach((element) async {
             await AnchorLocalDB.addAgent(element);
@@ -123,9 +123,9 @@ class AgentBloc {
     return _agents;
   }
 
-  Future _readAgentsFromDatabase() async {
+  Future _readAgentsFromDatabase(String anchorId) async {
     p('$cc 🌿 🌿 🌿 _readAgentsFromDatabase : 🎁 ');
-    _agents = await NetUtil.getAgents();
+    _agents = await NetUtil.getAgents(anchorId);
     _agentController.sink.add(_agents);
     return _agents;
   }

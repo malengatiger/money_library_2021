@@ -5,6 +5,7 @@ import 'package:money_library_2021/api/net.dart';
 import 'package:money_library_2021/models/agent.dart';
 import 'package:money_library_2021/models/anchor.dart';
 import 'package:money_library_2021/models/client.dart';
+import 'package:money_library_2021/util/prefs.dart';
 import 'package:money_library_2021/util/util.dart';
 
 class Auth {
@@ -52,9 +53,15 @@ class Auth {
     if (result.user == null) {
       throw Exception("Sign In Failed");
     }
-    await NetUtil.getAnchor();
-    var user = await NetUtil.getAnchorUser(result.user.uid);
-    return user;
+
+    var anchorUser = await NetUtil.getAnchorUser(result.user.uid);
+    var anchor = await NetUtil.getAnchor(anchorUser.anchorId);
+    await Prefs.saveAnchor(anchor);
+    await Prefs.saveAnchorUser(anchorUser);
+
+    p('$bb getting Anchor User from firestore auth :...uid: ${result.user.uid}');
+
+    return anchorUser;
   }
 
   static Future<Agent> signInAgent({String email, String password}) async {
@@ -65,7 +72,7 @@ class Auth {
       throw Exception("Sign In Failed");
     }
     Agent agent = await NetUtil.getAgent(result.user.uid);
-    await NetUtil.getAnchor();
+    await NetUtil.getAnchor(agent.anchorId);
 
     return agent;
   }
@@ -78,7 +85,7 @@ class Auth {
       throw Exception("Sign In Failed");
     }
     Client client = await NetUtil.getClient(result.user.uid);
-    await NetUtil.getAnchor();
+    await NetUtil.getAnchor(client.anchorId);
 
     return client;
   }

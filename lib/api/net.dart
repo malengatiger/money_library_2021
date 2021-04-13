@@ -25,16 +25,17 @@ class NetUtil {
 
   static const timeOutInSeconds = 30;
 
-  static Future<Anchor> getAnchor() async {
+  static Future<Anchor> getAnchor(String anchorId) async {
     p('$bb getAnchor starting ....');
-    var resp = await get(apiRoute: "getAnchor", mTimeOut: 9000);
+    var resp =
+        await get(apiRoute: "getAnchor?anchorId=$anchorId", mTimeOut: 9000);
     var anchor = Anchor.fromJson(resp);
     await Prefs.saveAnchor(anchor);
     return anchor;
   }
 
   static Future<AnchorUser> getAnchorUser(String uid) async {
-    p('$bb getAnchor starting ....');
+    p('$bb ....... getAnchorUser starting .... uid: ' + uid);
     var resp = await get(apiRoute: "getAnchorUser?uid=$uid", mTimeOut: 9000);
     var anchorUser = AnchorUser.fromJson(resp);
     await Prefs.saveAnchorUser(anchorUser);
@@ -49,10 +50,11 @@ class NetUtil {
     return agent;
   }
 
-  static Future<List<Agent>> getAgents() async {
+  static Future<List<Agent>> getAgents(String anchorId) async {
     p('$bb getAgents starting ....');
     List<Agent> agents = [];
-    List resp = await get(apiRoute: "getAgents", mTimeOut: 9000);
+    List resp =
+        await get(apiRoute: "getAgents?anchorId=$anchorId", mTimeOut: 9000);
     resp.forEach((element) {
       var agent = Agent.fromJson(element);
       agents.add(agent);
@@ -174,10 +176,7 @@ class NetUtil {
     // }
   }
 
-  static Future post(
-      {@required String apiRoute,
-      @required Map bag,
-      @required int mTimeOut}) async {
+  static Future post({@required String apiRoute, @required Map bag}) async {
     var url = await getBaseUrl();
     String token = 'availableNot';
     try {
@@ -189,7 +188,7 @@ class NetUtil {
       'Authorization': 'Bearer $token',
       'Content-Type': 'application/json'
     };
-    var dur = Duration(seconds: mTimeOut == null ? timeOutInSeconds : mTimeOut);
+    var dur = Duration(seconds: timeOutInSeconds);
     apiRoute = url + apiRoute;
     print('$bb: POST:  ................................... 🔵 '
         '🔆 calling backend: 💙 $apiRoute 💙');
@@ -204,7 +203,7 @@ class NetUtil {
     var start = DateTime.now();
     try {
       var uriResponse =
-          await client.post(Uri.parse(url), body: mBag, headers: mHeaders);
+          await client.post(Uri.parse(apiRoute), body: mBag, headers: mHeaders);
       var end = DateTime.now();
       p('$bb RESPONSE: 💙 status: ${uriResponse.statusCode} 💙 body: ${uriResponse.body}');
 
@@ -224,7 +223,7 @@ class NetUtil {
             '🚨 🚨 Status Code 🚨 ${uriResponse.statusCode} 🚨 body: ${uriResponse.body}');
       }
     } finally {
-      client.close();
+      // client.close();
     }
   }
 
@@ -237,7 +236,7 @@ class NetUtil {
     };
     apiRoute = url + apiRoute;
     p('$bb GET:  🔵 '
-        '🔆 calling backend: 💙 $apiRoute  💙');
+        '🔆 .................. calling backend: 💙 $apiRoute  💙');
     var start = DateTime.now();
     var dur = Duration(seconds: mTimeOut == null ? timeOutInSeconds : mTimeOut);
     try {
@@ -262,7 +261,7 @@ class NetUtil {
             '🚨 🚨 Status Code 🚨 ${uriResponse.statusCode} 🚨 body: ${uriResponse.body}');
       }
     } finally {
-      client.close();
+      // client.close();
     }
   }
 

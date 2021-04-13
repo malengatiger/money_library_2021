@@ -1,3 +1,5 @@
+import 'package:flutter/cupertino.dart';
+
 class Error {
   /*
       private String message;
@@ -97,6 +99,13 @@ class Extensions {
   }
 }
 
+/*
+public class PaymentStatusRecord {
+    String stellarAccountId,
+            amount,
+            paymentId,
+            status;
+ */
 class PaymentRequest {
   String id;
   String url;
@@ -116,6 +125,38 @@ class PaymentRequest {
     Map<String, dynamic> map = Map();
     map['id'] = id;
     map['url'] = url;
+
+    return map;
+  }
+}
+
+class StitchPaymentStatusRecord {
+  String paymentId, date;
+  String stellarAccountId, status, amount;
+
+  StitchPaymentStatusRecord(
+      {@required this.paymentId,
+      @required this.stellarAccountId,
+      @required this.amount,
+      @required this.status,
+      @required this.date}); //
+  //
+
+  StitchPaymentStatusRecord.fromJson(Map data) {
+    this.paymentId = data['paymentId'];
+    this.stellarAccountId = data['stellarAccountId'];
+    this.amount = data['amount'];
+    this.status = data['status'];
+    this.date = data['date'];
+  }
+
+  Map<String, dynamic> toJson() {
+    Map<String, dynamic> map = Map();
+    map['paymentId'] = paymentId;
+    map['stellarAccountId'] = stellarAccountId;
+    map['status'] = status;
+    map['amount'] = amount;
+    map['date'] = amount;
 
     return map;
   }
