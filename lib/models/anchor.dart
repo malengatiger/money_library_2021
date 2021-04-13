@@ -1,19 +1,23 @@
 class Anchor {
-  String anchorId, name, cellphone, email;
-  Account baseAccount, issuingAccount, distributionAccount;
+  String anchorId, name, cellphone, email, countryCode, anchorCurrency;
+  Account baseStellarAccount, issuingStellarAccount, distributionStellarAccount;
   AnchorUser anchorUser;
   String date;
+  List<Asset> assets;
 
   Anchor(
-      this.anchorId,
+      {this.anchorId,
       this.name,
       this.cellphone,
       this.email,
-      this.baseAccount,
-      this.issuingAccount,
-      this.distributionAccount,
+      this.baseStellarAccount,
+      this.issuingStellarAccount,
+      this.distributionStellarAccount,
       this.anchorUser,
-      this.date);
+      this.date,
+      this.assets,
+      this.anchorCurrency,
+      this.countryCode});
 
   Anchor.fromJson(Map data) {
     this.email = data['email'];
@@ -21,15 +25,27 @@ class Anchor {
     this.anchorId = data['anchorId'];
     this.date = data['date'];
     this.name = data['name'];
+    this.anchorCurrency = data['anchorCurrency'];
+    this.countryCode = data['countryCode'];
 
-    if (data['baseAccount'] != null) {
-      this.baseAccount = Account.fromJson(data['baseAccount']);
+    if (data['baseStellarAccount'] != null) {
+      this.baseStellarAccount = Account.fromJson(data['baseStellarAccount']);
     }
-    if (data['issuingAccount'] != null) {
-      this.issuingAccount = Account.fromJson(data['issuingAccount']);
+    if (data['issuingStellarAccount'] != null) {
+      this.issuingStellarAccount =
+          Account.fromJson(data['issuingStellarAccount']);
     }
-    if (data['distributionAccount'] != null) {
-      this.distributionAccount = Account.fromJson(data['distributionAccount']);
+    if (data['distributionStellarAccount'] != null) {
+      this.distributionStellarAccount =
+          Account.fromJson(data['distributionStellarAccount']);
+    }
+    assets = [];
+    if (data['assets'] != null) {
+      List list = data['assets'];
+      list.forEach((element) {
+        var asset = Asset.fromJson(element);
+        assets.add(asset);
+      });
     }
     if (data['anchorUser'] != null) {
       this.anchorUser = AnchorUser.fromJson(data['anchorUser']);
@@ -37,18 +53,28 @@ class Anchor {
   }
 
   Map<String, dynamic> toJson() {
+    List<dynamic> list = [];
+    assets.forEach((element) {
+      list.add(element.toJson());
+    });
+
     Map<String, dynamic> map = Map();
-    map['baseAccount'] = baseAccount == null ? null : baseAccount.toJson();
-    map['issuingAccount'] =
-        issuingAccount == null ? null : issuingAccount.toJson();
-    map['distributionAccount'] =
-        distributionAccount == null ? null : distributionAccount.toJson();
+    map['baseStellarAccount'] =
+        baseStellarAccount == null ? null : baseStellarAccount.toJson();
+    map['issuingStellarAccount'] =
+        issuingStellarAccount == null ? null : issuingStellarAccount.toJson();
+    map['distributionStellarAccount'] = distributionStellarAccount == null
+        ? null
+        : distributionStellarAccount.toJson();
     map['email'] = email;
     map['cellphone'] = cellphone;
     map['name'] = name;
     map['anchorId'] = anchorId;
     map['date'] = date;
+    map['countryCode'] = countryCode;
+    map['anchorCurrency'] = anchorCurrency;
     map['anchorUser'] = anchorUser == null ? null : anchorUser.toJson();
+    map['assets'] = list;
 
     return map;
   }
@@ -124,6 +150,27 @@ class AnchorUser {
     map['anchorId'] = anchorId;
     map['date'] = date;
     map['active'] = active;
+
+    return map;
+  }
+}
+
+class Asset {
+  String assetCode;
+  String date, issuer;
+
+  Asset(this.assetCode, this.date, this.issuer);
+  Asset.fromJson(Map data) {
+    this.assetCode = data['assetCode'];
+    this.issuer = data['issuer'];
+    this.date = data['date'];
+  }
+
+  Map<String, dynamic> toJson() {
+    Map<String, dynamic> map = Map();
+    map['assetCode'] = assetCode;
+    map['issuer'] = issuer;
+    map['date'] = date;
 
     return map;
   }

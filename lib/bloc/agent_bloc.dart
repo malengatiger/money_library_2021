@@ -66,6 +66,11 @@ class AgentBloc {
     if (_anchor != null) {
       getAgents(anchorId: _anchor.anchorId, refresh: false);
     }
+    if (_anchor.distributionStellarAccount == null) {
+      p('Anchor is missing distribution account :');
+      _anchor = await NetUtil.getAnchor(_anchor.anchorId);
+      p('${_anchor.toJson()}');
+    }
     return _anchor;
   }
 

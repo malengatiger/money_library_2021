@@ -26,9 +26,8 @@ class NetUtil {
   static const timeOutInSeconds = 30;
 
   static Future<Anchor> getAnchor(String anchorId) async {
-    p('$bb getAnchor starting ....');
-    var resp =
-        await get(apiRoute: "getAnchor?anchorId=$anchorId", mTimeOut: 9000);
+    p('$bb ........... getAnchor starting ....');
+    var resp = await get(apiRoute: "getAnchor?anchorId=$anchorId");
     var anchor = Anchor.fromJson(resp);
     await Prefs.saveAnchor(anchor);
     return anchor;
@@ -36,7 +35,7 @@ class NetUtil {
 
   static Future<AnchorUser> getAnchorUser(String uid) async {
     p('$bb ....... getAnchorUser starting .... uid: ' + uid);
-    var resp = await get(apiRoute: "getAnchorUser?uid=$uid", mTimeOut: 9000);
+    var resp = await get(apiRoute: "getAnchorUser?uid=$uid");
     var anchorUser = AnchorUser.fromJson(resp);
     await Prefs.saveAnchorUser(anchorUser);
     return anchorUser;
@@ -44,7 +43,7 @@ class NetUtil {
 
   static Future<Agent> getAgent(String agentId) async {
     p('$bb getAgent starting ....');
-    var resp = await get(apiRoute: "getAgent", mTimeOut: 9000);
+    var resp = await get(apiRoute: "getAgent");
     var agent = Agent.fromJson(resp);
     await Prefs.saveAgent(agent);
     return agent;
@@ -53,8 +52,7 @@ class NetUtil {
   static Future<List<Agent>> getAgents(String anchorId) async {
     p('$bb getAgents starting ....');
     List<Agent> agents = [];
-    List resp =
-        await get(apiRoute: "getAgents?anchorId=$anchorId", mTimeOut: 9000);
+    List resp = await get(apiRoute: "getAgents?anchorId=$anchorId");
     resp.forEach((element) {
       var agent = Agent.fromJson(element);
       agents.add(agent);
@@ -64,8 +62,7 @@ class NetUtil {
 
   static Future<Client> getClient(String clientId) async {
     p('$bb getClient starting ....');
-    var resp =
-        await get(apiRoute: "getClient?clientId=$clientId", mTimeOut: 9000);
+    var resp = await get(apiRoute: "getClient?clientId=$clientId");
     var client = Client.fromJson(resp);
     await Prefs.saveClient(client);
     return client;
@@ -73,8 +70,7 @@ class NetUtil {
 
   static Future<List<Client>> getAgentClients(String agentId) async {
     p('$bb getClient starting ....');
-    List resp =
-        await get(apiRoute: "getAgentClients?agentId=$agentId", mTimeOut: 9000);
+    List resp = await get(apiRoute: "getAgentClients?agentId=$agentId");
     List<Client> list = [];
     resp.forEach((element) async {
       var client = Client.fromJson(element);
@@ -87,8 +83,7 @@ class NetUtil {
 
   static Future<StellarAccountBag> getAccountBalances(String accountId) async {
     p('$bb $bb  getAccountBalances starting ....');
-    var resp = await get(
-        apiRoute: "getAccountBalances?accountId=$accountId", mTimeOut: 9000);
+    var resp = await get(apiRoute: "getAccountBalances?accountId=$accountId");
     var client = StellarAccountBag.fromJson(resp);
     await AnchorLocalDB.addBalance(accountId: accountId, bag: client);
     return client;
@@ -227,7 +222,7 @@ class NetUtil {
     }
   }
 
-  static Future get({@required String apiRoute, @required int mTimeOut}) async {
+  static Future get({@required String apiRoute}) async {
     var url = await getBaseUrl();
     var token = await Auth.getAuthToken();
     var mHeaders = {
@@ -238,7 +233,7 @@ class NetUtil {
     p('$bb GET:  🔵 '
         '🔆 .................. calling backend: 💙 $apiRoute  💙');
     var start = DateTime.now();
-    var dur = Duration(seconds: mTimeOut == null ? timeOutInSeconds : mTimeOut);
+    // var dur = Duration(seconds: mTimeOut == null ? timeOutInSeconds : mTimeOut);
     try {
       var uriResponse =
           await client.get(Uri.parse(apiRoute), headers: mHeaders);
