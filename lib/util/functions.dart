@@ -78,11 +78,17 @@ Color getRandomPastelColor() {
 }
 
 class Styles {
+  static const tiny = 12.0;
   static const small = 14.0;
   static const medium = 20.0;
   static const large = 32.0;
   static const reallyLarge = 52.0;
 
+  static TextStyle greyLabelTiny = TextStyle(
+    fontWeight: FontWeight.bold,
+    fontSize: tiny,
+    color: Colors.grey,
+  );
   static TextStyle greyLabelSmall = TextStyle(
     fontWeight: FontWeight.bold,
     fontSize: small,
@@ -143,6 +149,11 @@ class Styles {
   static TextStyle blackSmall = TextStyle(
     fontWeight: FontWeight.normal,
     fontSize: small,
+    color: Colors.black,
+  );
+  static TextStyle blackTiny = TextStyle(
+    fontWeight: FontWeight.normal,
+    fontSize: tiny,
     color: Colors.black,
   );
   static TextStyle blackBoldMedium = TextStyle(

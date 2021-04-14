@@ -1,5 +1,11 @@
 class Anchor {
-  String anchorId, name, cellphone, email, countryCode, anchorCurrency;
+  String anchorId,
+      name,
+      cellphone,
+      email,
+      countryCode,
+      anchorCurrencyCode,
+      assetCode;
   Account baseStellarAccount, issuingStellarAccount, distributionStellarAccount;
   AnchorUser anchorUser;
   String date;
@@ -16,7 +22,8 @@ class Anchor {
       this.anchorUser,
       this.date,
       this.assets,
-      this.anchorCurrency,
+      this.anchorCurrencyCode,
+      this.assetCode,
       this.countryCode});
 
   Anchor.fromJson(Map data) {
@@ -25,8 +32,9 @@ class Anchor {
     this.anchorId = data['anchorId'];
     this.date = data['date'];
     this.name = data['name'];
-    this.anchorCurrency = data['anchorCurrency'];
+    this.anchorCurrencyCode = data['anchorCurrencyCode'];
     this.countryCode = data['countryCode'];
+    this.assetCode = data['assetCode'];
 
     if (data['baseStellarAccount'] != null) {
       this.baseStellarAccount = Account.fromJson(data['baseStellarAccount']);
@@ -71,8 +79,9 @@ class Anchor {
     map['name'] = name;
     map['anchorId'] = anchorId;
     map['date'] = date;
+    map['assetCode'] = assetCode;
     map['countryCode'] = countryCode;
-    map['anchorCurrency'] = anchorCurrency;
+    map['anchorCurrencyCode'] = anchorCurrencyCode;
     map['anchorUser'] = anchorUser == null ? null : anchorUser.toJson();
     map['assets'] = list;
 

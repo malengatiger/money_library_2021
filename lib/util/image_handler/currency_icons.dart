@@ -1,23 +1,26 @@
 class CurrencyIcons {
-  static const String prefix = "assets/currencies/";
+  static const String prefix = "currency_assets/";
   static String getCurrencyImagePath(String assetCode) {
     switch (assetCode) {
-      case 'USD':
-        return "${prefix}currency_dollar_green.png";
+      case 'USDC':
+        return "${prefix}us.png";
         break;
-      case 'ZAR':
-        return "${prefix}zar.png";
+      case 'ZARK':
+        return "${prefix}za.png";
         break;
       case 'GBP':
-        return "${prefix}currency_blue_pound.png";
+        return "${prefix}gb-eng.png";
         break;
-      case 'EUR':
-        return "${prefix}currency_euro_red.png";
+      case 'EURT':
+        return "${prefix}eu.png";
+        break;
+      case 'ZIMDOLLAR':
+        return "${prefix}zw.png";
         break;
       case 'XLM':
         return "${prefix}stellar-xlm.png";
         break;
     }
-    return "${prefix}currency_euro_red.png";
+    return "${prefix}stellar-xlm.png";
   }
 }

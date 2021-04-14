@@ -9,6 +9,7 @@ import 'package:money_library_2021/models/agent.dart';
 import 'package:money_library_2021/models/anchor.dart';
 import 'package:money_library_2021/models/client.dart';
 import 'package:money_library_2021/models/owzo_request.dart';
+import 'package:money_library_2021/models/payment_dto.dart';
 import 'package:money_library_2021/models/stellar_account_bag.dart';
 import 'package:money_library_2021/util/functions.dart';
 import 'package:money_library_2021/util/prefs.dart';
@@ -87,6 +88,31 @@ class NetUtil {
     var client = StellarAccountBag.fromJson(resp);
     await AnchorLocalDB.addBalance(accountId: accountId, bag: client);
     return client;
+  }
+
+  static Future<List<PaymentDTO>> getAccountPayments(String accountId) async {
+    p('$bb $bb  getAccountBalances starting ....');
+    List resp = await get(apiRoute: "getAccountPayments?accountId=$accountId");
+    List<PaymentDTO> list = [];
+    for (var value in resp) {
+      var pa = PaymentDTO.fromJson(value);
+      list.add(pa);
+    }
+    // await AnchorLocalDB.addBalance(accountId: accountId, bag: client);
+    return list;
+  }
+
+  static Future<List<Balance>> getAnchorBalances() async {
+    p('$bb $bb  getAccountBalances starting ....');
+    List<Balance> balances = [];
+    List<dynamic> resp = await get(apiRoute: "getAnchorBalances");
+    p('$bb $bb  getAccountBalances result .... $resp');
+    resp.forEach((element) async {
+      var bal = Balance.fromJson(element);
+      balances.add(bal);
+    });
+
+    return balances;
   }
 
   static Future<String> getOwzoHash(

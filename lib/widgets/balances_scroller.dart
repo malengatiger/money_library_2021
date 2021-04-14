@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:money_library_2021/models/stellar_account_bag.dart';
 import 'package:money_library_2021/util/functions.dart';
 import 'package:money_library_2021/util/image_handler/currency_icons.dart';
-import 'package:money_library_2021/util/util.dart';
 
 class BalancesScroller extends StatelessWidget {
   final Axis direction;
@@ -40,13 +39,19 @@ class BalancesScroller extends StatelessWidget {
               child: Row(
                 children: <Widget>[
                   Container(
-                      width: 24,
+                      // width: 32,
+                      // height: 32,
+                      // decoration: BoxDecoration(
+                      //     boxShadow: customShadow,
+                      //     color: baseColor,
+                      //     shape: BoxShape.rectangle),
+                      child: Center(
+                    child: Image.asset(
+                      imagePath,
                       height: 24,
-                      decoration: BoxDecoration(
-                          boxShadow: customShadow,
-                          color: baseColor,
-                          shape: BoxShape.circle),
-                      child: Image.asset(imagePath)),
+                      width: 48,
+                    ),
+                  )),
                   SizedBox(
                     width: 8,
                   ),
