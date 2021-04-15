@@ -1,5 +1,3 @@
-import 'package:meta/meta.dart';
-
 /*
 @JsonProperty("ledger")
     public Integer ledger;
@@ -59,25 +57,31 @@ class TransactionDTO {
       hash,
       created_at;
   bool successful;
+  int operation_count;
 
-  double monitorMaxDistanceInMetres;
   TransactionDTO(
-      {@required this.fee_charged,
-      @required this.memo,
+      {this.fee_charged,
+      this.id,
+      this.memo,
       this.fee_account,
+      this.paging_token,
+      this.source_account,
+      this.hash,
+      this.created_at,
       this.successful,
-      this.monitorMaxDistanceInMetres,
-      @required this.id});
+      this.operation_count});
 
   TransactionDTO.fromJson(Map data) {
     this.fee_charged = data['fee_charged'];
-
     this.id = data['id'];
     this.memo = data['memo'];
     this.fee_account = data['fee_account'];
     this.paging_token = data['paging_token'];
+    this.source_account = data['source_account'];
+    this.hash = data['hash'];
     this.successful = data['successful'];
-    this.monitorMaxDistanceInMetres = data['monitorMaxDistanceInMetres'];
+    this.created_at = data['created_at'];
+    this.operation_count = data['operation_count'];
   }
   Map<String, dynamic> toJson() {
     Map<String, dynamic> map = {
@@ -85,9 +89,12 @@ class TransactionDTO {
       'id': id,
       'memo': memo,
       'fee_account': fee_account,
-      'monitorMaxDistanceInMetres': monitorMaxDistanceInMetres,
+      'source_account': source_account,
       'successful': successful,
       'paging_token': paging_token,
+      'created_at': created_at,
+      'operation_count': operation_count,
+      'hash': hash,
     };
     return map;
   }

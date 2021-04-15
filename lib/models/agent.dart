@@ -11,6 +11,7 @@ class Agent {
       password,
       url,
       secretSeed;
+  bool fakeImage;
   PersonalKYCFields personalKYCFields;
 
   Agent(
@@ -43,6 +44,7 @@ class Agent {
     this.organizationId = data['organizationId'];
     this.fiatBalance = data['fiatBalance'];
     this.url = data['url'];
+    this.fakeImage = data['fakeImage'];
 
     this.password = data['password'];
     this.secretSeed = data['secretSeed'];
@@ -64,7 +66,7 @@ class Agent {
     map['stellarAccountId'] = stellarAccountId;
     map['organizationId'] = organizationId;
     map['fiatBalance'] = fiatBalance;
-
+    map['fakeImage'] = fakeImage;
     map['url'] = url;
     map['password'] = password;
     map['secretSeed'] = secretSeed;

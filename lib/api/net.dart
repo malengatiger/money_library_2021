@@ -11,6 +11,7 @@ import 'package:money_library_2021/models/client.dart';
 import 'package:money_library_2021/models/owzo_request.dart';
 import 'package:money_library_2021/models/payment_dto.dart';
 import 'package:money_library_2021/models/stellar_account_bag.dart';
+import 'package:money_library_2021/models/transaction_dto.dart';
 import 'package:money_library_2021/util/functions.dart';
 import 'package:money_library_2021/util/prefs.dart';
 import 'package:money_library_2021/util/util.dart';
@@ -96,9 +97,25 @@ class NetUtil {
     List<PaymentDTO> list = [];
     for (var value in resp) {
       var pa = PaymentDTO.fromJson(value);
+      await AnchorLocalDB.addPayment(pa);
       list.add(pa);
     }
-    // await AnchorLocalDB.addBalance(accountId: accountId, bag: client);
+
+    return list;
+  }
+
+  static Future<List<TransactionDTO>> getAccountTransactions(
+      String accountId) async {
+    p('$bb $bb  getAccountTransactions starting ....');
+    List resp =
+        await get(apiRoute: "getAccountTransactions?accountId=$accountId");
+    List<TransactionDTO> list = [];
+    for (var value in resp) {
+      var tx = TransactionDTO.fromJson(value);
+      await AnchorLocalDB.addTransaction(tx);
+      list.add(tx);
+    }
+
     return list;
   }
 

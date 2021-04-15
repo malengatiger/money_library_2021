@@ -30,7 +30,7 @@ class CurrencyDropDown extends StatelessWidget {
               padding: const EdgeInsets.all(16.0),
               child: Row(
                 children: <Widget>[
-                  Image.asset(imagePath, height: 40, width: 40),
+                  Image.asset(imagePath, height: 28, width: 28),
                   SizedBox(width: 8),
                   Text(balance.assetCode == null ? "XLM" : balance.assetCode),
                 ],

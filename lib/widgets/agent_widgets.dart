@@ -119,7 +119,7 @@ class AgentLoanPayments extends StatelessWidget {
   Widget build(BuildContext context) {
     agentBloc.getClients(agentId: agent.agentId);
     return Padding(
-      padding: const EdgeInsets.only(left: 16.0, top: 12, right: 16),
+      padding: const EdgeInsets.only(left: 32.0, top: 12, right: 16),
       child: Container(
         child: Padding(
           padding: const EdgeInsets.all(8.0),

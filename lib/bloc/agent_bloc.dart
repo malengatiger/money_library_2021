@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -9,8 +8,10 @@ import 'package:money_library_2021/api/net.dart';
 import 'package:money_library_2021/models/agent.dart';
 import 'package:money_library_2021/models/anchor.dart';
 import 'package:money_library_2021/models/client.dart';
+import 'package:money_library_2021/models/payment_dto.dart';
 import 'package:money_library_2021/models/payment_request.dart';
 import 'package:money_library_2021/models/stellar_account_bag.dart';
+import 'package:money_library_2021/models/transaction_dto.dart';
 import 'package:money_library_2021/util/prefs.dart';
 import 'package:money_library_2021/util/util.dart';
 
@@ -23,6 +24,10 @@ class AgentBloc {
     getAnchorUser();
   }
 
+  StreamController<List<PaymentDTO>> _paymentController =
+      StreamController.broadcast();
+  StreamController<List<TransactionDTO>> _transactionController =
+      StreamController.broadcast();
   StreamController<List<Agent>> _agentController = StreamController.broadcast();
   StreamController<List<Client>> _clientController =
       StreamController.broadcast();
@@ -33,6 +38,8 @@ class AgentBloc {
   List<bool> _busies = [];
   List<Client> _clients = [];
   List<StellarAccountBag> _balances = [];
+  List<PaymentDTO> _payments = [];
+  List<TransactionDTO> _transactions = [];
 
   StreamController<List<String>> _errorController =
       StreamController.broadcast();
@@ -49,6 +56,10 @@ class AgentBloc {
 
   Stream<List<StellarAccountBag>> get balancesStream =>
       _balancesController.stream;
+
+  Stream<List<TransactionDTO>> get transactionStream =>
+      _transactionController.stream;
+  Stream<List<PaymentDTO>> get paymentStream => _paymentController.stream;
 
   List<Agent> get agents => _agents;
 
@@ -99,6 +110,27 @@ class AgentBloc {
   Future<AnchorUser> getAnchorUser() async {
     _anchorUser = await Prefs.getAnchorUser();
     return _anchorUser;
+  }
+
+  Future<List<PaymentDTO>> getPayments({String accountId, bool refresh}) async {
+    var list = await AnchorLocalDB.getPayments();
+
+    if (refresh || list.isEmpty) {
+      list = await NetUtil.getAccountPayments(accountId);
+    }
+    p('$cc payments found: ${list.length}');
+    return list;
+  }
+
+  Future<List<TransactionDTO>> getTransactions(
+      {String accountId, bool refresh = false}) async {
+    var list = await AnchorLocalDB.getTransactions();
+
+    if (refresh || list.isEmpty) {
+      list = await NetUtil.getAccountTransactions(accountId);
+    }
+    p('$cc transactions found: ${list.length}');
+    return list;
   }
 
   Future<List<Agent>> getAgents({String anchorId, bool refresh = false}) async {
@@ -177,6 +209,7 @@ class AgentBloc {
       } else {
         p('🍎 AgentBloc: getLocalBalances .... $accountId ..... ');
         bag = await AnchorLocalDB.getLastBalances(accountId);
+        p('🍎 AgentBloc: getLocalBalances .... do we have a bag? ..... ${bag.toJson()} ');
         if (bag == null) {
           bag = await NetUtil.getAccountBalances(accountId);
         }
@@ -203,7 +236,7 @@ class AgentBloc {
     _errors.clear();
     _errors.add(msg);
     _errorController.sink.add(_errors);
-    p(' 🍎 $msg');
+    p(' 🍎🍎🍎🍎🍎🍎🍎🍎🍎🍎 AgentBloc: _balanceError .... $msg');
     throw Exception(msg);
   }
 
@@ -213,10 +246,12 @@ class AgentBloc {
     _busyController.close();
     _clientController.close();
     _balancesController.close();
+    _transactionController.close();
+    _paymentController.close();
   }
 
   final FirebaseMessaging fcm = FirebaseMessaging.instance;
-  final FirebaseFirestore firestore = FirebaseFirestore.instance;
+  // final FirebaseFirestore firestore = FirebaseFirestore.instance;
 
   void _subscribeToArrivalsFCM() async {
 //    List<String> topics = [];

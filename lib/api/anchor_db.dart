@@ -3,7 +3,9 @@ import 'package:hive/hive.dart';
 import 'package:money_library_2021/models/agent.dart';
 import 'package:money_library_2021/models/client.dart';
 import 'package:money_library_2021/models/loan.dart';
+import 'package:money_library_2021/models/payment_dto.dart';
 import 'package:money_library_2021/models/stellar_account_bag.dart';
+import 'package:money_library_2021/models/transaction_dto.dart';
 import 'package:money_library_2021/util/util.dart';
 import 'package:path_provider/path_provider.dart' as path_provider;
 
@@ -17,6 +19,8 @@ class AnchorLocalDB {
   static Box clientBox;
   static Box balanceBox;
   static Box loanApplicationBox;
+  static Box paymentBox;
+  static Box transactionBox;
 
   static const aa = 'AnchorLocalDB: 🦠🦠🦠🦠🦠 ';
 
@@ -36,20 +40,65 @@ class AnchorLocalDB {
       p('$aa Hive balanceBox:  🔵  ....balanceBox.isOpen: ${balanceBox.isOpen}');
       loanApplicationBox = await Hive.openBox("loanApplicationBox");
       p('$aa Hive loanApplicationBox:  🔵  ....loanApplicationBox.isOpen: ${loanApplicationBox.isOpen}');
+
+      paymentBox = await Hive.openBox("paymentBox");
+      p('$aa Hive paymentBox:  🔵  ....paymentBox.isOpen: ${paymentBox.isOpen}');
+
+      transactionBox = await Hive.openBox("transactionBox");
+      p('$aa Hive transactionBox:  🔵  ....transactionBox.isOpen: ${transactionBox.isOpen}');
+
       p('$aa Hive local data ready to rumble ....$aa');
     }
+  }
+
+  static Future addTransaction(TransactionDTO transaction) async {
+    await _connectLocalDB();
+    agentBox.put(transaction.created_at, transaction.toJson());
+    p('$aa TransactionDTO added or changed: ${transaction.toJson()}');
+  }
+
+  static Future addPayment(PaymentDTO payment) async {
+    await _connectLocalDB();
+    agentBox.put(payment.created_at, payment.toJson());
+    p('$aa Payment added or changed: ${payment.toJson()}');
   }
 
   static Future addAgent(Agent agent) async {
     await _connectLocalDB();
     agentBox.put(agent.agentId, agent.toJson());
-    p('$aa Agent added: ${agent.toJson()}');
+    p('$aa Agent added or changed: ${agent.toJson()}');
   }
 
   static Future addClient(Client client) async {
     await _connectLocalDB();
     clientBox.put(client.clientId, client.toJson());
     p('$aa Client added: ${client.toJson()}');
+  }
+
+  static Future<List<PaymentDTO>> getPayments() async {
+    await _connectLocalDB();
+    List<PaymentDTO> mList = [];
+    var values = paymentBox.values;
+
+    values.forEach((element) {
+      mList.add(PaymentDTO.fromJson(element));
+    });
+
+    p('$aa 🥬 Payments retrieved from local Hive: 🍎 ${mList.length}');
+    return mList;
+  }
+
+  static Future<List<TransactionDTO>> getTransactions() async {
+    await _connectLocalDB();
+    List<TransactionDTO> mList = [];
+    var values = transactionBox.values;
+
+    values.forEach((element) {
+      mList.add(TransactionDTO.fromJson(element));
+    });
+
+    p('$aa 🥬 Transactions retrieved from local Hive: 🍎 ${mList.length}');
+    return mList;
   }
 
   static Future<List<Agent>> getAgents() async {
@@ -114,7 +163,15 @@ class AnchorLocalDB {
     if (bal == null) {
       return null;
     }
-    return StellarAccountBag.fromJson(bal);
+    p('💙 💙 💙 💙 💙 💙 💙 AnchorLocalDB: StellarAccountBag 💙');
+    p(bal);
+    try {
+      var bag = StellarAccountBag.fromJson(bal);
+      p('.............. do we get here ???');
+      return bag;
+    } catch (e) {
+      p(e);
+    }
   }
 
   static Future<List<StellarAccountBag>> getAllBalances() async {

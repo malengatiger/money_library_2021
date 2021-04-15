@@ -13,8 +13,8 @@ class StellarAccountBag {
       this.userId,
       this.userType});
 
-  StellarAccountBag.fromJson(Map<String, dynamic> json) {
-    p(' 🌽 json: $json ');
+  StellarAccountBag.fromJson(Map<dynamic, dynamic> json) {
+    p(' 🌽🌽🌽🌽🌽🌽🌽 StellarAccountBag.fromJson: $json ');
     accountId = json['accountId'];
     name = json['name'];
     date = json['date'];
@@ -23,7 +23,8 @@ class StellarAccountBag {
 
     if (json['balances'] != null) {
       balances = [];
-      json['balances'].forEach((v) {
+      List m = json['balances'];
+      m.forEach((v) {
         balances.add(new Balance.fromJson(v));
       });
     }
@@ -36,9 +37,14 @@ class StellarAccountBag {
     data['date'] = this.date;
     data['name'] = this.name;
     data['accountId'] = this.accountId;
+
+    List mList = [];
     if (this.balances != null) {
-      data['balances'] = this.balances.map((v) => v.toJson()).toList();
+      this.balances.forEach((b) {
+        mList.add(b.toJson());
+      });
     }
+    data['balances'] = mList;
     return data;
   }
 }
@@ -71,7 +77,7 @@ class Balance {
       this.authorized,
       this.authorizedToMaintainLiabilities});
 
-  Balance.fromJson(Map<String, dynamic> json) {
+  Balance.fromJson(Map<dynamic, dynamic> json) {
     assetType = json['assetType'];
     assetCode = json['assetCode'];
     assetIssuer = json['assetIssuer'];
