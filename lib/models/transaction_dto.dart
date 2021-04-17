@@ -55,9 +55,10 @@ class TransactionDTO {
       paging_token,
       source_account,
       hash,
-      created_at;
+      created_at,
+      max_fee;
   bool successful;
-  int operation_count;
+  int operation_count, ledger;
 
   TransactionDTO(
       {this.fee_charged,
@@ -69,7 +70,9 @@ class TransactionDTO {
       this.hash,
       this.created_at,
       this.successful,
-      this.operation_count});
+      this.operation_count,
+      this.ledger,
+      this.max_fee});
 
   TransactionDTO.fromJson(Map data) {
     this.fee_charged = data['fee_charged'];
@@ -81,6 +84,8 @@ class TransactionDTO {
     this.hash = data['hash'];
     this.successful = data['successful'];
     this.created_at = data['created_at'];
+    this.ledger = data['ledger'];
+    this.max_fee = data['max_fee'];
     this.operation_count = data['operation_count'];
   }
   Map<String, dynamic> toJson() {
@@ -94,6 +99,8 @@ class TransactionDTO {
       'paging_token': paging_token,
       'created_at': created_at,
       'operation_count': operation_count,
+      'max_fee': max_fee,
+      'ledger': ledger,
       'hash': hash,
     };
     return map;

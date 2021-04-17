@@ -12,10 +12,11 @@ import 'package:money_library_2021/models/payment_dto.dart';
 import 'package:money_library_2021/models/payment_request.dart';
 import 'package:money_library_2021/models/stellar_account_bag.dart';
 import 'package:money_library_2021/models/transaction_dto.dart';
+import 'package:money_library_2021/util/functions.dart';
 import 'package:money_library_2021/util/prefs.dart';
 import 'package:money_library_2021/util/util.dart';
 
-final AgentBloc agentBloc = AgentBloc();
+AgentBloc agentBloc = AgentBloc();
 
 class AgentBloc {
   AgentBloc() {
@@ -119,6 +120,11 @@ class AgentBloc {
       list = await NetUtil.getAccountPayments(accountId);
     }
     p('$cc payments found: ${list.length}');
+    p('$cc transactions found: ${list.length}');
+    list.forEach((element) {
+      prettyPrint(
+          element.toJson(), "🌼 🌼 🌼 🌼 🌼 🌼  Payment: 🍎 ${element.id}");
+    });
     return list;
   }
 
@@ -130,6 +136,10 @@ class AgentBloc {
       list = await NetUtil.getAccountTransactions(accountId);
     }
     p('$cc transactions found: ${list.length}');
+    list.forEach((element) {
+      prettyPrint(
+          element.toJson(), "🔵 🔵 🔵 🔵 🔵 🔵 Transaction: 🍎 ${element.id}");
+    });
     return list;
   }
 
@@ -209,19 +219,18 @@ class AgentBloc {
       } else {
         p('🍎 AgentBloc: getLocalBalances .... $accountId ..... ');
         bag = await AnchorLocalDB.getLastBalances(accountId);
-        p('🍎 AgentBloc: getLocalBalances .... do we have a bag? ..... ${bag.toJson()} ');
         if (bag == null) {
           bag = await NetUtil.getAccountBalances(accountId);
         }
       }
-      p('🌿 🌿 🌿 Balances found on database : 🎁 in stream: '
-          '${bag.balances.length} 🎁 ');
-      if (bag != null) {
-        AnchorLocalDB.addBalance(bag: bag, accountId: accountId);
-      }
       _balances.clear();
-      _balances.add(bag);
-      _balancesController.sink.add(_balances);
+      if (bag != null) {
+        p('🌿 🌿 🌿 Balances found on database : 🎁 in stream: '
+            '${bag.balances.length} 🎁 ');
+        AnchorLocalDB.addBalance(bag: bag, accountId: accountId);
+        _balances.add(bag);
+        _balancesController.sink.add(_balances);
+      }
     } catch (e) {
       p(e);
       _balanceError();

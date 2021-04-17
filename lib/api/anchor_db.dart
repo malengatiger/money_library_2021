@@ -32,12 +32,16 @@ class AnchorLocalDB {
       Hive.init(appDocumentDirectory.path);
       p('$aa Hive local data will be stored here ... '
           ' 🍎 🍎 ${appDocumentDirectory.path}');
+
       agentBox = await Hive.openBox("agentBox");
       p('$aa Hive agentBox:  🔵  ....agentBox.isOpen: ${agentBox.isOpen}');
+
       clientBox = await Hive.openBox("clientBox");
       p('$aa Hive clientBox:  🔵  ....clientBox.isOpen: ${clientBox.isOpen}');
+
       balanceBox = await Hive.openBox("balanceBox");
       p('$aa Hive balanceBox:  🔵  ....balanceBox.isOpen: ${balanceBox.isOpen}');
+
       loanApplicationBox = await Hive.openBox("loanApplicationBox");
       p('$aa Hive loanApplicationBox:  🔵  ....loanApplicationBox.isOpen: ${loanApplicationBox.isOpen}');
 
@@ -53,13 +57,13 @@ class AnchorLocalDB {
 
   static Future addTransaction(TransactionDTO transaction) async {
     await _connectLocalDB();
-    agentBox.put(transaction.created_at, transaction.toJson());
+    transactionBox.put(transaction.created_at, transaction.toJson());
     p('$aa TransactionDTO added or changed: ${transaction.toJson()}');
   }
 
   static Future addPayment(PaymentDTO payment) async {
     await _connectLocalDB();
-    agentBox.put(payment.created_at, payment.toJson());
+    paymentBox.put(payment.created_at, payment.toJson());
     p('$aa Payment added or changed: ${payment.toJson()}');
   }
 
