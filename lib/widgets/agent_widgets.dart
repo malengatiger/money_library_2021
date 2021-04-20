@@ -12,7 +12,7 @@ class AgentClientsWidget extends StatelessWidget {
   const AgentClientsWidget({Key key, @required this.agent}) : super(key: key);
   @override
   Widget build(BuildContext context) {
-    agentBloc.getClients(agentId: agent.agentId);
+    agentBloc.getAgentClients(agentId: agent.agentId);
     return Padding(
       padding: const EdgeInsets.only(left: 16.0, top: 12, right: 16),
       child: Container(
@@ -66,7 +66,7 @@ class AgentLoans extends StatelessWidget {
   const AgentLoans({Key key, this.agent}) : super(key: key);
   @override
   Widget build(BuildContext context) {
-    agentBloc.getClients(agentId: agent.agentId);
+    agentBloc.getAgentClients(agentId: agent.agentId);
     return Padding(
       padding: const EdgeInsets.only(left: 16.0, top: 12, right: 16),
       child: Container(
@@ -117,7 +117,7 @@ class AgentLoanPayments extends StatelessWidget {
   const AgentLoanPayments({Key key, this.agent}) : super(key: key);
   @override
   Widget build(BuildContext context) {
-    agentBloc.getClients(agentId: agent.agentId);
+    agentBloc.getAgentClients(agentId: agent.agentId);
     return Padding(
       padding: const EdgeInsets.only(left: 32.0, top: 12, right: 16),
       child: Container(

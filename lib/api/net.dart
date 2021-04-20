@@ -8,10 +8,11 @@ import 'package:money_library_2021/api/anchor_db.dart';
 import 'package:money_library_2021/models/agent.dart';
 import 'package:money_library_2021/models/anchor.dart';
 import 'package:money_library_2021/models/client.dart';
+import 'package:money_library_2021/models/fiat_payment_request.dart';
 import 'package:money_library_2021/models/owzo_request.dart';
+import 'package:money_library_2021/models/path_payment_request.dart';
 import 'package:money_library_2021/models/payment_dto.dart';
 import 'package:money_library_2021/models/stellar_account_bag.dart';
-import 'package:money_library_2021/models/transaction_dto.dart';
 import 'package:money_library_2021/util/functions.dart';
 import 'package:money_library_2021/util/prefs.dart';
 import 'package:money_library_2021/util/util.dart';
@@ -83,6 +84,19 @@ class NetUtil {
     return list;
   }
 
+  static Future<List<Client>> getAnchorClients(String anchorId) async {
+    p('$bb getClient starting ....');
+    List resp = await get(apiRoute: "getAnchorClients?anchorId=$anchorId");
+    List<Client> list = [];
+    resp.forEach((element) async {
+      var client = Client.fromJson(element);
+      list.add(client);
+      await AnchorLocalDB.addClient(client);
+    });
+
+    return list;
+  }
+
   static Future<StellarAccountBag> getAccountBalances(String accountId) async {
     p('$bb $bb  getAccountBalances starting ....');
     var resp = await get(apiRoute: "getAccountBalances?accountId=$accountId");
@@ -104,15 +118,128 @@ class NetUtil {
     return list;
   }
 
-  static Future<List<TransactionDTO>> getAccountTransactions(
-      String accountId) async {
-    p('$bb $bb  getAccountTransactions starting ....');
-    List resp =
-        await get(apiRoute: "getAccountTransactions?accountId=$accountId");
-    List<TransactionDTO> list = [];
+  static Future<List<StellarFiatPaymentResponse>>
+      getFiatPaymentResponsesByAnchor(
+          {String anchorId, String fromDate, String toDate}) async {
+    p('$bb $bb  getFiatPaymentResponsesByAnchor starting ....');
+    List resp = await get(
+        apiRoute:
+            "getFiatPaymentResponsesByAnchor?anchorId=$anchorId&fromDate=$fromDate&toDate=$toDate");
+    List<StellarFiatPaymentResponse> list = [];
     for (var value in resp) {
-      var tx = TransactionDTO.fromJson(value);
-      await AnchorLocalDB.addTransaction(tx);
+      var tx = StellarFiatPaymentResponse.fromJson(value);
+      await AnchorLocalDB.addStellarFiatPaymentResponse(tx);
+      list.add(tx);
+    }
+
+    return list;
+  }
+
+  static Future<List<StellarFiatPaymentResponse>>
+      getFiatPaymentResponsesBySourceAccount(String accountId) async {
+    p('$bb $bb  getFiatPaymentResponsesBySourceAccount starting ....');
+    List resp = await get(
+        apiRoute:
+            "getFiatPaymentResponsesBySourceAccount?accountId=$accountId");
+    List<StellarFiatPaymentResponse> list = [];
+    for (var value in resp) {
+      var tx = StellarFiatPaymentResponse.fromJson(value);
+      await AnchorLocalDB.addStellarFiatPaymentResponse(tx);
+      list.add(tx);
+    }
+
+    return list;
+  }
+
+  static Future<List<StellarFiatPaymentResponse>>
+      getFiatPaymentResponsesByDestinationAccount(String accountId) async {
+    p('$bb $bb  getFiatPaymentResponsesByDestinationAccount starting ....');
+    List resp = await get(
+        apiRoute:
+            "getFiatPaymentResponsesByDestinationAccount?accountId=$accountId");
+    List<StellarFiatPaymentResponse> list = [];
+    for (var value in resp) {
+      var tx = StellarFiatPaymentResponse.fromJson(value);
+      await AnchorLocalDB.addStellarFiatPaymentResponse(tx);
+      list.add(tx);
+    }
+
+    return list;
+  }
+
+  static Future<List<StellarFiatPaymentResponse>>
+      getFiatPaymentResponsesByAsset(
+          String assetCode, String fromDate, String toDate) async {
+    p('$bb $bb  getFiatPaymentResponsesByAsset starting ....');
+    List resp = await get(
+        apiRoute: "getFiatPaymentResponsesByAsset?assetCode=$assetCode");
+    List<StellarFiatPaymentResponse> list = [];
+    for (var value in resp) {
+      var tx = StellarFiatPaymentResponse.fromJson(value);
+      await AnchorLocalDB.addStellarFiatPaymentResponse(tx);
+      list.add(tx);
+    }
+
+    return list;
+  }
+
+  static Future<List<PathPaymentRequest>> getPathPaymentRequestsBySourceAccount(
+      String accountId) async {
+    p('$bb $bb  getPathPaymentRequestsBySourceAccount starting ....');
+    List resp = await get(
+        apiRoute: "getPathPaymentRequestsBySourceAccount?accountId=$accountId");
+    List<PathPaymentRequest> list = [];
+    for (var value in resp) {
+      var tx = PathPaymentRequest.fromJson(value);
+      await AnchorLocalDB.addPathPaymentRequest(tx);
+      list.add(tx);
+    }
+
+    return list;
+  }
+
+  static Future<List<PathPaymentRequest>>
+      getPathPaymentRequestsByDestinationAccount(String accountId) async {
+    p('$bb $bb  getPathPaymentRequestsByDestinationAccount starting ....');
+    List resp = await get(
+        apiRoute:
+            "getPathPaymentRequestsByDestinationAccount?accountId=$accountId");
+    List<PathPaymentRequest> list = [];
+    for (var value in resp) {
+      var tx = PathPaymentRequest.fromJson(value);
+      await AnchorLocalDB.addPathPaymentRequest(tx);
+      list.add(tx);
+    }
+
+    return list;
+  }
+
+  static Future<List<PathPaymentRequest>> getPathPaymentByAssetPair(
+      String anchorId, String assetFrom, String assetTo) async {
+    p('$bb $bb  getPathPaymentByAssetPair starting ....');
+    List resp = await get(
+        apiRoute:
+            "getPathPaymentByAssetPair?anchorId=$anchorId&assetFrom=$assetFrom&assetTo=$assetTo");
+    List<PathPaymentRequest> list = [];
+    for (var value in resp) {
+      var tx = PathPaymentRequest.fromJson(value);
+      await AnchorLocalDB.addPathPaymentRequest(tx);
+      list.add(tx);
+    }
+
+    return list;
+  }
+
+  static Future<List<PathPaymentRequest>> getPathPaymentRequestsByAnchor(
+      String anchorId, String fromDate, String toDate) async {
+    p('$bb $bb  getPathPaymentRequestsByAnchor starting ....');
+    List resp = await get(
+        apiRoute:
+            "getPathPaymentRequestsByAnchor?anchorId=$anchorId&fromDate=$fromDate&toDate=$toDate");
+    List<PathPaymentRequest> list = [];
+    for (var value in resp) {
+      var tx = PathPaymentRequest.fromJson(value);
+      await AnchorLocalDB.addPathPaymentRequest(tx);
       list.add(tx);
     }
 

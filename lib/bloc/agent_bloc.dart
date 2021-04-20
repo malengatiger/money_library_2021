@@ -8,11 +8,12 @@ import 'package:money_library_2021/api/net.dart';
 import 'package:money_library_2021/models/agent.dart';
 import 'package:money_library_2021/models/anchor.dart';
 import 'package:money_library_2021/models/client.dart';
+import 'package:money_library_2021/models/fiat_payment_request.dart';
+import 'package:money_library_2021/models/path_payment_request.dart';
 import 'package:money_library_2021/models/payment_dto.dart';
 import 'package:money_library_2021/models/payment_request.dart';
 import 'package:money_library_2021/models/stellar_account_bag.dart';
 import 'package:money_library_2021/models/transaction_dto.dart';
-import 'package:money_library_2021/util/functions.dart';
 import 'package:money_library_2021/util/prefs.dart';
 import 'package:money_library_2021/util/util.dart';
 
@@ -71,7 +72,7 @@ class AgentBloc {
   List<Agent> _agents = [];
   Anchor _anchor;
   AnchorUser _anchorUser;
-  static const cc = 'AgentBloc: 🎁 🎁 🎁 ';
+  static const cc = '🌼 🌼 🌼 🌼 🌼 🌼 AgentBloc: ';
 
   Future<Anchor> getAnchor() async {
     _anchor = await Prefs.getAnchor();
@@ -115,31 +116,64 @@ class AgentBloc {
 
   Future<List<PaymentDTO>> getPayments({String accountId, bool refresh}) async {
     var list = await AnchorLocalDB.getPayments();
-
     if (refresh || list.isEmpty) {
       list = await NetUtil.getAccountPayments(accountId);
     }
     p('$cc payments found: ${list.length}');
-    p('$cc transactions found: ${list.length}');
-    list.forEach((element) {
-      prettyPrint(
-          element.toJson(), "🌼 🌼 🌼 🌼 🌼 🌼  Payment: 🍎 ${element.id}");
-    });
+    // list.forEach((element) {
+    //   prettyPrint(
+    //       element.toJson(), "🌼 🌼 🌼 🌼 🌼 🌼  Payment: 🍎 ${element.id}");
+    // });
     return list;
   }
 
-  Future<List<TransactionDTO>> getTransactions(
+  Future<List<PathPaymentRequest>> getPathPaymentRequestsBySourceAccount(
       {String accountId, bool refresh = false}) async {
-    var list = await AnchorLocalDB.getTransactions();
-
+    var list =
+        await AnchorLocalDB.getPathPaymentRequestsBySourceAccount(accountId);
     if (refresh || list.isEmpty) {
-      list = await NetUtil.getAccountTransactions(accountId);
+      list = await NetUtil.getPathPaymentRequestsBySourceAccount(accountId);
     }
-    p('$cc transactions found: ${list.length}');
-    list.forEach((element) {
-      prettyPrint(
-          element.toJson(), "🔵 🔵 🔵 🔵 🔵 🔵 Transaction: 🍎 ${element.id}");
-    });
+    p('$cc getPathPaymentRequestsBySourceAccount found: ${list.length}');
+    return list;
+  }
+
+  Future<List<PathPaymentRequest>> getPathPaymentRequestsByDestinationAccount(
+      {String accountId, bool refresh = false}) async {
+    var list = await AnchorLocalDB.getPathPaymentRequestsByDestinationAccount(
+        accountId);
+    if (refresh || list.isEmpty) {
+      list =
+          await NetUtil.getPathPaymentRequestsByDestinationAccount(accountId);
+    }
+    p('$cc getPathPaymentRequestsByDestinationAccount found: ${list.length}');
+    return list;
+  }
+
+  Future<List<StellarFiatPaymentResponse>> getFiatPaymentResponsesByAnchor(
+      {String anchorId,
+      String fromDate,
+      String toDate,
+      bool refresh = false}) async {
+    var list = await AnchorLocalDB.getFiatPaymentResponsesByAnchor(
+        anchorId: anchorId, fromDate: fromDate, toDate: toDate);
+    if (refresh || list.isEmpty) {
+      list = await NetUtil.getFiatPaymentResponsesByAnchor(
+          anchorId: anchorId, fromDate: fromDate, toDate: toDate);
+    }
+    p('$cc getFiatPaymentResponsesByAnchor found: ${list.length}');
+    return list;
+  }
+
+  Future<List<StellarFiatPaymentResponse>>
+      getFiatPaymentResponsesBySourceAccount(
+          {String accountId, bool refresh = false}) async {
+    var list =
+        await AnchorLocalDB.getFiatPaymentResponsesBySourceAccount(accountId);
+    if (refresh || list.isEmpty) {
+      list = await NetUtil.getFiatPaymentResponsesBySourceAccount(accountId);
+    }
+    p('$cc getFiatPaymentResponsesBySourceAccount found: ${list.length}');
     return list;
   }
 
@@ -155,12 +189,12 @@ class AgentBloc {
         if (_agents.isEmpty) {
           _agents = await _readAgentsFromDatabase(anchorId);
           p('$cc 🌿 🌿 🌿 Agents found remotely: 🎁  ${_agents.length} 🎁 ');
-          _agents.forEach((element) async {
-            await AnchorLocalDB.addAgent(element);
-          });
         }
         _agentController.sink.add(_agents);
       }
+      _agents.forEach((element) async {
+        await AnchorLocalDB.addAgent(element);
+      });
     } catch (e) {
       p(e);
       _errors.clear();
@@ -177,7 +211,7 @@ class AgentBloc {
     return _agents;
   }
 
-  Future<List<Client>> getClients(
+  Future<List<Client>> getAgentClients(
       {String agentId, bool refresh = false}) async {
     try {
       p("🔵 🔵 🔵 🔵 Getting agents clients from local or remote db ... agentId: $agentId");
@@ -202,9 +236,41 @@ class AgentBloc {
     return _clients;
   }
 
+  Future<List<Client>> getAnchorClients(
+      {String anchorId, bool refresh = false}) async {
+    try {
+      p("🔵 🔵 🔵 🔵 Getting anchor clients from local or remote db ... anchorId: $anchorId");
+      if (refresh) {
+        await _getRemoteAnchorClients(anchorId);
+        p('🌿 🌿 🌿 Anchor\'s clients found on REMOTE database : 🎁  ${_clients.length} 🎁 anchorId: $anchorId');
+      } else {
+        _clients = await AnchorLocalDB.getAllClients();
+        p('🌿 🌿 🌿 Anchor\'s clients found on LOCAL database : 🎁  ${_clients.length} 🎁 anchorId: $anchorId');
+        if (_clients.isEmpty) {
+          await _getRemoteAnchorClients(anchorId);
+          p('🌿 🌿 🌿 Anchor\'s clients found on REMOTE database : 🎁  ${_clients.length} 🎁 anchorId: $anchorId');
+        }
+      }
+    } catch (e) {
+      p(e);
+      _errors.clear();
+      _errors.add('Firestore agent query failed');
+      _errorController.sink.add(_errors);
+    }
+    _clientController.sink.add(_clients);
+    return _clients;
+  }
+
   Future<List<Client>> _getRemoteClients(String agentId) async {
     p('🔵 🔵 🔵 🔵 Getting agents clients from REMOTE database ...');
     _clients = await NetUtil.getAgentClients(agentId);
+    _clientController.sink.add(_clients);
+    return _clients;
+  }
+
+  Future<List<Client>> _getRemoteAnchorClients(String anchorId) async {
+    p('🔵 🔵 🔵 🔵 Getting anchor clients from REMOTE database ...');
+    _clients = await NetUtil.getAnchorClients(anchorId);
     _clientController.sink.add(_clients);
     return _clients;
   }
