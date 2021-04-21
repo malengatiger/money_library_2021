@@ -15,9 +15,9 @@ class StellarFiatPaymentResponse {
       agentId,
       amount,
       loanId,
-      clientId,
-      ledger;
+      clientId;
   bool success;
+  int ledger;
 
   StellarFiatPaymentResponse(
       {this.anchorId,

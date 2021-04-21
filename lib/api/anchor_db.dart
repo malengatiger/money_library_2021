@@ -48,11 +48,11 @@ class AnchorLocalDB {
       loanApplicationBox = await Hive.openBox("loanApplicationBox");
       p('$aa Hive loanApplicationBox:  🔵  ....loanApplicationBox.isOpen: ${loanApplicationBox.isOpen}');
 
-      fiatPaymentBox = await Hive.openBox("paymentBox");
-      p('$aa Hive paymentBox:  🔵  ....paymentBox.isOpen: ${fiatPaymentBox.isOpen}');
+      fiatPaymentBox = await Hive.openBox("fiatPaymentBox");
+      p('$aa Hive fiatPaymentBox:  🔵  ....fiatPaymentBox.isOpen: ${fiatPaymentBox.isOpen}');
 
-      pathpaymentBox = await Hive.openBox("transactionBox");
-      p('$aa Hive transactionBox:  🔵  ....transactionBox.isOpen: ${pathpaymentBox.isOpen}');
+      pathpaymentBox = await Hive.openBox("pathpaymentBox");
+      p('$aa Hive pathpaymentBox:  🔵  ....pathpaymentBox.isOpen: ${pathpaymentBox.isOpen}');
 
       p('$aa Hive local data ready to rumble ....$aa');
     }
@@ -67,7 +67,7 @@ class AnchorLocalDB {
  */
   static Future addPathPaymentRequest(PathPaymentRequest request) async {
     await _connectLocalDB();
-    pathpaymentBox.put(request.date, request.toJson());
+    pathpaymentBox.put(request.pathPaymentRequestId, request.toJson());
 
     p('$aa PathPaymentRequest added or changed: 🍎 '
         '${pathpaymentBox.keys.length} records ${request.toJson()}');
@@ -76,7 +76,7 @@ class AnchorLocalDB {
   static Future addStellarFiatPaymentResponse(
       StellarFiatPaymentResponse response) async {
     await _connectLocalDB();
-    fiatPaymentBox.put(response.date, response.toJson());
+    fiatPaymentBox.put(response.paymentRequestId, response.toJson());
 
     p('$aa StellarFiatPaymentResponse added or changed: 🍎 '
         '${pathpaymentBox.keys.length} records ${response.toJson()}');
@@ -92,14 +92,14 @@ class AnchorLocalDB {
   static Future addAgent(Agent agent) async {
     await _connectLocalDB();
     agentBox.put(agent.agentId, agent.toJson());
-    p('$aa Agent added or changed: '
-        '${agentBox.keys.length} records ${agent.toJson()}');
+    // p('$aa Agent added or changed: '
+    //     '${agentBox.keys.length} records ${agent.toJson()}');
   }
 
   static Future addClient(Client client) async {
     await _connectLocalDB();
     clientBox.put(client.clientId, client.toJson());
-    p('$aa Client added: ${client.toJson()}');
+    // p('$aa Client added: ${client.toJson()}');
   }
 
   static Future<List<PaymentDTO>> getPayments() async {
@@ -207,6 +207,29 @@ class AnchorLocalDB {
     return mList;
   }
 
+  static Future<List<PathPaymentRequest>> getPathPaymentRequestsByAnchor(
+      {String anchorId, String fromDate, String toDate}) async {
+    await _connectLocalDB();
+    List<PathPaymentRequest> mList = [];
+    var values = pathpaymentBox.values;
+
+    values.forEach((element) {
+      var m = PathPaymentRequest.fromJson(element);
+      if (m.anchorId == anchorId) {
+        //todo - filter by date .....
+        DateTime from = DateTime.parse(fromDate);
+        DateTime to = DateTime.parse(toDate);
+        DateTime mDate = DateTime.parse(m.date);
+        if (mDate.isBefore(to) && mDate.isAfter(from)) {
+          mList.add(m);
+        }
+      }
+    });
+
+    p('$aa 🥬 getPathPaymentRequestsByAnchor retrieved from local Hive: 🍎 ${mList.length}');
+    return mList;
+  }
+
   static Future<List<PathPaymentRequest>>
       getPathPaymentRequestsByDestinationAccount(String accountId) async {
     await _connectLocalDB();
@@ -220,7 +243,7 @@ class AnchorLocalDB {
       }
     });
 
-    p('$aa 🥬 PathPaymentRequests retrieved from local Hive: 🍎 ${mList.length}');
+    p('$aa 🥬 getPathPaymentRequestsByDestinationAccount retrieved from local Hive: 🍎 ${mList.length}');
     return mList;
   }
 

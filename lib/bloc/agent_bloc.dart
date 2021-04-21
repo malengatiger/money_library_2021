@@ -10,10 +10,8 @@ import 'package:money_library_2021/models/anchor.dart';
 import 'package:money_library_2021/models/client.dart';
 import 'package:money_library_2021/models/fiat_payment_request.dart';
 import 'package:money_library_2021/models/path_payment_request.dart';
-import 'package:money_library_2021/models/payment_dto.dart';
 import 'package:money_library_2021/models/payment_request.dart';
 import 'package:money_library_2021/models/stellar_account_bag.dart';
-import 'package:money_library_2021/models/transaction_dto.dart';
 import 'package:money_library_2021/util/prefs.dart';
 import 'package:money_library_2021/util/util.dart';
 
@@ -26,9 +24,9 @@ class AgentBloc {
     getAnchorUser();
   }
 
-  StreamController<List<PaymentDTO>> _paymentController =
+  StreamController<List<StellarFiatPaymentResponse>> _fiatPaymentController =
       StreamController.broadcast();
-  StreamController<List<TransactionDTO>> _transactionController =
+  StreamController<List<PathPaymentRequest>> _pathPaymentController =
       StreamController.broadcast();
   StreamController<List<Agent>> _agentController = StreamController.broadcast();
   StreamController<List<Client>> _clientController =
@@ -40,8 +38,8 @@ class AgentBloc {
   List<bool> _busies = [];
   List<Client> _clients = [];
   List<StellarAccountBag> _balances = [];
-  List<PaymentDTO> _payments = [];
-  List<TransactionDTO> _transactions = [];
+  List<PathPaymentRequest> _pathPaymentRequests = [];
+  List<StellarFiatPaymentResponse> _fiatPaymentResponses = [];
 
   StreamController<List<String>> _errorController =
       StreamController.broadcast();
@@ -59,9 +57,11 @@ class AgentBloc {
   Stream<List<StellarAccountBag>> get balancesStream =>
       _balancesController.stream;
 
-  Stream<List<TransactionDTO>> get transactionStream =>
-      _transactionController.stream;
-  Stream<List<PaymentDTO>> get paymentStream => _paymentController.stream;
+  Stream<List<PathPaymentRequest>> get pathPaymentStream =>
+      _pathPaymentController.stream;
+
+  Stream<List<StellarFiatPaymentResponse>> get fiatPaymentStream =>
+      _fiatPaymentController.stream;
 
   List<Agent> get agents => _agents;
 
@@ -114,70 +114,111 @@ class AgentBloc {
     return _anchorUser;
   }
 
-  Future<List<PaymentDTO>> getPayments({String accountId, bool refresh}) async {
-    var list = await AnchorLocalDB.getPayments();
-    if (refresh || list.isEmpty) {
-      list = await NetUtil.getAccountPayments(accountId);
+  Future<List<PathPaymentRequest>> getPathPaymentRequestsByAnchor(
+      {String anchorId, String fromDate, String toDate, bool refresh}) async {
+    p('$cc getPathPaymentRequestsByAnchor: anchorId: $anchorId refresh: $refresh');
+
+    if (refresh) {
+      _pathPaymentRequests = await NetUtil.getPathPaymentRequestsByAnchor(
+          anchorId: anchorId, fromDate: fromDate, toDate: toDate);
+    } else {
+      _pathPaymentRequests = await AnchorLocalDB.getPathPaymentRequestsByAnchor(
+          anchorId: anchorId, fromDate: fromDate, toDate: toDate);
+      if (_pathPaymentRequests.isEmpty) {
+        _pathPaymentRequests = await NetUtil.getPathPaymentRequestsByAnchor(
+            anchorId: anchorId, fromDate: fromDate, toDate: toDate);
+      }
     }
-    p('$cc payments found: ${list.length}');
-    // list.forEach((element) {
-    //   prettyPrint(
-    //       element.toJson(), "🌼 🌼 🌼 🌼 🌼 🌼  Payment: 🍎 ${element.id}");
-    // });
-    return list;
+
+    _pathPaymentController.sink.add(_pathPaymentRequests);
+    p('$cc getPathPaymentRequestsByAnchor found: ${_pathPaymentRequests.length}');
+    return _pathPaymentRequests;
   }
 
   Future<List<PathPaymentRequest>> getPathPaymentRequestsBySourceAccount(
       {String accountId, bool refresh = false}) async {
-    var list =
+    _pathPaymentRequests =
         await AnchorLocalDB.getPathPaymentRequestsBySourceAccount(accountId);
-    if (refresh || list.isEmpty) {
-      list = await NetUtil.getPathPaymentRequestsBySourceAccount(accountId);
+    if (refresh || _pathPaymentRequests.isEmpty) {
+      _pathPaymentRequests =
+          await NetUtil.getPathPaymentRequestsBySourceAccount(accountId);
     }
-    p('$cc getPathPaymentRequestsBySourceAccount found: ${list.length}');
-    return list;
+    _pathPaymentController.sink.add(_pathPaymentRequests);
+    p('$cc getPathPaymentRequestsBySourceAccount found: ${_pathPaymentRequests.length}');
+    return _pathPaymentRequests;
   }
 
   Future<List<PathPaymentRequest>> getPathPaymentRequestsByDestinationAccount(
       {String accountId, bool refresh = false}) async {
-    var list = await AnchorLocalDB.getPathPaymentRequestsByDestinationAccount(
-        accountId);
-    if (refresh || list.isEmpty) {
-      list =
+    _pathPaymentRequests =
+        await AnchorLocalDB.getPathPaymentRequestsByDestinationAccount(
+            accountId);
+    if (refresh || _pathPaymentRequests.isEmpty) {
+      _pathPaymentRequests =
           await NetUtil.getPathPaymentRequestsByDestinationAccount(accountId);
     }
-    p('$cc getPathPaymentRequestsByDestinationAccount found: ${list.length}');
-    return list;
+    _pathPaymentController.sink.add(_pathPaymentRequests);
+    p('$cc getPathPaymentRequestsByDestinationAccount found: ${_pathPaymentRequests.length} $cc');
+    return _pathPaymentRequests;
   }
 
   Future<List<StellarFiatPaymentResponse>> getFiatPaymentResponsesByAnchor(
-      {String anchorId,
-      String fromDate,
-      String toDate,
-      bool refresh = false}) async {
-    var list = await AnchorLocalDB.getFiatPaymentResponsesByAnchor(
-        anchorId: anchorId, fromDate: fromDate, toDate: toDate);
-    if (refresh || list.isEmpty) {
-      list = await NetUtil.getFiatPaymentResponsesByAnchor(
+      {String anchorId, String fromDate, String toDate, bool refresh}) async {
+    p('$cc getFiatPaymentResponsesByAnchor: anchorId: $anchorId $cc  refresh: $refresh');
+
+    if (refresh) {
+      _fiatPaymentResponses = await NetUtil.getFiatPaymentResponsesByAnchor(
           anchorId: anchorId, fromDate: fromDate, toDate: toDate);
+    } else {
+      _fiatPaymentResponses =
+          await AnchorLocalDB.getFiatPaymentResponsesByAnchor(
+              anchorId: anchorId, fromDate: fromDate, toDate: toDate);
+      if (_fiatPaymentResponses.isEmpty) {
+        _fiatPaymentResponses = await NetUtil.getFiatPaymentResponsesByAnchor(
+            anchorId: anchorId, fromDate: fromDate, toDate: toDate);
+      }
     }
-    p('$cc getFiatPaymentResponsesByAnchor found: ${list.length}');
-    return list;
+
+    _fiatPaymentController.sink.add(_fiatPaymentResponses);
+    p('$cc getFiatPaymentResponsesByAnchor found: ${_fiatPaymentResponses.length} $cc');
+    return _fiatPaymentResponses;
   }
 
   Future<List<StellarFiatPaymentResponse>>
       getFiatPaymentResponsesBySourceAccount(
-          {String accountId, bool refresh = false}) async {
-    var list =
-        await AnchorLocalDB.getFiatPaymentResponsesBySourceAccount(accountId);
-    if (refresh || list.isEmpty) {
-      list = await NetUtil.getFiatPaymentResponsesBySourceAccount(accountId);
+          {String accountId, bool refresh}) async {
+    if (refresh) {
+      _fiatPaymentResponses =
+          await NetUtil.getFiatPaymentResponsesBySourceAccount(accountId);
+    } else {
+      _fiatPaymentResponses =
+          await AnchorLocalDB.getFiatPaymentResponsesBySourceAccount(accountId);
     }
-    p('$cc getFiatPaymentResponsesBySourceAccount found: ${list.length}');
-    return list;
+    if (_fiatPaymentResponses.isEmpty) {
+      _fiatPaymentResponses =
+          await NetUtil.getFiatPaymentResponsesBySourceAccount(accountId);
+    }
+    _fiatPaymentController.sink.add(_fiatPaymentResponses);
+    p('$cc getFiatPaymentResponsesBySourceAccount found: ${_fiatPaymentResponses.length}');
+    return _fiatPaymentResponses;
   }
 
-  Future<List<Agent>> getAgents({String anchorId, bool refresh = false}) async {
+  Future<List<StellarFiatPaymentResponse>>
+      getFiatPaymentResponsesByDestinationAccount(
+          {String accountId, bool refresh}) async {
+    _fiatPaymentResponses =
+        await AnchorLocalDB.getFiatPaymentResponsesByDestinationAccount(
+            accountId);
+    if (refresh || _fiatPaymentResponses.isEmpty) {
+      _fiatPaymentResponses =
+          await NetUtil.getFiatPaymentResponsesByDestinationAccount(accountId);
+    }
+    _fiatPaymentController.sink.add(_fiatPaymentResponses);
+    p('$cc getFiatPaymentResponsesByDestinationAccount found: ${_fiatPaymentResponses.length}');
+    return _fiatPaymentResponses;
+  }
+
+  Future<List<Agent>> getAgents({String anchorId, bool refresh}) async {
     try {
       p("$cc refreshing ... getAgents .... 💧💧 refresh: $refresh");
       _agents.clear();
@@ -236,8 +277,7 @@ class AgentBloc {
     return _clients;
   }
 
-  Future<List<Client>> getAnchorClients(
-      {String anchorId, bool refresh = false}) async {
+  Future<List<Client>> getAnchorClients({String anchorId, bool refresh}) async {
     try {
       p("🔵 🔵 🔵 🔵 Getting anchor clients from local or remote db ... anchorId: $anchorId");
       if (refresh) {
@@ -321,8 +361,8 @@ class AgentBloc {
     _busyController.close();
     _clientController.close();
     _balancesController.close();
-    _transactionController.close();
-    _paymentController.close();
+    _pathPaymentController.close();
+    _fiatPaymentController.close();
   }
 
   final FirebaseMessaging fcm = FirebaseMessaging.instance;

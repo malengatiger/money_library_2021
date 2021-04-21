@@ -231,7 +231,7 @@ class NetUtil {
   }
 
   static Future<List<PathPaymentRequest>> getPathPaymentRequestsByAnchor(
-      String anchorId, String fromDate, String toDate) async {
+      {String anchorId, String fromDate, String toDate}) async {
     p('$bb $bb  getPathPaymentRequestsByAnchor starting ....');
     List resp = await get(
         apiRoute:

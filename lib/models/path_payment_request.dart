@@ -6,7 +6,7 @@ String sourceAccount,  destinationAccount;
 
  */
 class PathPaymentRequest {
-  String anchorId, sourceAccount;
+  String anchorId, sourceAccount, pathPaymentRequestId;
   String date,
       dateUpdated,
       destinationAccount,
@@ -28,6 +28,7 @@ class PathPaymentRequest {
       this.sendAmount,
       this.destinationMin,
       this.token,
+      this.pathPaymentRequestId,
       this.success});
 
   PathPaymentRequest.fromJson(Map data) {
@@ -41,6 +42,7 @@ class PathPaymentRequest {
     this.destinationAssetCode = data['destinationAssetCode'];
     this.sendAmount = data['sendAmount'];
     this.success = data['success'];
+    this.pathPaymentRequestId = data['pathPaymentRequestId'];
 
     this.token = data['token'];
   }
@@ -57,7 +59,7 @@ class PathPaymentRequest {
     map['sendAmount'] = sendAmount;
     map['success'] = success;
     map['token'] = token;
-
+    map['pathPaymentRequestId'] = pathPaymentRequestId;
     return map;
   }
 }
