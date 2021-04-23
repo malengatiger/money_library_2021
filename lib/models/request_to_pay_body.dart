@@ -1,16 +1,16 @@
 import 'package:meta/meta.dart';
 
 class RequestToPayBody {
-  String amount, currency, externalId, payerMessage, payeeNote;
-  Payer payer;
+  String? amount, currency, externalId, payerMessage, payeeNote;
+  Payer? payer;
 
   RequestToPayBody(
-      {@required this.currency,
-      @required this.amount,
-      @required this.externalId,
-      @required this.payerMessage,
-      @required this.payeeNote,
-      @required this.payer});
+      {required this.currency,
+      required this.amount,
+      required this.externalId,
+      required this.payerMessage,
+      required this.payeeNote,
+      required this.payer});
 
   RequestToPayBody.fromJson(Map data) {
     this.currency = data['currency'];
@@ -30,17 +30,17 @@ class RequestToPayBody {
       'externalId': externalId,
       'payerMessage': payerMessage,
       'payeeNote': payeeNote,
-      'payer': this.payer == null ? null : this.payer.toJson(),
+      'payer': this.payer == null ? null : this.payer!.toJson(),
     };
     return map;
   }
 }
 
 class Payer {
-  String partyIdType, partyId;
+  String? partyIdType, partyId;
   Payer({
-    @required this.partyId,
-    @required this.partyIdType,
+    required this.partyId,
+    required this.partyIdType,
   });
 
   Payer.fromJson(Map data) {
@@ -63,11 +63,11 @@ public static class RequestToPayBag {
 
  */
 class RequestToPayBag {
-  String referenceId;
-  RequestToPayBody requestToPayBody;
+  String? referenceId;
+  RequestToPayBody? requestToPayBody;
   RequestToPayBag({
-    @required this.requestToPayBody,
-    @required this.referenceId,
+    required this.requestToPayBody,
+    required this.referenceId,
   });
 
   RequestToPayBag.fromJson(Map data) {
@@ -79,7 +79,7 @@ class RequestToPayBag {
     Map<String, dynamic> map = {
       'referenceId': referenceId,
       'requestToPayBody':
-          requestToPayBody == null ? null : requestToPayBody.toJson(),
+          requestToPayBody == null ? null : requestToPayBody!.toJson(),
     };
     return map;
   }

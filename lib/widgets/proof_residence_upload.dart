@@ -11,39 +11,39 @@ import 'package:money_library_2021/util/util.dart';
 import 'mobile_registration.dart';
 
 class ProofOfResidenceUpload extends StatefulWidget {
-  final Client client;
-  final Agent agent;
-  final PageListener pageListener;
+  final Client? client;
+  final Agent? agent;
+  final PageListener? pageListener;
 
   const ProofOfResidenceUpload(
-      {Key key, this.client, this.agent, this.pageListener})
+      {Key? key, this.client, this.agent, this.pageListener})
       : super(key: key);
   @override
   _ProofOfResidenceUploadState createState() => _ProofOfResidenceUploadState();
 }
 
 class _ProofOfResidenceUploadState extends State<ProofOfResidenceUpload> {
-  File _proofOfResidenceFile;
-  String _id, _name;
+  File? _proofOfResidenceFile;
+  String? _id, _name;
   bool isBusy = false;
   List<BottomNavigationBarItem> _items = [];
   var _key = GlobalKey<ScaffoldState>();
-  ClientCache _clientCache;
+  ClientCache? _clientCache;
 
   @override
   void initState() {
     super.initState();
     if (widget.client != null) {
-      _id = widget.client.clientId;
-      _name = widget.client.personalKYCFields == null
+      _id = widget.client!.clientId;
+      _name = widget.client!.personalKYCFields == null
           ? null
-          : widget.client.personalKYCFields.getFullName();
+          : widget.client!.personalKYCFields!.getFullName();
     }
     if (widget.agent != null) {
-      _id = widget.agent.agentId;
-      _name = widget.agent.personalKYCFields == null
+      _id = widget.agent!.agentId;
+      _name = widget.agent!.personalKYCFields == null
           ? null
-          : widget.agent.personalKYCFields.getFullName();
+          : widget.agent!.personalKYCFields!.getFullName();
     }
     _getCache();
   }
@@ -56,10 +56,10 @@ class _ProofOfResidenceUploadState extends State<ProofOfResidenceUpload> {
   _getCache() async {
     _clientCache = await Prefs.getClientCache();
     if (_clientCache != null) {
-      if (_clientCache.proofOfResidencePath != null) {
-        _proofOfResidenceFile = File(_clientCache.proofOfResidencePath);
+      if (_clientCache!.proofOfResidencePath != null) {
+        _proofOfResidenceFile = File(_clientCache!.proofOfResidencePath!);
       }
-      _id = _clientCache.client.clientId;
+      _id = _clientCache!.client!.clientId;
     } else {
       p('😡 😡 😡 ClientCache not found, this may be a problem. Or not.');
     }
@@ -99,7 +99,7 @@ class _ProofOfResidenceUploadState extends State<ProofOfResidenceUpload> {
     });
     try {
       var resp = await NetUtil.uploadProofOfResidence(
-          id: _id, proofOfResidence: _proofOfResidenceFile);
+          id: _id!, proofOfResidence: _proofOfResidenceFile!);
       p(resp);
 //      AppSnackBar.showSnackBar(
 //          scaffoldKey: _key,
@@ -148,7 +148,7 @@ class _ProofOfResidenceUploadState extends State<ProofOfResidenceUpload> {
                             child: Image.asset('assets/images/doc2.png'),
                             opacity: 0.2,
                           )
-                        : Image.file(_proofOfResidenceFile),
+                        : Image.file(_proofOfResidenceFile!),
                     Spacer(),
                     ElevatedButton(
                       child: Text(

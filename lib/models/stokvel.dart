@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
 class Stokvel {
-  String name, date, stokvelId, accountId;
-  bool isActive;
-  Member adminMember;
+  String? name, date, stokvelId, accountId;
+  bool? isActive;
+  Member? adminMember;
 
   Stokvel(
       {this.name, this.stokvelId, this.date, this.adminMember, this.isActive});
@@ -33,7 +33,7 @@ class Stokvel {
         'stokvelId': stokvelId,
         'date': date,
         'isActive': isActive,
-        'adminMember': adminMember == null ? null : adminMember.toJson(),
+        'adminMember': adminMember == null ? null : adminMember!.toJson(),
       };
       return map;
     } catch (e) {
@@ -44,21 +44,21 @@ class Stokvel {
 }
 
 class Member {
-  String name, cellphone, email, date, memberId, accountId, url, fcmToken;
-  bool isActive;
-  List<String> stokvelIds;
+  String? name, cellphone, email, date, memberId, accountId, url, fcmToken;
+  bool? isActive;
+  List<String>? stokvelIds;
 
   Member(
-      {@required this.name,
-      @required this.memberId,
-      @required this.email,
-      @required this.cellphone,
-      @required this.date,
-      @required this.url,
-      @required this.fcmToken,
-      @required this.accountId,
-      @required this.stokvelIds,
-      @required this.isActive});
+      {required this.name,
+      required this.memberId,
+      required this.email,
+      required this.cellphone,
+      required this.date,
+      required this.url,
+      required this.fcmToken,
+      required this.accountId,
+      required this.stokvelIds,
+      required this.isActive});
 
   Member.fromJson(Map map) {
     try {
@@ -75,7 +75,7 @@ class Member {
       if (map['stokvelIds'] != null) {
         List mm = map['stokvelIds'];
         mm.forEach((m) {
-          stokvelIds.add(m as String);
+          stokvelIds!.add(m as String);
         });
       }
     } catch (e) {
@@ -107,18 +107,18 @@ class Member {
 }
 
 class StokvelPayment {
-  Member member;
-  Stokvel stokvel;
-  String amount, date, seed, stellarHash, paymentId;
+  Member? member;
+  Stokvel? stokvel;
+  String? amount, date, seed, stellarHash, paymentId;
 
   StokvelPayment(
-      {@required this.member,
-      @required this.amount,
-      @required this.date,
-      @required this.seed,
-      @required this.stellarHash,
-      @required this.paymentId,
-      @required this.stokvel});
+      {required this.member,
+      required this.amount,
+      required this.date,
+      required this.seed,
+      required this.stellarHash,
+      required this.paymentId,
+      required this.stokvel});
 
   StokvelPayment.fromJson(Map map) {
     amount = map['amount'];
@@ -142,23 +142,23 @@ class StokvelPayment {
       'paymentId': paymentId,
       'stellarHash': stellarHash,
       'date': date,
-      'member': member == null ? null : member.toJson(),
-      'stokvel': stokvel == null ? null : stokvel.toJson(),
+      'member': member == null ? null : member!.toJson(),
+      'stokvel': stokvel == null ? null : stokvel!.toJson(),
     };
     return map;
   }
 }
 
 class MemberPayment {
-  Member fromMember, toMember;
-  String amount, date, seed, stellarHash, paymentId;
+  Member? fromMember, toMember;
+  String? amount, date, seed, stellarHash, paymentId;
 
   MemberPayment(
-      {@required this.fromMember,
-      @required this.toMember,
-      @required this.amount,
-      @required this.date,
-      @required this.paymentId,
+      {required this.fromMember,
+      required this.toMember,
+      required this.amount,
+      required this.date,
+      required this.paymentId,
       this.seed,
       this.stellarHash});
 
@@ -184,20 +184,20 @@ class MemberPayment {
       'paymentId': paymentId,
       'stellarHash': stellarHash,
       'date': date,
-      'fromMember': fromMember == null ? null : fromMember.toJson(),
-      'toMember': toMember == null ? null : toMember.toJson(),
+      'fromMember': fromMember == null ? null : fromMember!.toJson(),
+      'toMember': toMember == null ? null : toMember!.toJson(),
     };
     return map;
   }
 }
 
 class Invitation {
-  String email, date, cellphone, memberId, message, invitationId;
-  Stokvel stokvel;
+  String? email, date, cellphone, memberId, message, invitationId;
+  Stokvel? stokvel;
   Invitation(
-      {@required this.email,
-      @required this.date,
-      @required this.stokvel,
+      {required this.email,
+      required this.date,
+      required this.stokvel,
       this.memberId,
       this.cellphone,
       this.invitationId});
@@ -222,22 +222,22 @@ class Invitation {
       'cellphone': cellphone,
       'message': message,
       'memberId': memberId,
-      'stokvel': stokvel == null ? null : stokvel.toJson(),
+      'stokvel': stokvel == null ? null : stokvel!.toJson(),
     };
     return map;
   }
 }
 
 class StokkieCredential {
-  String accountId, date, seed, cryptKey, fortunaKey, stokvelId, memberId;
+  String? accountId, date, seed, cryptKey, fortunaKey, stokvelId, memberId;
   StokkieCredential({
-    @required this.accountId,
-    @required this.date,
-    @required this.cryptKey,
-    @required this.fortunaKey,
-    @required this.stokvelId,
-    @required this.memberId,
-    @required this.seed,
+    required this.accountId,
+    required this.date,
+    required this.cryptKey,
+    required this.fortunaKey,
+    required this.stokvelId,
+    required this.memberId,
+    required this.seed,
   });
 
   StokkieCredential.fromJson(Map map) {
@@ -265,7 +265,7 @@ class StokkieCredential {
 }
 
 class StokkieCredentials {
-  List<StokkieCredential> credentials;
+  List<StokkieCredential>? credentials;
 
   StokkieCredentials(this.credentials);
 
@@ -274,29 +274,29 @@ class StokkieCredentials {
     if (map['credentials'] != null) {
       List mm = map['credentials'];
       mm.forEach((m) {
-        credentials.add(StokkieCredential.fromJson(m));
+        credentials!.add(StokkieCredential.fromJson(m));
       });
     }
-    print('Inside fromJson: 🌼 ${credentials.length}, is this incrementing??');
+    print('Inside fromJson: 🌼 ${credentials!.length}, is this incrementing??');
   }
 
   Map<String, dynamic> toJson() {
     List mList = [];
 
-    credentials.forEach((c) {
+    credentials!.forEach((c) {
       mList.add(c.toJson());
     });
 
     Map<String, dynamic> map = {
       'credentials': mList,
     };
-    print('Inside toJson: 🌼 ${credentials.length}, is this incrementing??');
+    print('Inside toJson: 🌼 ${credentials!.length}, is this incrementing??');
     return map;
   }
 }
 
 class Stokvels {
-  List<Stokvel> stokvels;
+  List<Stokvel>? stokvels;
   Stokvels(this.stokvels);
 
   Stokvels.fromJson(Map map) {
@@ -304,14 +304,14 @@ class Stokvels {
     if (map['stokvels'] != null) {
       List mm = map['stokvels'];
       mm.forEach((m) {
-        stokvels.add(Stokvel.fromJson(m));
+        stokvels!.add(Stokvel.fromJson(m));
       });
     }
   }
   Map<String, dynamic> toJson() {
     List mList = [];
 
-    stokvels.forEach((c) {
+    stokvels!.forEach((c) {
       mList.add(c.toJson());
     });
 
@@ -323,7 +323,7 @@ class Stokvels {
 }
 
 class Members {
-  List<Member> members;
+  List<Member>? members;
   Members(this.members);
 
   Members.fromJson(Map map) {
@@ -331,14 +331,14 @@ class Members {
     if (map['members'] != null) {
       List mm = map['members'];
       mm.forEach((m) {
-        members.add(Member.fromJson(m));
+        members!.add(Member.fromJson(m));
       });
     }
   }
   Map<String, dynamic> toJson() {
     List mList = [];
 
-    members.forEach((c) {
+    members!.forEach((c) {
       mList.add(c.toJson());
     });
 
@@ -350,7 +350,7 @@ class Members {
 }
 
 class MemberPayments {
-  List<MemberPayment> memberPayments;
+  List<MemberPayment>? memberPayments;
   MemberPayments(this.memberPayments);
 
   MemberPayments.fromJson(Map map) {
@@ -358,13 +358,13 @@ class MemberPayments {
     if (map['memberPayments'] != null) {
       List mm = map['memberPayments'];
       mm.forEach((m) {
-        memberPayments.add(MemberPayment.fromJson(m));
+        memberPayments!.add(MemberPayment.fromJson(m));
       });
     }
   }
   Map<String, dynamic> toJson() {
     List mList = [];
-    memberPayments.forEach((c) {
+    memberPayments!.forEach((c) {
       mList.add(c.toJson());
     });
 
@@ -376,7 +376,7 @@ class MemberPayments {
 }
 
 class StokvelPayments {
-  List<StokvelPayment> stokvelPayments;
+  List<StokvelPayment>? stokvelPayments;
   StokvelPayments(this.stokvelPayments);
 
   StokvelPayments.fromJson(Map map) {
@@ -384,13 +384,13 @@ class StokvelPayments {
     if (map['stokvelPayments'] != null) {
       List mm = map['stokvelPayments'];
       mm.forEach((m) {
-        stokvelPayments.add(StokvelPayment.fromJson(m));
+        stokvelPayments!.add(StokvelPayment.fromJson(m));
       });
     }
   }
   Map<String, dynamic> toJson() {
     List mList = [];
-    stokvelPayments.forEach((c) {
+    stokvelPayments!.forEach((c) {
       mList.add(c.toJson());
     });
 
@@ -403,12 +403,12 @@ class StokvelPayments {
 
 //todo - expand StokvelGoal ideas and code ... saving money for something (sports, trips, volunteering, group purchase, crowd funding etc.
 class StokvelGoal {
-  String name, date, targetDate, stokvelGoalId, targetAmount, description;
-  List<StokvelPayment> payments;
-  List<String> imageUrls;
-  Stokvel stokvel;
-  List<Member> beneficiaries;
-  bool isActive;
+  String? name, date, targetDate, stokvelGoalId, targetAmount, description;
+  List<StokvelPayment>? payments;
+  List<String>? imageUrls;
+  Stokvel? stokvel;
+  List<Member>? beneficiaries;
+  bool? isActive;
 
   StokvelGoal(
       {this.name,
@@ -436,21 +436,21 @@ class StokvelGoal {
     if (map['payments'] != null) {
       List mList = map['payments'];
       mList.forEach((m) {
-        payments.add(StokvelPayment.fromJson(m));
+        payments!.add(StokvelPayment.fromJson(m));
       });
     }
     imageUrls = [];
     if (map['imageUrls'] != null) {
       List mList = map['imageUrls'];
       mList.forEach((u) {
-        imageUrls.add(u as String);
+        imageUrls!.add(u as String);
       });
     }
     beneficiaries = [];
     if (map['beneficiaries'] != null) {
       List mList = map['beneficiaries'];
       mList.forEach((m) {
-        beneficiaries.add(Member.fromJson(m));
+        beneficiaries!.add(Member.fromJson(m));
       });
     }
     if (map['stokvel'] != null) {
@@ -460,15 +460,15 @@ class StokvelGoal {
 
   Map<String, dynamic> toJson() {
     var mList = [];
-    payments.forEach((p) {
+    payments!.forEach((p) {
       mList.add(p.toJson());
     });
     var bList = [];
-    beneficiaries.forEach((p) {
+    beneficiaries!.forEach((p) {
       bList.add(p.toJson());
     });
     var uList = [];
-    imageUrls.forEach((p) {
+    imageUrls!.forEach((p) {
       uList.add(p);
     });
     Map<String, dynamic> map = {
@@ -482,7 +482,7 @@ class StokvelGoal {
       'imageUrls': uList,
       'isActive': isActive,
       'beneficiaries': bList,
-      'stokvel': stokvel == null ? null : stokvel.toJson(),
+      'stokvel': stokvel == null ? null : stokvel!.toJson(),
     };
     return map;
   }

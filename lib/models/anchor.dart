@@ -1,15 +1,15 @@
 class Anchor {
-  String anchorId,
+  String? anchorId,
       name,
       cellphone,
       email,
       countryCode,
       anchorCurrencyCode,
       assetCode;
-  Account baseStellarAccount, issuingStellarAccount, distributionStellarAccount;
-  AnchorUser anchorUser;
-  String date;
-  List<Asset> assets;
+  Account? baseStellarAccount, issuingStellarAccount, distributionStellarAccount;
+  AnchorUser? anchorUser;
+  String? date;
+  List<Asset>? assets;
 
   Anchor(
       {this.anchorId,
@@ -52,7 +52,7 @@ class Anchor {
       List list = data['assets'];
       list.forEach((element) {
         var asset = Asset.fromJson(element);
-        assets.add(asset);
+        assets!.add(asset);
       });
     }
     if (data['anchorUser'] != null) {
@@ -62,18 +62,18 @@ class Anchor {
 
   Map<String, dynamic> toJson() {
     List<dynamic> list = [];
-    assets.forEach((element) {
+    assets!.forEach((element) {
       list.add(element.toJson());
     });
 
     Map<String, dynamic> map = Map();
     map['baseStellarAccount'] =
-        baseStellarAccount == null ? null : baseStellarAccount.toJson();
+        baseStellarAccount == null ? null : baseStellarAccount!.toJson();
     map['issuingStellarAccount'] =
-        issuingStellarAccount == null ? null : issuingStellarAccount.toJson();
+        issuingStellarAccount == null ? null : issuingStellarAccount!.toJson();
     map['distributionStellarAccount'] = distributionStellarAccount == null
         ? null
-        : distributionStellarAccount.toJson();
+        : distributionStellarAccount!.toJson();
     map['email'] = email;
     map['cellphone'] = cellphone;
     map['name'] = name;
@@ -82,7 +82,7 @@ class Anchor {
     map['assetCode'] = assetCode;
     map['countryCode'] = countryCode;
     map['anchorCurrencyCode'] = anchorCurrencyCode;
-    map['anchorUser'] = anchorUser == null ? null : anchorUser.toJson();
+    map['anchorUser'] = anchorUser == null ? null : anchorUser!.toJson();
     map['assets'] = list;
 
     return map;
@@ -90,8 +90,8 @@ class Anchor {
 }
 
 class Account {
-  String accountId;
-  String date, name;
+  String? accountId;
+  String? date, name;
 
   Account(this.accountId, this.date, this.name);
   Account.fromJson(Map data) {
@@ -111,7 +111,7 @@ class Account {
 }
 
 class AnchorUser {
-  String firstName,
+  String? firstName,
       middleName,
       lastName,
       email,
@@ -119,8 +119,8 @@ class AnchorUser {
       anchorId,
       userId,
       idNumber;
-  bool active;
-  String date;
+  bool? active;
+  String? date;
 
   AnchorUser(
       {this.firstName,
@@ -165,8 +165,8 @@ class AnchorUser {
 }
 
 class Asset {
-  String assetCode;
-  String date, issuer;
+  String? assetCode;
+  String? date, issuer;
 
   Asset(this.assetCode, this.date, this.issuer);
   Asset.fromJson(Map data) {

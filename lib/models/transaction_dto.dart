@@ -48,7 +48,7 @@
  */
 class TransactionDTO {
   // ignore: non_constant_identifier_names
-  String fee_charged,
+  String? fee_charged,
       id,
       memo,
       fee_account,
@@ -57,8 +57,8 @@ class TransactionDTO {
       hash,
       created_at,
       max_fee;
-  bool successful;
-  int operation_count, ledger;
+  bool? successful;
+  int? operation_count, ledger;
 
   TransactionDTO(
       {this.fee_charged,

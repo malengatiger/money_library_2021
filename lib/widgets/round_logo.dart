@@ -3,7 +3,7 @@ import 'package:money_library_2021/util/util.dart';
 
 class RoundLogo extends StatefulWidget {
   final double radius, margin;
-  const RoundLogo({Key key, @required this.radius, @required this.margin})
+  const RoundLogo({Key? key, required this.radius, required this.margin})
       : super(key: key);
 
   @override
@@ -12,8 +12,8 @@ class RoundLogo extends StatefulWidget {
 
 class _RoundLogoState extends State<RoundLogo>
     with SingleTickerProviderStateMixin {
-  AnimationController controller;
-  Animation animation;
+  late AnimationController controller;
+  late Animation animation;
 
   @override
   initState() {
@@ -41,7 +41,7 @@ class _RoundLogoState extends State<RoundLogo>
           shape: BoxShape.circle),
       child: Center(
         child: ScaleTransition(
-          scale: animation,
+          scale: animation as Animation<double>,
           child: Container(
             width: widget.radius - widget.margin,
             height: widget.radius - widget.margin,

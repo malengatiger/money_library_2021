@@ -4,17 +4,17 @@ import 'package:meta/meta.dart';
 var projectPositions: List<Position>?
  */
 class Project {
-  String _id, name, projectId, description, organizationId, created;
-  String organizationName;
+  String? _id, name, projectId, description, organizationId, created;
+  String? organizationName;
 
-  double monitorMaxDistanceInMetres;
+  double? monitorMaxDistanceInMetres;
   Project(
-      {@required this.name,
-      @required this.description,
+      {required this.name,
+      required this.description,
       this.organizationId,
       this.organizationName,
       this.monitorMaxDistanceInMetres,
-      @required this.projectId});
+      required this.projectId});
 
   Project.fromJson(Map data) {
     this.name = data['name'];

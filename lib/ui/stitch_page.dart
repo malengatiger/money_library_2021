@@ -18,14 +18,14 @@ class StitchPaymentPage extends StatefulWidget {
 
 class _StitchPaymentPageState extends State<StitchPaymentPage>
     with SingleTickerProviderStateMixin {
-  AnimationController _controller;
-  GoogleOAuth2Client client;
-  OAuth2Helper oauth2Helper;
+  late AnimationController _controller;
+  GoogleOAuth2Client? client;
+  OAuth2Helper? oauth2Helper;
   var url = 'https://secure.stitch.money/connect/authorize';
   var clientId = 'test-3e463858-6832-49f3-a598-b2e4a9e14113';
-  String paymentRequestResponse;
+  String? paymentRequestResponse;
   // var _type = UniLinksType.string;
-  StreamSubscription _sub;
+  late StreamSubscription _sub;
 // Platform messages are asynchronous, so we initialize in an async method.
 //   Future<void> initPlatformState() async {
 //     if (_type == UniLinksType.string) {
@@ -80,8 +80,8 @@ class _StitchPaymentPageState extends State<StitchPaymentPage>
         date: DateTime.now().toIso8601String());
 
     p('$mm sending StitchPaymentStatusRecord .... ${rec.toJson()}');
-    String stitchResponseJSON = await NetUtil.post(
-        apiRoute: 'addStablecoinToAccount', bag: rec.toJson());
+    String? stitchResponseJSON = await (NetUtil.post(
+        apiRoute: 'addStablecoinToAccount', bag: rec.toJson()) as FutureOr<String?>);
     p('$mm addStablecoinToAccount response: $stitchResponseJSON');
   }
 
@@ -95,8 +95,8 @@ class _StitchPaymentPageState extends State<StitchPaymentPage>
   static const mm = 'StitchPage: 🌺 🌺 🌺 ';
   bool busy = false;
   var _key = GlobalKey<ScaffoldState>();
-  String authCode;
-  String paymentRequestURL;
+  String? authCode;
+  String? paymentRequestURL;
 
   @override
   void dispose() {
@@ -111,22 +111,22 @@ class _StitchPaymentPageState extends State<StitchPaymentPage>
       busy = true;
     });
     try {
-      Map<String, dynamic> stitchResponseJSON = await NetUtil.getWithNoAuth(
+      Map<String, dynamic> stitchResponseJSON = await (NetUtil.getWithNoAuth(
           apiRoute:
               'createPaymentRequest?amount=${amtController.text}&currency=ZAR&reference=${referenceController.text}',
-          mTimeOut: 90000);
+          mTimeOut: 90000) as FutureOr<Map<String, dynamic>>);
       StitchResponse stitchResponse =
           StitchResponse.fromJson(stitchResponseJSON);
 
       if (stitchResponse.errors == null) {
-        paymentRequestURL = stitchResponse.paymentRequest.url;
-        paymentRequestURL.trimLeft();
-        paymentRequestURL.trimRight();
+        paymentRequestURL = stitchResponse.paymentRequest!.url;
+        paymentRequestURL!.trimLeft();
+        paymentRequestURL!.trimRight();
         p('🔑 🔑 🔑 🔑 payment request generated : 🔑 🔑 🔑 🔑  url: $paymentRequestURL');
         startBrowser();
       } else {
         StringBuffer buffer = StringBuffer();
-        stitchResponse.errors.forEach((element) {
+        stitchResponse.errors!.forEach((element) {
           buffer.writeln(element.toJson());
         });
         AppSnackBar.showErrorSnackBar(
@@ -143,7 +143,7 @@ class _StitchPaymentPageState extends State<StitchPaymentPage>
     });
   }
 
-  String paymentStatus, paymentId;
+  String? paymentStatus, paymentId;
 
   var amtController = TextEditingController(text: "115.00");
   var referenceController = TextEditingController(
@@ -276,7 +276,7 @@ class _StitchPaymentPageState extends State<StitchPaymentPage>
                                       width: 24,
                                     ),
                                     Text(
-                                      paymentStatus,
+                                      paymentStatus!,
                                       style: Styles.pinkBoldMedium,
                                     ),
                                   ],
@@ -305,8 +305,8 @@ class _StitchPaymentPageState extends State<StitchPaymentPage>
   void startBrowser() async {
     p('🔆 🔆 🔆 🔆 🔆 🔆 🔆 🔆  starting browser with $paymentRequestURL 🔆 🔆 🔆 🔆');
 
-    if (await canLaunch(paymentRequestURL)) {
-      await launch(paymentRequestURL);
+    if (await canLaunch(paymentRequestURL!)) {
+      await launch(paymentRequestURL!);
       p('🔆 🔆 🔆 🔆 🔵 🔵 🔵 🔵 🔵 🔵  browser launched with $paymentRequestURL 🔵 🔵');
     } else {
       throw '🔆 🔆  Could not launch $paymentRequestURL';

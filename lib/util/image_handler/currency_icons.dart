@@ -1,6 +1,6 @@
 class CurrencyIcons {
   static const String prefix = "currency_assets/";
-  static String getCurrencyImagePath(String assetCode) {
+  static String getCurrencyImagePath(String? assetCode) {
     switch (assetCode) {
       case 'USDC':
         return "${prefix}us.png";

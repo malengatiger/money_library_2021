@@ -3,11 +3,11 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart' as DotEnv;
 
-Future<String> getBaseUrl() async {
+Future<String?> getBaseUrl() async {
   await DotEnv.load(fileName: '.env');
-  String devURL = DotEnv.env['devURL'];
-  String prodURL = DotEnv.env['prodURL'];
-  String status = DotEnv.env['status'];
+  String? devURL = DotEnv.env['devURL'];
+  String? prodURL = DotEnv.env['prodURL'];
+  String? status = DotEnv.env['status'];
   if (status == null) {
     throw Exception('Development or Production Status unknown or unavailable');
   }
@@ -19,137 +19,137 @@ Future<String> getBaseUrl() async {
   }
 }
 
-Future<String> getOwzoUrl() async {
+Future<String?> getOwzoUrl() async {
   await DotEnv.load(fileName: '.env');
-  String owzoURL = DotEnv.env['owzo.url'];
+  String? owzoURL = DotEnv.env['owzo.url'];
 
   p('🔵 🔵 Properties Data from dot.env file; 🔆 owzoURL: $owzoURL 🔵 🔵 🔵 ');
   return owzoURL;
 }
 
-Future<String> getCountryCode() async {
+Future<String?> getCountryCode() async {
   await DotEnv.load(fileName: '.env');
-  String countryCode = DotEnv.env['owzo.countryCode'];
+  String? countryCode = DotEnv.env['owzo.countryCode'];
 
   p('🔵 🔵 Properties Data from dot.env file; 🔆 countryCode: $countryCode 🔵 🔵 🔵 ');
   return countryCode;
 }
 
-Future<String> getOwzoPrivateKey() async {
+Future<String?> getOwzoPrivateKey() async {
   await DotEnv.load(fileName: '.env');
-  String privateKey = DotEnv.env['owzo.privateKey'];
+  String? privateKey = DotEnv.env['owzo.privateKey'];
 
   p('🔵 🔵 Properties Data from dot.env file; 🔆 privateKey: $privateKey 🔵 🔵 🔵 ');
   return privateKey;
 }
 
-Future<String> getOwzoApiKey() async {
+Future<String?> getOwzoApiKey() async {
   await DotEnv.load(fileName: '.env');
-  String apiKey = DotEnv.env['owzo.apiKey'];
+  String? apiKey = DotEnv.env['owzo.apiKey'];
 
   p('🔵 🔵 Properties Data from dot.env file; 🔆 apiKey: $apiKey 🔵 🔵 🔵 ');
   return apiKey;
 }
 
-Future<String> getOwzoSuccessUrl() async {
+Future<String?> getOwzoSuccessUrl() async {
   await DotEnv.load(fileName: '.env');
-  String url = DotEnv.env['owzo.successUrl'];
+  String? url = DotEnv.env['owzo.successUrl'];
 
   p('🔵 🔵 Properties Data from dot.env file; 🔆 url: $url 🔵 🔵 🔵 ');
   return url;
 }
 
-Future<String> getOwzoErrorUrl() async {
+Future<String?> getOwzoErrorUrl() async {
   await DotEnv.load(fileName: '.env');
-  String url = DotEnv.env['owzo.errorUrl'];
+  String? url = DotEnv.env['owzo.errorUrl'];
 
   p('🔵 🔵 Properties Data from dot.env file; 🔆 url: $url 🔵 🔵 🔵 ');
   return url;
 }
 
-Future<String> getOwzoCancelUrl() async {
+Future<String?> getOwzoCancelUrl() async {
   await DotEnv.load(fileName: '.env');
-  String url = DotEnv.env['owzo.cancelUrl'];
+  String? url = DotEnv.env['owzo.cancelUrl'];
 
   p('🔵 🔵 Properties Data from dot.env file; 🔆 url: $url 🔵 🔵 🔵 ');
   return url;
 }
 
-Future<String> getOwzoSiteCode() async {
+Future<String?> getOwzoSiteCode() async {
   await DotEnv.load(fileName: '.env');
-  String siteCode = DotEnv.env['owzo.siteCode'];
+  String? siteCode = DotEnv.env['owzo.siteCode'];
 
   p('🔵 🔵 Properties Data from dot.env file; 🔆 siteCode: $siteCode 🔵 🔵 🔵 ');
   return siteCode;
 }
 
-Future<String> getOwzoNotifyUrl() async {
+Future<String?> getOwzoNotifyUrl() async {
   await DotEnv.load(fileName: '.env');
-  String url = DotEnv.env['owzo.notifyUrl'];
+  String? url = DotEnv.env['owzo.notifyUrl'];
 
   p('🔵 🔵 Properties Data from dot.env file; 🔆 url: $url 🔵 🔵 🔵 ');
   return url;
 }
 
-Future<String> getCurrencyCode() async {
+Future<String?> getCurrencyCode() async {
   await DotEnv.load(fileName: '.env');
-  String currencyCode = DotEnv.env['owzo.currencyCode'];
+  String? currencyCode = DotEnv.env['owzo.currencyCode'];
 
   p('🔵 🔵 Properties Data from dot.env file; 🔆 currencyCode: $currencyCode 🔵 🔵 🔵 ');
   return currencyCode;
 }
 
-Future<String> getPayfastPassPhrase() async {
+Future<String?> getPayfastPassPhrase() async {
   await DotEnv.load(fileName: '.env');
-  String passPhrase = DotEnv.env['payfast.passPhrase'];
+  String? passPhrase = DotEnv.env['payfast.passPhrase'];
 
   p('🔵 🔵 Properties Data from dot.env file; 🔆 payfast passPhrase: $passPhrase 🔵 🔵 🔵 ');
   return passPhrase;
 }
 
-Future<String> getPayfastMerchantId() async {
+Future<String?> getPayfastMerchantId() async {
   await DotEnv.load(fileName: '.env');
-  String merchantId = DotEnv.env['payfast.merchantId'];
+  String? merchantId = DotEnv.env['payfast.merchantId'];
 
   p('🔵 🔵 Properties Data from dot.env file; 🔆 payfast merchantId: $merchantId 🔵 🔵 🔵 ');
   return merchantId;
 }
 
-Future<String> getPayfastMerchantKey() async {
+Future<String?> getPayfastMerchantKey() async {
   await DotEnv.load(fileName: '.env');
-  String merchantKey = DotEnv.env['payfast.merchantKey'];
+  String? merchantKey = DotEnv.env['payfast.merchantKey'];
 
   p('🔵 🔵 Properties Data from dot.env file; 🔆 payfast merchantKey: $merchantKey 🔵 🔵 🔵 ');
   return merchantKey;
 }
 
-Future<String> getPayfastReturnUrl() async {
+Future<String?> getPayfastReturnUrl() async {
   await DotEnv.load(fileName: '.env');
-  String returnUrl = DotEnv.env['payfast.returnUrl'];
+  String? returnUrl = DotEnv.env['payfast.returnUrl'];
 
   p('🔵 🔵 Properties Data from dot.env file; 🔆 payfast returnUrl: $returnUrl 🔵 🔵 🔵 ');
   return returnUrl;
 }
 
-Future<String> getPayfastNotifyUrl() async {
+Future<String?> getPayfastNotifyUrl() async {
   await DotEnv.load(fileName: '.env');
-  String notifyUrl = DotEnv.env['payfast.notifyUrl'];
+  String? notifyUrl = DotEnv.env['payfast.notifyUrl'];
 
   p('🔵 🔵 Properties Data from dot.env file; 🔆 payfast notifyUrl: $notifyUrl 🔵 🔵 🔵 ');
   return notifyUrl;
 }
 
-Future<String> getPayfastCancelUrl() async {
+Future<String?> getPayfastCancelUrl() async {
   await DotEnv.load(fileName: '.env');
-  String cancelUrl = DotEnv.env['payfast.cancelUrl'];
+  String? cancelUrl = DotEnv.env['payfast.cancelUrl'];
 
   p('🔵 🔵 Properties Data from dot.env file; 🔆 payfast cancelUrl: $cancelUrl 🔵 🔵 🔵 ');
   return cancelUrl;
 }
 
-Future<String> getPayfastUrl() async {
+Future<String?> getPayfastUrl() async {
   await DotEnv.load(fileName: '.env');
-  String url = DotEnv.env['payfast.url'];
+  String? url = DotEnv.env['payfast.url'];
 
   p('🔵 🔵 Properties Data from dot.env file; 🔆 payfast url: $url 🔵 🔵 🔵 ');
   return url;
@@ -157,7 +157,7 @@ Future<String> getPayfastUrl() async {
 
 Future<bool> isProductionMode() async {
   await DotEnv.load(fileName: '.env');
-  String status = DotEnv.env['status'];
+  String? status = DotEnv.env['status'];
   if (status == null) {
     throw Exception(
         'Development or Production Status unknown or unavailable in environment');
@@ -184,8 +184,8 @@ String dummy =
 //Color secondaryColor = Colors.brown[100];
 
 Random _rand = Random(new DateTime.now().millisecondsSinceEpoch);
-Color get baseColor => _getBaseColor();
-Color get secondaryColor => _getSecondaryColor();
+Color? get baseColor => _getBaseColor();
+Color? get secondaryColor => _getSecondaryColor();
 
 /*
   GOOD COLOR COMBINATIONS
@@ -194,8 +194,8 @@ Color get secondaryColor => _getSecondaryColor();
   Colors.amber[50] Colors.brown[100];
   Colors.indigo[50]
  */
-Color _getBaseColor() {
-  List<Color> colors = List();
+Color? _getBaseColor() {
+  List<Color> colors = [];
   colors.add(Colors.blue.shade50);
   colors.add(Colors.grey.shade50);
   colors.add(Colors.pink.shade50);
@@ -215,8 +215,8 @@ Color _getBaseColor() {
   return Colors.blueGrey[100];
 }
 
-Color _getSecondaryColor() {
-  List<Color> colors = List();
+Color? _getSecondaryColor() {
+  List<Color> colors = [];
   colors.add(Colors.brown.shade100);
   colors.add(Colors.grey.shade100);
   colors.add(Colors.pink.shade50);
@@ -241,7 +241,7 @@ List<BoxShadow> customShadow = [
       offset: Offset(-3, -3),
       blurRadius: 20),
   BoxShadow(
-      color: Colors.blue[900].withOpacity(0.2),
+      color: Colors.blue[900]!.withOpacity(0.2),
       spreadRadius: 2,
       offset: Offset(5, 5),
       blurRadius: 12),

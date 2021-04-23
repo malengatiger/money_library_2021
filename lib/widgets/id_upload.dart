@@ -12,39 +12,39 @@ import 'package:money_library_2021/util/util.dart';
 import 'mobile_registration.dart';
 
 class IDUpload extends StatefulWidget {
-  final Client client;
-  final Agent agent;
+  final Client? client;
+  final Agent? agent;
   final PageListener pageListener;
 
   const IDUpload(
-      {Key key, this.client, this.agent, @required this.pageListener})
+      {Key? key, this.client, this.agent, required this.pageListener})
       : super(key: key);
   @override
   _IDUploadState createState() => _IDUploadState();
 }
 
 class _IDUploadState extends State<IDUpload> {
-  File _imageFront, _imageBack;
-  String _id, _name;
+  File? _imageFront, _imageBack;
+  String? _id, _name;
   bool isBusy = false;
   List<BottomNavigationBarItem> _items = [];
   var _key = GlobalKey<ScaffoldState>();
-  ClientCache _clientCache;
+  ClientCache? _clientCache;
 
   @override
   void initState() {
     super.initState();
     if (widget.client != null) {
-      _id = widget.client.clientId;
-      _name = widget.client.personalKYCFields == null
+      _id = widget.client!.clientId;
+      _name = widget.client!.personalKYCFields == null
           ? null
-          : widget.client.personalKYCFields.getFullName();
+          : widget.client!.personalKYCFields!.getFullName();
     }
     if (widget.agent != null) {
-      _id = widget.agent.agentId;
-      _name = widget.agent.personalKYCFields == null
+      _id = widget.agent!.agentId;
+      _name = widget.agent!.personalKYCFields == null
           ? null
-          : widget.agent.personalKYCFields.getFullName();
+          : widget.agent!.personalKYCFields!.getFullName();
     }
 
     _getCache();
@@ -53,13 +53,13 @@ class _IDUploadState extends State<IDUpload> {
   _getCache() async {
     _clientCache = await Prefs.getClientCache();
     if (_clientCache != null) {
-      if (_clientCache.idFrontPath != null) {
-        _imageFront = File(_clientCache.idFrontPath);
+      if (_clientCache!.idFrontPath != null) {
+        _imageFront = File(_clientCache!.idFrontPath!);
       }
-      if (_clientCache.idBackPath != null) {
-        _imageBack = File(_clientCache.idBackPath);
+      if (_clientCache!.idBackPath != null) {
+        _imageBack = File(_clientCache!.idBackPath!);
       }
-      _id = _clientCache.client.clientId;
+      _id = _clientCache!.client!.clientId;
       setState(() {});
     }
   }
@@ -121,7 +121,7 @@ class _IDUploadState extends State<IDUpload> {
     });
     try {
       var resp = await NetUtil.uploadIDDocuments(
-          id: _id, idFront: _imageFront, idBack: _imageBack);
+          id: _id!, idFront: _imageFront!, idBack: _imageBack!);
       p(resp);
 //      AppSnackBar.showSnackBar(
 //          scaffoldKey: _key,
@@ -164,7 +164,7 @@ class _IDUploadState extends State<IDUpload> {
                             opacity: 0.3,
                           )
                         : Image.file(
-                            _imageFront,
+                            _imageFront!,
                             height: 320,
                             width: 320,
                           ),
@@ -209,7 +209,7 @@ class _IDUploadState extends State<IDUpload> {
                             child: Image.asset('assets/images/id2.png'),
                           )
                         : Image.file(
-                            _imageBack,
+                            _imageBack!,
                             height: 320,
                             width: 320,
                           ),

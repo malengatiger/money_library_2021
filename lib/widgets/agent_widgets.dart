@@ -9,7 +9,7 @@ import 'avatar.dart';
 class AgentClientsWidget extends StatelessWidget {
   final Agent agent;
 
-  const AgentClientsWidget({Key key, @required this.agent}) : super(key: key);
+  const AgentClientsWidget({Key? key, required this.agent}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     agentBloc.getAgentClients(agentId: agent.agentId);
@@ -43,7 +43,7 @@ class AgentClientsWidget extends StatelessWidget {
                       builder: (context, snapshot) {
                         var total = 0;
                         if (snapshot.hasData) {
-                          total = snapshot.data.length;
+                          total = snapshot.data!.length;
                         }
                         return Text(
                           '$total',
@@ -61,12 +61,12 @@ class AgentClientsWidget extends StatelessWidget {
 }
 
 class AgentLoans extends StatelessWidget {
-  final Agent agent;
+  final Agent? agent;
 
-  const AgentLoans({Key key, this.agent}) : super(key: key);
+  const AgentLoans({Key? key, this.agent}) : super(key: key);
   @override
   Widget build(BuildContext context) {
-    agentBloc.getAgentClients(agentId: agent.agentId);
+    agentBloc.getAgentClients(agentId: agent!.agentId);
     return Padding(
       padding: const EdgeInsets.only(left: 16.0, top: 12, right: 16),
       child: Container(
@@ -94,7 +94,7 @@ class AgentLoans extends StatelessWidget {
                       builder: (context, snapshot) {
                         var total = 0;
                         if (snapshot.hasData) {
-                          total = snapshot.data.length;
+                          total = snapshot.data!.length;
                         }
                         return Text(
                           '$total',
@@ -112,12 +112,12 @@ class AgentLoans extends StatelessWidget {
 }
 
 class AgentLoanPayments extends StatelessWidget {
-  final Agent agent;
+  final Agent? agent;
 
-  const AgentLoanPayments({Key key, this.agent}) : super(key: key);
+  const AgentLoanPayments({Key? key, this.agent}) : super(key: key);
   @override
   Widget build(BuildContext context) {
-    agentBloc.getAgentClients(agentId: agent.agentId);
+    agentBloc.getAgentClients(agentId: agent!.agentId);
     return Padding(
       padding: const EdgeInsets.only(left: 32.0, top: 12, right: 16),
       child: Container(
@@ -145,7 +145,7 @@ class AgentLoanPayments extends StatelessWidget {
                       builder: (context, snapshot) {
                         var total = 0;
                         if (snapshot.hasData) {
-                          total = snapshot.data.length;
+                          total = snapshot.data!.length;
                         }
                         return Text(
                           '$total',

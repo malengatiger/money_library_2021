@@ -1,9 +1,9 @@
 import 'package:money_library_2021/util/util.dart';
 
 class StellarAccountBag {
-  String accountId;
-  List<Balance> balances;
-  String name, date, userId, userType;
+  String? accountId;
+  List<Balance>? balances;
+  String? name, date, userId, userType;
 
   StellarAccountBag(
       {this.accountId,
@@ -25,7 +25,7 @@ class StellarAccountBag {
       balances = [];
       List m = json['balances'];
       m.forEach((v) {
-        balances.add(new Balance.fromJson(v));
+        balances!.add(new Balance.fromJson(v));
       });
     }
   }
@@ -40,7 +40,7 @@ class StellarAccountBag {
 
     List mList = [];
     if (this.balances != null) {
-      this.balances.forEach((b) {
+      this.balances!.forEach((b) {
         mList.add(b.toJson());
       });
     }
@@ -50,18 +50,18 @@ class StellarAccountBag {
 }
 
 class Balance {
-  String assetType;
-  String assetCode;
-  String assetIssuer;
-  String limit;
-  String balance;
-  String buyingLiabilities;
-  String sellingLiabilities;
-  int lastModifiedLedger;
-  Sponsor sponsor;
-  Asset asset;
-  bool authorized;
-  bool authorizedToMaintainLiabilities;
+  String? assetType;
+  String? assetCode;
+  String? assetIssuer;
+  String? limit;
+  String? balance;
+  String? buyingLiabilities;
+  String? sellingLiabilities;
+  int? lastModifiedLedger;
+  Sponsor? sponsor;
+  Asset? asset;
+  bool? authorized;
+  bool? authorizedToMaintainLiabilities;
 
   Balance(
       {this.assetType,
@@ -104,10 +104,10 @@ class Balance {
     data['sellingLiabilities'] = this.sellingLiabilities;
     data['lastModifiedLedger'] = this.lastModifiedLedger;
     if (this.sponsor != null) {
-      data['sponsor'] = this.sponsor.toJson();
+      data['sponsor'] = this.sponsor!.toJson();
     }
     if (this.asset != null) {
-      data['asset'] = this.asset.toJson();
+      data['asset'] = this.asset!.toJson();
     }
     data['authorized'] = this.authorized;
     data['authorizedToMaintainLiabilities'] =
@@ -117,7 +117,7 @@ class Balance {
 }
 
 class Sponsor {
-  bool present;
+  bool? present;
 
   Sponsor({this.present});
 
@@ -133,9 +133,9 @@ class Sponsor {
 }
 
 class Asset {
-  String type;
-  String issuer;
-  String code;
+  String? type;
+  String? issuer;
+  String? code;
 
   Asset({this.type, this.issuer, this.code});
 

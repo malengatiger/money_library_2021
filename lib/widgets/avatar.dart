@@ -5,14 +5,14 @@ class RoundAvatar extends StatelessWidget {
   final String path;
   final double radius;
   final bool fromNetwork;
-  final Color marginColor;
+  final Color? marginColor;
   final double margin;
 
   const RoundAvatar(
-      {Key key,
-      @required this.path,
-      @required this.radius,
-      @required this.fromNetwork,
+      {Key? key,
+      required this.path,
+      required this.radius,
+      required this.fromNetwork,
       this.margin = 0.0,
       this.marginColor})
       : super(key: key);
@@ -66,9 +66,9 @@ class RoundAvatar extends StatelessWidget {
 
 //
 class MyAvatar extends StatelessWidget {
-  final Icon icon;
+  final Icon? icon;
 
-  const MyAvatar({Key key, this.icon}) : super(key: key);
+  const MyAvatar({Key? key, this.icon}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return Container(

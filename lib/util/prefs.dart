@@ -25,7 +25,7 @@ class Prefs {
     var jx = json.encode(mJson);
     prefs.setString('client', jx);
     print(
-        "🌽 🌽 🌽 Prefs. CLIENT  SAVED: 💦  ...... ${client.personalKYCFields.getFullName()} 💦 ");
+        "🌽 🌽 🌽 Prefs. CLIENT  SAVED: 💦  ...... ${client.personalKYCFields!.getFullName()} 💦 ");
     return null;
   }
 
@@ -57,7 +57,7 @@ class Prefs {
     var jx = json.encode(mJson);
     prefs.setString('agent', jx);
     print(
-        "🌽 🌽 🌽 Prefs. AGENT SAVED: 💦  ...... ${agent.personalKYCFields.getFullName()} 💦 ");
+        "🌽 🌽 🌽 Prefs. AGENT SAVED: 💦  ...... ${agent.personalKYCFields!.getFullName()} 💦 ");
     return null;
   }
 
@@ -84,7 +84,7 @@ class Prefs {
     print('🔵 🔵 🔵 Prefs: saveMOMOKey ok: $apiKey 🍎 🍎 ');
   }
 
-  static Future<String> getMOMOKey() async {
+  static Future<String?> getMOMOKey() async {
     final preferences = await SharedPreferences.getInstance();
     var b = preferences.getString('momoKey');
     if (b == null) {
@@ -101,7 +101,7 @@ class Prefs {
     print('🔵 🔵 🔵 Prefs: saveMOMORef ok: $referenceId 🍎 🍎 ');
   }
 
-  static Future<String> getMOMORef() async {
+  static Future<String?> getMOMORef() async {
     final preferences = await SharedPreferences.getInstance();
     var b = preferences.getString('referenceId');
     if (b == null) {
@@ -112,7 +112,7 @@ class Prefs {
     }
   }
 
-  static Future<Client> getClient() async {
+  static Future<Client?> getClient() async {
     p('🦋 🦋 .................  🌽 🥨 🥨  🌽  getting cached CLIENT .... 🥨 🥨 ');
     var prefs = await SharedPreferences.getInstance();
     var string = prefs.getString('client');
@@ -122,11 +122,11 @@ class Prefs {
     var jx = json.decode(string);
     var name = new Client.fromJson(jx);
     print(
-        "🌽 🌽 🌽 Prefs.getClient 🧩🧩🧩🧩 ......CLIENT:  🧩 ${name.personalKYCFields.getFullName()} retrieved 🧩");
+        "🌽 🌽 🌽 Prefs.getClient 🧩🧩🧩🧩 ......CLIENT:  🧩 ${name.personalKYCFields!.getFullName()} retrieved 🧩");
     return name;
   }
 
-  static Future<ClientCache> getClientCache() async {
+  static Future<ClientCache?> getClientCache() async {
     p('🦋 🦋 .................  🌽 🥨 🥨  🌽  getting cached CLIENT_CACHE .... 🥨 🥨 ');
     var prefs = await SharedPreferences.getInstance();
     var string = prefs.getString('clientCache');
@@ -140,7 +140,7 @@ class Prefs {
     return name;
   }
 
-  static Future<Anchor> getAnchor() async {
+  static Future<Anchor?> getAnchor() async {
     p('🦋 🦋 .................  🌽 🥨 🥨  🌽  getting cached ANCHOR .... 🥨 🥨 ');
     var prefs = await SharedPreferences.getInstance();
     var string = prefs.getString('anchor');
@@ -154,7 +154,7 @@ class Prefs {
     return name;
   }
 
-  static Future<Agent> getAgent() async {
+  static Future<Agent?> getAgent() async {
     p('🦋 🦋 🦋 .................  🌽 🥨 🥨  🌽  getting cached agent .... check next statement ... falling down 🥨 🥨 ');
     var prefs = await SharedPreferences.getInstance();
     p('.................  🌽  🌽  😡 😡 😡  SharedPreferences instance OK ....');
@@ -166,11 +166,11 @@ class Prefs {
     var jx = json.decode(string);
     var name = new Agent.fromJson(jx);
     print(
-        "🌽 🌽 🌽 🧡  Prefs.getAgent 🧩🧩🧩🧩 ......AGENT:  🧩 ${name.personalKYCFields.getFullName()} retrieved 🧩");
+        "🌽 🌽 🌽 🧡  Prefs.getAgent 🧩🧩🧩🧩 ......AGENT:  🧩 ${name.personalKYCFields!.getFullName()} retrieved 🧩");
     return name;
   }
 
-  static Future<AnchorUser> getAnchorUser() async {
+  static Future<AnchorUser?> getAnchorUser() async {
     var prefs = await SharedPreferences.getInstance();
     var string = prefs.getString('anchorUser');
     if (string == null) {
@@ -193,7 +193,7 @@ class Prefs {
     return null;
   }
 
-  static Future<Member> getMember() async {
+  static Future<Member?> getMember() async {
     var prefs = await SharedPreferences.getInstance();
     var string = prefs.getString('member');
     if (string == null) {

@@ -52,16 +52,17 @@ class ThemeBloc {
 }
 
 class ThemeUtil {
-  static List<ThemeData> _themes = List();
+  static List<ThemeData> _themes = [];
 
-  static int index;
+  static int index = 0;
 
-  static ThemeData getTheme({int themeIndex}) {
+  static ThemeData getTheme({int? themeIndex}) {
     print('🌈 🌈 .......... getting theme with index: 🌈 $index');
     if (_themes.isEmpty) {
       _setThemes();
     }
     if (themeIndex == null) {
+      // ignore: unnecessary_null_comparison
       if (index == null) {
         index = 0;
       } else {
@@ -73,7 +74,7 @@ class ThemeUtil {
     } else {
       index = themeIndex;
     }
-    return _themes.elementAt(index);
+    return _themes.elementAt(index!);
   }
 
   static int getThemeCount() {

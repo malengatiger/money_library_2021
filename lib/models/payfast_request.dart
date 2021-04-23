@@ -1,8 +1,8 @@
 class PayFastRequest {
-  String merchantId, merchantKey;
-  String returnUrl, cancelUrl, notifyUrl;
-  PayFastBuyerDetails buyerDetails;
-  PayFastTransactionDetails transactionDetails;
+  String? merchantId, merchantKey;
+  String? returnUrl, cancelUrl, notifyUrl;
+  PayFastBuyerDetails? buyerDetails;
+  PayFastTransactionDetails? transactionDetails;
 
   PayFastRequest(
       {this.merchantId,
@@ -37,18 +37,18 @@ class PayFastRequest {
     map['cancel_url'] = cancelUrl;
     map['notify_url'] = notifyUrl;
     map['transactionDetails'] =
-        transactionDetails == null ? null : transactionDetails.toJson();
-    map['buyerDetails'] = buyerDetails == null ? null : buyerDetails.toJson();
+        transactionDetails == null ? null : transactionDetails!.toJson();
+    map['buyerDetails'] = buyerDetails == null ? null : buyerDetails!.toJson();
 
     return map;
   }
 }
 
 class PayFastBuyerDetails {
-  String nameFirst;
-  String nameLast;
-  String emailAddress;
-  String cellNumber;
+  String? nameFirst;
+  String? nameLast;
+  String? emailAddress;
+  String? cellNumber;
 
   PayFastBuyerDetails(
       {this.nameFirst, this.nameLast, this.emailAddress, this.cellNumber});
@@ -72,15 +72,15 @@ class PayFastBuyerDetails {
 }
 
 class PayFastTransactionDetails {
-  String paymentId;
-  String itemName;
-  String itemDescription;
-  String customString1;
-  String customString2;
-  String customString3;
-  String customString4;
-  String customString5;
-  double amount;
+  String? paymentId;
+  String? itemName;
+  String? itemDescription;
+  String? customString1;
+  String? customString2;
+  String? customString3;
+  String? customString4;
+  String? customString5;
+  double? amount;
 
   PayFastTransactionDetails(
       {this.paymentId,

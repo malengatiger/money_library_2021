@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
@@ -28,7 +29,7 @@ class NetUtil {
 
   static const timeOutInSeconds = 30;
 
-  static Future<Anchor> getAnchor(String anchorId) async {
+  static Future<Anchor> getAnchor(String? anchorId) async {
     p('$bb ........... getAnchor starting ....');
     var resp = await get(apiRoute: "getAnchor?anchorId=$anchorId");
     var anchor = Anchor.fromJson(resp);
@@ -52,10 +53,11 @@ class NetUtil {
     return agent;
   }
 
-  static Future<List<Agent>> getAgents(String anchorId) async {
+  static Future<List<Agent>> getAgents(String? anchorId) async {
     p('$bb getAgents starting ....');
     List<Agent> agents = [];
-    List resp = await get(apiRoute: "getAgents?anchorId=$anchorId");
+    List resp = await (get(apiRoute: "getAgents?anchorId=$anchorId")
+        as FutureOr<List<dynamic>>);
     resp.forEach((element) {
       var agent = Agent.fromJson(element);
       agents.add(agent);
@@ -71,9 +73,10 @@ class NetUtil {
     return client;
   }
 
-  static Future<List<Client>> getAgentClients(String agentId) async {
+  static Future<List<Client>> getAgentClients(String? agentId) async {
     p('$bb getClient starting ....');
-    List resp = await get(apiRoute: "getAgentClients?agentId=$agentId");
+    List resp = await (get(apiRoute: "getAgentClients?agentId=$agentId")
+        as FutureOr<List<dynamic>>);
     List<Client> list = [];
     resp.forEach((element) async {
       var client = Client.fromJson(element);
@@ -84,9 +87,10 @@ class NetUtil {
     return list;
   }
 
-  static Future<List<Client>> getAnchorClients(String anchorId) async {
+  static Future<List<Client>> getAnchorClients(String? anchorId) async {
     p('$bb getClient starting ....');
-    List resp = await get(apiRoute: "getAnchorClients?anchorId=$anchorId");
+    List resp = await (get(apiRoute: "getAnchorClients?anchorId=$anchorId")
+        as FutureOr<List<dynamic>>);
     List<Client> list = [];
     resp.forEach((element) async {
       var client = Client.fromJson(element);
@@ -97,7 +101,7 @@ class NetUtil {
     return list;
   }
 
-  static Future<StellarAccountBag> getAccountBalances(String accountId) async {
+  static Future<StellarAccountBag> getAccountBalances(String? accountId) async {
     p('$bb $bb  getAccountBalances starting ....');
     var resp = await get(apiRoute: "getAccountBalances?accountId=$accountId");
     var client = StellarAccountBag.fromJson(resp);
@@ -107,7 +111,8 @@ class NetUtil {
 
   static Future<List<PaymentDTO>> getAccountPayments(String accountId) async {
     p('$bb $bb  getAccountBalances starting ....');
-    List resp = await get(apiRoute: "getAccountPayments?accountId=$accountId");
+    List resp = await (get(apiRoute: "getAccountPayments?accountId=$accountId")
+        as FutureOr<List<dynamic>>);
     List<PaymentDTO> list = [];
     for (var value in resp) {
       var pa = PaymentDTO.fromJson(value);
@@ -120,11 +125,12 @@ class NetUtil {
 
   static Future<List<StellarFiatPaymentResponse>>
       getFiatPaymentResponsesByAnchor(
-          {String anchorId, String fromDate, String toDate}) async {
+          {String? anchorId, String? fromDate, String? toDate}) async {
     p('$bb $bb  getFiatPaymentResponsesByAnchor starting ....');
-    List resp = await get(
-        apiRoute:
-            "getFiatPaymentResponsesByAnchor?anchorId=$anchorId&fromDate=$fromDate&toDate=$toDate");
+    List resp = await (get(
+            apiRoute:
+                "getFiatPaymentResponsesByAnchor?anchorId=$anchorId&fromDate=$fromDate&toDate=$toDate")
+        as FutureOr<List<dynamic>>);
     List<StellarFiatPaymentResponse> list = [];
     for (var value in resp) {
       var tx = StellarFiatPaymentResponse.fromJson(value);
@@ -136,11 +142,12 @@ class NetUtil {
   }
 
   static Future<List<StellarFiatPaymentResponse>>
-      getFiatPaymentResponsesBySourceAccount(String accountId) async {
+      getFiatPaymentResponsesBySourceAccount(String? accountId) async {
     p('$bb $bb  getFiatPaymentResponsesBySourceAccount starting ....');
-    List resp = await get(
-        apiRoute:
-            "getFiatPaymentResponsesBySourceAccount?accountId=$accountId");
+    List resp = await (get(
+            apiRoute:
+                "getFiatPaymentResponsesBySourceAccount?accountId=$accountId")
+        as FutureOr<List<dynamic>>);
     List<StellarFiatPaymentResponse> list = [];
     for (var value in resp) {
       var tx = StellarFiatPaymentResponse.fromJson(value);
@@ -152,11 +159,12 @@ class NetUtil {
   }
 
   static Future<List<StellarFiatPaymentResponse>>
-      getFiatPaymentResponsesByDestinationAccount(String accountId) async {
+      getFiatPaymentResponsesByDestinationAccount(String? accountId) async {
     p('$bb $bb  getFiatPaymentResponsesByDestinationAccount starting ....');
-    List resp = await get(
-        apiRoute:
-            "getFiatPaymentResponsesByDestinationAccount?accountId=$accountId");
+    List resp = await (get(
+            apiRoute:
+                "getFiatPaymentResponsesByDestinationAccount?accountId=$accountId")
+        as FutureOr<List<dynamic>>);
     List<StellarFiatPaymentResponse> list = [];
     for (var value in resp) {
       var tx = StellarFiatPaymentResponse.fromJson(value);
@@ -171,8 +179,9 @@ class NetUtil {
       getFiatPaymentResponsesByAsset(
           String assetCode, String fromDate, String toDate) async {
     p('$bb $bb  getFiatPaymentResponsesByAsset starting ....');
-    List resp = await get(
-        apiRoute: "getFiatPaymentResponsesByAsset?assetCode=$assetCode");
+    List resp = await (get(
+            apiRoute: "getFiatPaymentResponsesByAsset?assetCode=$assetCode")
+        as FutureOr<List<dynamic>>);
     List<StellarFiatPaymentResponse> list = [];
     for (var value in resp) {
       var tx = StellarFiatPaymentResponse.fromJson(value);
@@ -184,10 +193,12 @@ class NetUtil {
   }
 
   static Future<List<PathPaymentRequest>> getPathPaymentRequestsBySourceAccount(
-      String accountId) async {
+      String? accountId) async {
     p('$bb $bb  getPathPaymentRequestsBySourceAccount starting ....');
-    List resp = await get(
-        apiRoute: "getPathPaymentRequestsBySourceAccount?accountId=$accountId");
+    List resp = await (get(
+            apiRoute:
+                "getPathPaymentRequestsBySourceAccount?accountId=$accountId")
+        as FutureOr<List<dynamic>>);
     List<PathPaymentRequest> list = [];
     for (var value in resp) {
       var tx = PathPaymentRequest.fromJson(value);
@@ -199,11 +210,12 @@ class NetUtil {
   }
 
   static Future<List<PathPaymentRequest>>
-      getPathPaymentRequestsByDestinationAccount(String accountId) async {
+      getPathPaymentRequestsByDestinationAccount(String? accountId) async {
     p('$bb $bb  getPathPaymentRequestsByDestinationAccount starting ....');
-    List resp = await get(
-        apiRoute:
-            "getPathPaymentRequestsByDestinationAccount?accountId=$accountId");
+    List resp = await (get(
+            apiRoute:
+                "getPathPaymentRequestsByDestinationAccount?accountId=$accountId")
+        as FutureOr<List<dynamic>>);
     List<PathPaymentRequest> list = [];
     for (var value in resp) {
       var tx = PathPaymentRequest.fromJson(value);
@@ -217,9 +229,10 @@ class NetUtil {
   static Future<List<PathPaymentRequest>> getPathPaymentByAssetPair(
       String anchorId, String assetFrom, String assetTo) async {
     p('$bb $bb  getPathPaymentByAssetPair starting ....');
-    List resp = await get(
-        apiRoute:
-            "getPathPaymentByAssetPair?anchorId=$anchorId&assetFrom=$assetFrom&assetTo=$assetTo");
+    List resp = await (get(
+            apiRoute:
+                "getPathPaymentByAssetPair?anchorId=$anchorId&assetFrom=$assetFrom&assetTo=$assetTo")
+        as FutureOr<List<dynamic>>);
     List<PathPaymentRequest> list = [];
     for (var value in resp) {
       var tx = PathPaymentRequest.fromJson(value);
@@ -231,11 +244,12 @@ class NetUtil {
   }
 
   static Future<List<PathPaymentRequest>> getPathPaymentRequestsByAnchor(
-      {String anchorId, String fromDate, String toDate}) async {
+      {String? anchorId, String? fromDate, String? toDate}) async {
     p('$bb $bb  getPathPaymentRequestsByAnchor starting ....');
-    List resp = await get(
-        apiRoute:
-            "getPathPaymentRequestsByAnchor?anchorId=$anchorId&fromDate=$fromDate&toDate=$toDate");
+    List resp = await (get(
+            apiRoute:
+                "getPathPaymentRequestsByAnchor?anchorId=$anchorId&fromDate=$fromDate&toDate=$toDate")
+        as FutureOr<List<dynamic>>);
     List<PathPaymentRequest> list = [];
     for (var value in resp) {
       var tx = PathPaymentRequest.fromJson(value);
@@ -249,7 +263,8 @@ class NetUtil {
   static Future<List<Balance>> getAnchorBalances() async {
     p('$bb $bb  getAccountBalances starting ....');
     List<Balance> balances = [];
-    List<dynamic> resp = await get(apiRoute: "getAnchorBalances");
+    List<dynamic> resp =
+        await (get(apiRoute: "getAnchorBalances") as FutureOr<List<dynamic>>);
     p('$bb $bb  getAccountBalances result .... $resp');
     resp.forEach((element) async {
       var bal = Balance.fromJson(element);
@@ -259,31 +274,32 @@ class NetUtil {
     return balances;
   }
 
-  static Future<String> getOwzoHash(
-      {OwzoPaymentRequest request, BuildContext context}) async {
+  static Future<String?> getOwzoHash(
+      {required OwzoPaymentRequest request,
+      required BuildContext context}) async {
     p('🐳 🐳 Building concatenated string from PaymentRequest ...');
-    var privateKey = await getOwzoPrivateKey();
-    var site = await getOwzoSiteCode();
-    var country = await getCountryCode();
-    var currency = await getCurrencyCode();
-    var success = await getOwzoSuccessUrl();
-    var cancel = await getOwzoCancelUrl();
-    var error = await getOwzoErrorUrl();
-    var notify = await getOwzoNotifyUrl();
+    var privateKey = await (getOwzoPrivateKey() as FutureOr<String>);
+    var site = await (getOwzoSiteCode() as FutureOr<String>);
+    var country = await (getCountryCode() as FutureOr<String>);
+    var currency = await (getCurrencyCode() as FutureOr<String>);
+    var success = await (getOwzoSuccessUrl() as FutureOr<String>);
+    var cancel = await (getOwzoCancelUrl() as FutureOr<String>);
+    var error = await (getOwzoErrorUrl() as FutureOr<String>);
+    var notify = await (getOwzoNotifyUrl() as FutureOr<String>);
     var sb = StringBuffer();
     sb.write(site.toLowerCase());
     sb.write(country.toLowerCase());
     sb.write(currency.toLowerCase());
     sb.write(
         '${getFormattedAmount('${request.amount}', context)}'.toLowerCase());
-    sb.write(request.transactionReference.toLowerCase());
-    sb.write(request.bankReference.toLowerCase());
-    sb.write(request.customer.toLowerCase());
+    sb.write(request.transactionReference!.toLowerCase());
+    sb.write(request.bankReference!.toLowerCase());
+    sb.write(request.customer!.toLowerCase());
     sb.write(cancel.toLowerCase());
     sb.write(error.toLowerCase());
     sb.write(success.toLowerCase());
     sb.write(notify.toLowerCase());
-    sb.write(request.isTest ? 'true' : 'false');
+    sb.write(request.isTest! ? 'true' : 'false');
     sb.write(privateKey.toLowerCase());
     var string = sb.toString();
     p('NetUtil: ⏰ ⏰ ⏰ String to be Hashed on the backend: 🔆 $string ..... 🔆');
@@ -295,22 +311,22 @@ class NetUtil {
 
   static const bb = 'NetUtil: 🔵 🔵 🔵 🔵 🔵 🔵 ';
   static Future momoPost(
-      {@required String apiRoute,
-      @required Map<String, dynamic> body,
-      @required Map<String, String> headers,
-      @required int mTimeOut}) async {
+      {required String apiRoute,
+      required Map<String, dynamic> body,
+      required Map<String, String> headers,
+      required int mTimeOut}) async {
     var url = DotEnv.env['devURL'];
     var status = DotEnv.env['status'];
+    assert(url != null);
     if (status == 'prod') {
       url = DotEnv.env['prodURL'];
     }
 
-    var dur = Duration(seconds: mTimeOut == null ? timeOutInSeconds : mTimeOut);
-    url += apiRoute;
+    if (url != null) url += apiRoute;
     p('$bb momoPost: '
         '🔆 🔆 🔆 🔆 calling backend:  💙  '
         '$url  💙  ........... ');
-    String requestBody;
+    String? requestBody;
     if (body != null) {
       requestBody = jsonEncode(body);
     }
@@ -341,8 +357,8 @@ class NetUtil {
     // }
   }
 
-  static Future post({@required String apiRoute, @required Map bag}) async {
-    var url = await getBaseUrl();
+  static Future post({required String apiRoute, required Map bag}) async {
+    var url = await (getBaseUrl() as FutureOr<String>);
     String token = 'availableNot';
     try {
       token = await Auth.getAuthToken();
@@ -392,8 +408,8 @@ class NetUtil {
     }
   }
 
-  static Future get({@required String apiRoute}) async {
-    var url = await getBaseUrl();
+  static Future get({required String apiRoute}) async {
+    var url = await (getBaseUrl() as FutureOr<String>);
     var token = await Auth.getAuthToken();
     var mHeaders = {
       'Authorization': 'Bearer $token',
@@ -431,8 +447,8 @@ class NetUtil {
   }
 
   static Future getWithNoAuth(
-      {@required String apiRoute, @required int mTimeOut}) async {
-    var url = await getBaseUrl();
+      {required String apiRoute, required int mTimeOut}) async {
+    var url = await (getBaseUrl() as FutureOr<String>);
     var mHeaders = {'Content-Type': 'application/json'};
     apiRoute = url + apiRoute;
     p('$bb getWithNoAuth:  🔆 calling backend:  ............apiRoute: 💙 '
@@ -463,11 +479,9 @@ class NetUtil {
   }
 
   static Future uploadIDDocuments(
-      {@required String id,
-      @required File idFront,
-      @required File idBack}) async {
+      {required String id, required File idFront, required File idBack}) async {
     p('🐸  🐸  🐸 Uploading the front and back of ID document ...');
-    var url = await getBaseUrl();
+    var url = await (getBaseUrl() as FutureOr<String>);
     var finalUrl = url + 'uploadID';
     var frontBytes = await idFront.length();
     var backBytes = await idBack.length();
@@ -495,8 +509,8 @@ class NetUtil {
   }
 
   static Future uploadProofOfResidence(
-      {@required String id, @required File proofOfResidence}) async {
-    var url = await getBaseUrl();
+      {required String id, required File proofOfResidence}) async {
+    var url = await (getBaseUrl() as FutureOr<String>);
     var finalUrl = url + 'uploadProofOfResidence';
     var frontBytes = await proofOfResidence.length();
     p('🐸  🐸  🐸 proofOfResidence size: $frontBytes bytes ...');
@@ -516,10 +530,9 @@ class NetUtil {
     }
   }
 
-  static Future uploadSelfie(
-      {@required String id, @required File selfie}) async {
+  static Future uploadSelfie({required String id, required File selfie}) async {
     p('🐸  🐸  🐸 Uploading the selfie file ...');
-    var url = await getBaseUrl();
+    var url = await (getBaseUrl() as FutureOr<String>);
     var finalUrl = url + 'uploadSelfie';
     var frontBytes = await selfie.length();
     p('🐸  🐸  🐸 Selfie size: $frontBytes bytes ...');

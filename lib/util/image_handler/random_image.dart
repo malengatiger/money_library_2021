@@ -19,7 +19,7 @@ class RandomImage {
       list.add(images[i]);
     }
 
-    return list;
+    return list as List<String>;
   }
 
   static _loadImages() {

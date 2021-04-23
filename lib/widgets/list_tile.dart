@@ -7,9 +7,9 @@ class TransitionListTile extends StatelessWidget {
     this.subtitle,
   });
 
-  final GestureTapCallback onTap;
-  final String title;
-  final String subtitle;
+  final GestureTapCallback? onTap;
+  final String? title;
+  final String? subtitle;
 
   @override
   Widget build(BuildContext context) {
@@ -32,8 +32,8 @@ class TransitionListTile extends StatelessWidget {
         ),
       ),
       onTap: onTap,
-      title: Text(title),
-      subtitle: Text(subtitle),
+      title: Text(title!),
+      subtitle: Text(subtitle!),
     );
   }
 }

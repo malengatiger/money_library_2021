@@ -26,11 +26,11 @@ class _RegistrationMobileState extends State<RegistrationMobile>
   GlobalKey<ScaffoldState> _key = GlobalKey();
   bool isBusy = false;
   final _controller = PageController();
-  Client _client = Client.create();
-  ClientCache _clientCache;
-  Anchor _anchor;
+  Client? _client = Client.create();
+  ClientCache? _clientCache;
+  Anchor? _anchor;
   Uuid _uuid = Uuid();
-  double currentPageValue = 0.0;
+  double? currentPageValue = 0.0;
   bool formComplete = false,
       idUploaded = false,
       selfieUploaded = false,
@@ -45,7 +45,7 @@ class _RegistrationMobileState extends State<RegistrationMobile>
       if (mounted) {
         setState(() {
           currentPageValue = _controller.page;
-          _dotPosition = _controller.page.floor() * 1.0;
+          _dotPosition = _controller.page!.floor() * 1.0;
         });
       }
     });
@@ -56,13 +56,13 @@ class _RegistrationMobileState extends State<RegistrationMobile>
     p('⭐️⭐️⭐️ Getting cache for old data input ...');
     _clientCache = await Prefs.getClientCache();
     if (_clientCache != null) {
-      _client = _clientCache.client;
+      _client = _clientCache!.client;
       //todo - update form with stuff from client ....
     } else {
-      _client.clientId = _uuid.v4();
-      _client.anchorId = _anchor == null ? null : _anchor.anchorId;
+      _client!.clientId = _uuid.v4();
+      _client!.anchorId = _anchor == null ? null : _anchor!.anchorId;
       _clientCache = ClientCache(client: _client);
-      Prefs.saveClientCache(_clientCache);
+      Prefs.saveClientCache(_clientCache!);
     }
   }
 
@@ -76,7 +76,7 @@ class _RegistrationMobileState extends State<RegistrationMobile>
 
   _goToNextPage() {
     p('🍎 🍎 🍎 🍎 _goToNextPage using PageController  🍎 🍎 🍎 🍎  ........ ');
-    int currentPage = currentPageValue.floor();
+    int currentPage = currentPageValue!.floor();
     switch (currentPage) {
       case 0:
         _controller.animateToPage(1,
@@ -95,7 +95,7 @@ class _RegistrationMobileState extends State<RegistrationMobile>
 
   _goToPreviousPage() {
     p('_goToPreviousPage using PageController  ');
-    int currentPage = currentPageValue as int;
+    int? currentPage = currentPageValue as int?;
     switch (currentPage) {
       case 0:
 //        _controller.animateToPage(1,
@@ -115,7 +115,7 @@ class _RegistrationMobileState extends State<RegistrationMobile>
   _submit() async {
     p('🚺 🚺 🚺 🚺 🚺 🚺 Submit client only after validating the input');
     _clientCache = await Prefs.getClientCache();
-    if (_clientCache.idFrontPath == null || _clientCache.idBackPath == null) {
+    if (_clientCache!.idFrontPath == null || _clientCache!.idBackPath == null) {
       if (currentPageValue != 1.0) {
         _controller.animateToPage(1,
             duration: Duration(seconds: 1), curve: Curves.easeInOut);
@@ -125,7 +125,7 @@ class _RegistrationMobileState extends State<RegistrationMobile>
     } else {
       p('🥣 🥣 ID Documentation found for submission');
     }
-    if (_clientCache.selfiePath == null) {
+    if (_clientCache!.selfiePath == null) {
       if (currentPageValue != 2.0) {
         _controller.animateToPage(2,
             duration: Duration(seconds: 1), curve: Curves.easeInOut);
@@ -135,7 +135,7 @@ class _RegistrationMobileState extends State<RegistrationMobile>
     } else {
       p('🥣 🥣 Selfie found for submission');
     }
-    if (_clientCache.client.password == null) {
+    if (_clientCache!.client!.password == null) {
       if (currentPageValue != 0.0) {
         _controller.animateToPage(0,
             duration: Duration(seconds: 1), curve: Curves.easeInOut);
@@ -145,7 +145,7 @@ class _RegistrationMobileState extends State<RegistrationMobile>
     } else {
       p('🥣 🥣 Password found for submission');
     }
-    if (_clientCache.client.personalKYCFields == null) {
+    if (_clientCache!.client!.personalKYCFields == null) {
       if (currentPageValue != 0.0) {
         _controller.animateToPage(0,
             duration: Duration(seconds: 1), curve: Curves.easeInOut);
@@ -153,10 +153,10 @@ class _RegistrationMobileState extends State<RegistrationMobile>
       _errorSnack('KYC fields are missing');
       return;
     } else {
-      if (_clientCache.client.personalKYCFields.firstName == null ||
-          _clientCache.client.personalKYCFields.lastName == null ||
-          _clientCache.client.personalKYCFields.mobileNumber == null ||
-          _clientCache.client.personalKYCFields.emailAddress == null) {
+      if (_clientCache!.client!.personalKYCFields!.firstName == null ||
+          _clientCache!.client!.personalKYCFields!.lastName == null ||
+          _clientCache!.client!.personalKYCFields!.mobileNumber == null ||
+          _clientCache!.client!.personalKYCFields!.emailAddress == null) {
         if (currentPageValue != 0.0) {
           _controller.animateToPage(0,
               duration: Duration(seconds: 1), curve: Curves.easeInOut);
@@ -167,24 +167,24 @@ class _RegistrationMobileState extends State<RegistrationMobile>
         p('🥣 🥣 Personal KYC fields found for submission');
       }
     }
-    _clientCache.client.active = false;
+    _clientCache!.client!.active = false;
     p('☘️ everything checks out .... 🥣 🥣 🥣 🥣  CLIENT data is ready for submission ...');
-    p(' 🔆 Check all fields from ClientCache: 🧩🧩🧩 ${_clientCache.toJson()}');
+    p(' 🔆 Check all fields from ClientCache: 🧩🧩🧩 ${_clientCache!.toJson()}');
     try {
       p(' 🔆 RegistrationMobile: starting ID upload ..');
       var idResult = await NetUtil.uploadIDDocuments(
-          id: _clientCache.client.clientId,
-          idFront: File(_clientCache.idFrontPath),
-          idBack: File(_clientCache.idBackPath));
+          id: _clientCache!.client!.clientId!,
+          idFront: File(_clientCache!.idFrontPath!),
+          idBack: File(_clientCache!.idBackPath!));
 
       p(' 🔆 RegistrationMobile: starting selfie upload ..');
       var selfieResult = await NetUtil.uploadSelfie(
-          id: _clientCache.client.clientId,
-          selfie: File(_clientCache.selfiePath));
+          id: _clientCache!.client!.clientId!,
+          selfie: File(_clientCache!.selfiePath!));
 
       p(' 🔆 RegistrationMobile: starting actual registration ..');
       var mResult = await NetUtil.post(
-          apiRoute: 'registerClient', bag: _clientCache.client.toJson());
+          apiRoute: 'registerClient', bag: _clientCache!.client!.toJson());
 
       p(idResult);
       p(selfieResult);
@@ -196,11 +196,11 @@ class _RegistrationMobileState extends State<RegistrationMobile>
           backgroundColor: Colors.black);
     } catch (e) {
       p(e);
-      _errorSnack(e.message == null ? 'Registration Failed' : e.message);
+      _errorSnack('Registration Failed: $e');
     }
   }
 
-  _errorSnack(String message) {
+  _errorSnack(String? message) {
     AppSnackBar.showErrorSnackBar(scaffoldKey: _key, message: message);
   }
 
@@ -277,7 +277,7 @@ class _RegistrationMobileState extends State<RegistrationMobile>
   }
 
   @override
-  onActionPressed(int action) {
+  onActionPressed(int? action) {
     return null;
   }
 
@@ -325,11 +325,11 @@ class _RegistrationMobileState extends State<RegistrationMobile>
 }
 
 class RegistrationForm extends StatefulWidget {
-  final Client client;
+  final Client? client;
   final PageListener pageListener;
 
   const RegistrationForm(
-      {Key key, @required this.client, @required this.pageListener})
+      {Key? key, required this.client, required this.pageListener})
       : super(key: key);
   @override
   _RegistrationFormState createState() => _RegistrationFormState();
@@ -343,16 +343,16 @@ class _RegistrationFormState extends State<RegistrationForm>
   TextEditingController lNameCntr = TextEditingController();
   TextEditingController cellphoneCntr = TextEditingController();
 
-  AnimationController titleController;
-  Animation titleAnimation, btnAnimation;
-  ClientCache _clientCache;
-  Client _client;
+  late AnimationController titleController;
+  late Animation titleAnimation, btnAnimation;
+  ClientCache? _clientCache;
+  Client? _client;
 
   bool isBusy = false;
-  Animation<double> boxAnimation;
-  Animation<double> classificationAnimation;
-  Animation<Offset> pulseAnimation;
-  Animation<Offset> meanAnimation;
+  Animation<double>? boxAnimation;
+  Animation<double>? classificationAnimation;
+  Animation<Offset>? pulseAnimation;
+  Animation<Offset>? meanAnimation;
   @override
   void initState() {
     super.initState();
@@ -390,7 +390,7 @@ class _RegistrationFormState extends State<RegistrationForm>
     p('_RegistrationFormState: ⭐️⭐️⭐️ Getting cache for old data input ...');
     _clientCache = await Prefs.getClientCache();
     if (_clientCache != null) {
-      _client = _clientCache.client;
+      _client = _clientCache!.client;
       _fillForm();
     }
     setState(() {});
@@ -406,33 +406,33 @@ class _RegistrationFormState extends State<RegistrationForm>
 
   void _onTextChanged(String value) {
     p(' 🍎  🍎 some text entered on keyboard ... : $value');
-    if (_client.personalKYCFields == null) {
-      _client.personalKYCFields = PersonalKYCFields.create();
+    if (_client!.personalKYCFields == null) {
+      _client!.personalKYCFields = PersonalKYCFields.create();
     }
-    _client.personalKYCFields.firstName = fNameCntr.text;
-    _client.personalKYCFields.lastName = lNameCntr.text;
-    _client.personalKYCFields.emailAddress = emailCntr.text;
-    _client.personalKYCFields.mobileNumber = cellphoneCntr.text;
-    _client.password = pswdCntr.text;
-    _clientCache.client = _client;
-    Prefs.saveClientCache(_clientCache);
+    _client!.personalKYCFields!.firstName = fNameCntr.text;
+    _client!.personalKYCFields!.lastName = lNameCntr.text;
+    _client!.personalKYCFields!.emailAddress = emailCntr.text;
+    _client!.personalKYCFields!.mobileNumber = cellphoneCntr.text;
+    _client!.password = pswdCntr.text;
+    _clientCache!.client = _client;
+    Prefs.saveClientCache(_clientCache!);
   }
 
   void _fillForm() {
     p(' 🍎  🍎 filling the form from cache ...');
-    if (_client.personalKYCFields != null) {
-      if (_client.personalKYCFields.emailAddress != null) {
-        emailCntr.text = _client.personalKYCFields.emailAddress;
+    if (_client!.personalKYCFields != null) {
+      if (_client!.personalKYCFields!.emailAddress != null) {
+        emailCntr.text = _client!.personalKYCFields!.emailAddress!;
       }
-      if (_client.personalKYCFields.firstName != null) {
-        fNameCntr.text = _client.personalKYCFields.firstName;
+      if (_client!.personalKYCFields!.firstName != null) {
+        fNameCntr.text = _client!.personalKYCFields!.firstName!;
       }
-      if (_client.personalKYCFields.lastName != null) {
-        lNameCntr.text = _client.personalKYCFields.lastName;
+      if (_client!.personalKYCFields!.lastName != null) {
+        lNameCntr.text = _client!.personalKYCFields!.lastName!;
       }
     }
-    if (_client.password != null) {
-      pswdCntr.text = _client.password;
+    if (_client!.password != null) {
+      pswdCntr.text = _client!.password!;
     }
   }
 
@@ -455,7 +455,7 @@ class _RegistrationFormState extends State<RegistrationForm>
                         height: 2,
                       ),
                       ScaleTransition(
-                        scale: titleAnimation,
+                        scale: titleAnimation as Animation<double>,
                         alignment: Alignment(0.0, 0.0),
                         child: GestureDetector(
                           onTap: () {
@@ -546,7 +546,7 @@ class _RegistrationFormState extends State<RegistrationForm>
                         height: 20,
                       ),
                       ScaleTransition(
-                        scale: btnAnimation,
+                        scale: btnAnimation as Animation<double>,
                         child: Container(
                           height: 60,
                           width: 300,

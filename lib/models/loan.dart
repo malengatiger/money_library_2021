@@ -12,17 +12,17 @@ private String loanId, clientId, agentId, anchorId;
  */
 class LoanApplication {
   //TODO - COMPLETE class definition ...
-  String anchorId, agentId;
-  String clientId, loanId, totalAmountPayable;
-  int loanPeriodInMonths;
-  double interestRate;
-  String date,
+  String? anchorId, agentId;
+  String? clientId, loanId, totalAmountPayable;
+  int? loanPeriodInMonths;
+  double? interestRate;
+  String? date,
       agentSeed,
       clientAccount,
       assetCode,
       lastDatePaid,
       lastPaymentRequestId;
-  PersonalKYCFields personalKYCFields;
+  PersonalKYCFields? personalKYCFields;
 
   LoanApplication(
       this.anchorId,
@@ -77,7 +77,7 @@ class LoanApplication {
     map['lastPaymentRequestId'] = lastPaymentRequestId;
     map['loanPeriodInMonths'] = loanPeriodInMonths;
     map['personalKYCFields'] =
-        personalKYCFields == null ? null : personalKYCFields.toJson();
+        personalKYCFields == null ? null : personalKYCFields!.toJson();
 
     return map;
   }

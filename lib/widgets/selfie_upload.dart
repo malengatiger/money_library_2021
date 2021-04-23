@@ -13,39 +13,39 @@ import 'package:money_library_2021/widgets/avatar.dart';
 import 'mobile_registration.dart';
 
 class SelfieUpload extends StatefulWidget {
-  final Client client;
-  final Agent agent;
+  final Client? client;
+  final Agent? agent;
   final PageListener pageListener;
 
   const SelfieUpload(
-      {Key key, this.client, this.agent, @required this.pageListener})
+      {Key? key, this.client, this.agent, required this.pageListener})
       : super(key: key);
   @override
   _SelfieUploadState createState() => _SelfieUploadState();
 }
 
 class _SelfieUploadState extends State<SelfieUpload> {
-  File _selfieFile;
-  String _id, _name;
+  File? _selfieFile;
+  String? _id, _name;
   bool isBusy = false;
   List<BottomNavigationBarItem> _items = [];
   var _key = GlobalKey<ScaffoldState>();
-  ClientCache _clientCache;
+  ClientCache? _clientCache;
 
   @override
   void initState() {
     super.initState();
     if (widget.client != null) {
-      _id = widget.client.clientId;
-      _name = widget.client.personalKYCFields == null
+      _id = widget.client!.clientId;
+      _name = widget.client!.personalKYCFields == null
           ? null
-          : widget.client.personalKYCFields.getFullName();
+          : widget.client!.personalKYCFields!.getFullName();
     }
     if (widget.agent != null) {
-      _id = widget.agent.agentId;
-      _name = widget.agent.personalKYCFields == null
+      _id = widget.agent!.agentId;
+      _name = widget.agent!.personalKYCFields == null
           ? null
-          : widget.agent.personalKYCFields.getFullName();
+          : widget.agent!.personalKYCFields!.getFullName();
     }
     _getCache();
   }
@@ -53,14 +53,14 @@ class _SelfieUploadState extends State<SelfieUpload> {
   _getCache() async {
     _clientCache = await Prefs.getClientCache();
     if (_clientCache != null) {
-      if (_clientCache.selfiePath != null) {
-        _selfieFile = File(_clientCache.selfiePath);
+      if (_clientCache!.selfiePath != null) {
+        _selfieFile = File(_clientCache!.selfiePath!);
         if (_selfieFile != null) {
-          _clientCache.idBackPath = _selfieFile.path;
-          Prefs.saveClientCache(_clientCache);
+          _clientCache!.idBackPath = _selfieFile!.path;
+          Prefs.saveClientCache(_clientCache!);
         }
       }
-      _id = _clientCache.client.clientId;
+      _id = _clientCache!.client!.clientId;
     } else {
       p('😡 😡 😡 ClientCache not found, this may be a problem. Or not.');
     }
@@ -100,7 +100,7 @@ class _SelfieUploadState extends State<SelfieUpload> {
       isBusy = true;
     });
     try {
-      var resp = await NetUtil.uploadSelfie(id: _id, selfie: _selfieFile);
+      var resp = await NetUtil.uploadSelfie(id: _id!, selfie: _selfieFile!);
       p(resp);
       AppSnackBar.showSnackBar(
           scaffoldKey: _key,
@@ -152,7 +152,7 @@ class _SelfieUploadState extends State<SelfieUpload> {
                             marginColor: baseColor,
                             fromNetwork: false)
                         : RoundAvatar(
-                            path: _selfieFile.path,
+                            path: _selfieFile!.path,
                             radius: 300,
                             fromNetwork: false),
                     Spacer(),

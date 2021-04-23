@@ -10,10 +10,10 @@ class Error {
 
     private Extensions extensions;
    */
-  String message;
-  List<Location> locations;
-  List<String> path;
-  Extensions extensions;
+  String? message;
+  List<Location>? locations;
+  List<String>? path;
+  Extensions? extensions;
 
   Error(this.message, this.locations, this.path, this.extensions); //
   //
@@ -26,25 +26,25 @@ class Error {
     if (data['locations'] != null) {
       List locs = data['locations'];
       locs.forEach((element) {
-        locations.add(Location.fromJson(element));
+        locations!.add(Location.fromJson(element));
       });
     }
     this.path = [];
     if (data['path'] != null) {
       List locs = data['path'];
       locs.forEach((element) {
-        this.path.add(element);
+        this.path!.add(element);
       });
     }
   }
 
   Map<String, dynamic> toJson() {
     List mPath = [];
-    this.path.forEach((element) {
+    this.path!.forEach((element) {
       mPath.add(element);
     });
     List locs = [];
-    this.locations.forEach((element) {
+    this.locations!.forEach((element) {
       locs.add(element.toJson());
     });
 
@@ -59,7 +59,7 @@ class Error {
 }
 
 class Location {
-  int line, column;
+  int? line, column;
   Location(
     this.line,
   ); //
@@ -80,7 +80,7 @@ class Location {
 }
 
 class Extensions {
-  String code;
+  String? code;
 
   Extensions(
     this.code,
@@ -107,8 +107,8 @@ public class PaymentStatusRecord {
             status;
  */
 class PaymentRequest {
-  String id;
-  String url;
+  String? id;
+  String? url;
 
   PaymentRequest(
     this.id,
@@ -131,15 +131,15 @@ class PaymentRequest {
 }
 
 class StitchPaymentStatusRecord {
-  String paymentId, date;
-  String stellarAccountId, status, amount;
+  String? paymentId, date;
+  String? stellarAccountId, status, amount;
 
   StitchPaymentStatusRecord(
-      {@required this.paymentId,
-      @required this.stellarAccountId,
-      @required this.amount,
-      @required this.status,
-      @required this.date}); //
+      {required this.paymentId,
+      required this.stellarAccountId,
+      required this.amount,
+      required this.status,
+      required this.date}); //
   //
 
   StitchPaymentStatusRecord.fromJson(Map data) {
@@ -163,8 +163,8 @@ class StitchPaymentStatusRecord {
 }
 
 class StitchResponse {
-  PaymentRequest paymentRequest;
-  List<Error> errors;
+  PaymentRequest? paymentRequest;
+  List<Error>? errors;
 
   StitchResponse(this.paymentRequest, this.errors); //
   //
@@ -174,10 +174,10 @@ class StitchResponse {
       this.paymentRequest = PaymentRequest.fromJson(data['paymentRequest']);
     }
     if (data['errors'] != null) {
-      List list = data['errors'];
+      List? list = data['errors'];
       if (list != null && list.isNotEmpty) {
         list.forEach((element) {
-          this.errors.add(Error.fromJson(element));
+          this.errors!.add(Error.fromJson(element));
         });
       }
     }
@@ -186,15 +186,15 @@ class StitchResponse {
   Map<String, dynamic> toJson() {
     List errs = [];
     if (this.errors != null) {
-      if (this.errors.isNotEmpty) {
-        this.errors.forEach((element) {
+      if (this.errors!.isNotEmpty) {
+        this.errors!.forEach((element) {
           errs.add(element.toJson());
         });
       }
     }
     Map<String, dynamic> map = Map();
     map['paymentRequest'] =
-        paymentRequest == null ? null : paymentRequest.toJson();
+        paymentRequest == null ? null : paymentRequest!.toJson();
     map['errors'] = errs;
 
     return map;

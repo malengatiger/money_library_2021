@@ -5,17 +5,17 @@ import 'package:money_library_2021/util/util.dart';
 class RoundNumberWidget extends StatelessWidget {
   final int number;
   final double radius, margin;
-  final Color marginColor, mainColor;
+  final Color? marginColor, mainColor;
   final TextStyle textStyle;
 
   const RoundNumberWidget(
-      {Key key,
-      @required this.number,
-      @required this.radius,
-      @required this.margin,
-      @required this.marginColor,
-      @required this.mainColor,
-      @required this.textStyle})
+      {Key? key,
+      required this.number,
+      required this.radius,
+      required this.margin,
+      required this.marginColor,
+      required this.mainColor,
+      required this.textStyle})
       : super(key: key);
 
   @override

@@ -3,19 +3,19 @@ import 'package:money_library_2021/util/util.dart';
 import 'agent.dart';
 
 class Client {
-  String anchorId;
-  String clientId, startingFiatBalance;
-  double latitude, longitude;
-  String dateRegistered,
+  String? anchorId;
+  String? clientId, startingFiatBalance;
+  double? latitude, longitude;
+  String? dateRegistered,
       dateUpdated,
       externalAccountId,
       account,
       fiatLimit,
       password,
       secretSeed;
-  List<String> agentIds;
-  PersonalKYCFields personalKYCFields;
-  bool active;
+  List<String>? agentIds;
+  PersonalKYCFields? personalKYCFields;
+  bool? active;
 
   Client.create();
 
@@ -59,7 +59,7 @@ class Client {
     if (data['agentIds'] != null) {
       List mList = data['agentIds'];
       mList.forEach((m) {
-        this.agentIds.add(m as String);
+        this.agentIds!.add(m as String);
       });
     }
   }
@@ -81,16 +81,16 @@ class Client {
     map['agentIds'] = agentIds;
     map['secretSeed'] = secretSeed;
     map['personalKYCFields'] =
-        personalKYCFields == null ? null : personalKYCFields.toJson();
+        personalKYCFields == null ? null : personalKYCFields!.toJson();
 
     return map;
   }
 }
 
 class ClientCache {
-  String idFrontPath, date, idBackPath, selfiePath;
-  String proofOfResidencePath;
-  Client client;
+  String? idFrontPath, date, idBackPath, selfiePath;
+  String? proofOfResidencePath;
+  Client? client;
 
   ClientCache(
       {this.idFrontPath,
@@ -124,7 +124,7 @@ class ClientCache {
         'idBackPath': idBackPath,
         'date': date,
         'proofOfResidencePath': proofOfResidencePath,
-        'client': client == null ? null : client.toJson(),
+        'client': client == null ? null : client!.toJson(),
       };
       return map;
     } catch (e) {

@@ -16,7 +16,7 @@ public Links _links;
  */
 class PaymentDTO {
   // ignore: non_constant_identifier_names
-  String source_account,
+  String? source_account,
       id,
       // ignore: non_constant_identifier_names
       paging_token,
@@ -31,7 +31,7 @@ class PaymentDTO {
       to,
       amount;
   // ignore: non_constant_identifier_names
-  bool transaction_successful;
+  bool? transaction_successful;
 
   PaymentDTO(
       {this.source_account,

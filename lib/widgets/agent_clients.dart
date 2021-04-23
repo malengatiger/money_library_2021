@@ -7,9 +7,9 @@ import 'package:money_library_2021/widgets/avatar.dart';
 import 'package:money_library_2021/widgets/round_number.dart';
 
 class AgentClientList extends StatefulWidget {
-  final Agent agent;
+  final Agent? agent;
 
-  const AgentClientList({Key key, this.agent}) : super(key: key);
+  const AgentClientList({Key? key, this.agent}) : super(key: key);
 
   @override
   _AgentClientListState createState() => _AgentClientListState();
@@ -19,8 +19,8 @@ class _AgentClientListState extends State<AgentClientList>
     with SingleTickerProviderStateMixin {
   List<String> imageList = [];
   List<Client> clients = [];
-  AnimationController controller;
-  Animation<double> animation;
+  late AnimationController controller;
+  Animation<double>? animation;
 
   @override
   void initState() {
@@ -52,7 +52,7 @@ class _AgentClientListState extends State<AgentClientList>
         child: Scaffold(
       backgroundColor: secondaryColor,
       appBar: AppBar(
-        title: Text('${widget.agent.personalKYCFields.getFullName()}',
+        title: Text('${widget.agent!.personalKYCFields!.getFullName()}',
             style: Styles.blackSmall),
         backgroundColor: secondaryColor,
         elevation: 0,
@@ -76,10 +76,10 @@ class _AgentClientListState extends State<AgentClientList>
                     padding: const EdgeInsets.only(left: 12.0, bottom: 8),
                     child: GestureDetector(
                       onTap: () {
-                        p('💙💙💙 client has been tapped: 💙💙 ${client.personalKYCFields.getFullName()} 💙');
+                        p('💙💙💙 client has been tapped: 💙💙 ${client.personalKYCFields!.getFullName()} 💙');
                       },
                       child: RoundWidget(
-                        text: client.personalKYCFields.getFullName(),
+                        text: client.personalKYCFields!.getFullName(),
                         radius: 48,
                         margin: 12,
                         widget: RoundAvatar(
@@ -115,11 +115,11 @@ class RoundWidget extends StatelessWidget {
   final String text;
 
   const RoundWidget(
-      {Key key,
-      @required this.text,
-      @required this.widget,
-      @required this.radius,
-      @required this.margin})
+      {Key? key,
+      required this.text,
+      required this.widget,
+      required this.radius,
+      required this.margin})
       : super(key: key);
   @override
   Widget build(BuildContext context) {

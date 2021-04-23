@@ -9,9 +9,9 @@ class CurrencyDropDown extends StatelessWidget {
   final CurrencyDropDownListener listener;
 
   const CurrencyDropDown(
-      {Key key,
-      @required this.bag,
-      @required this.listener,
+      {Key? key,
+      required this.bag,
+      required this.listener,
       this.showXLM = false})
       : super(key: key);
 
@@ -19,7 +19,7 @@ class CurrencyDropDown extends StatelessWidget {
   Widget build(BuildContext context) {
     assert(bag != null);
     var items = <DropdownMenuItem<Balance>>[];
-    bag.balances.forEach((balance) {
+    bag.balances!.forEach((balance) {
       p('🌼 .... Balance to be put into dropDown menu: ${balance.assetCode} ${balance.balance}');
       var imagePath = CurrencyIcons.getCurrencyImagePath(balance.assetCode);
       p('🌼 .... imagePath: $imagePath');
@@ -32,7 +32,7 @@ class CurrencyDropDown extends StatelessWidget {
                 children: <Widget>[
                   Image.asset(imagePath, height: 28, width: 28),
                   SizedBox(width: 8),
-                  Text(balance.assetCode == null ? "XLM" : balance.assetCode),
+                  Text(balance.assetCode == null ? "XLM" : balance.assetCode!),
                 ],
               ),
             )));
@@ -43,11 +43,11 @@ class CurrencyDropDown extends StatelessWidget {
         hint: Text('Select Currency'), items: items, onChanged: _onChanged);
   }
 
-  void _onChanged(Balance value) {
+  void _onChanged(Balance? value) {
     listener.onChanged(value);
   }
 }
 
 abstract class CurrencyDropDownListener {
-  onChanged(Balance value);
+  onChanged(Balance? value);
 }

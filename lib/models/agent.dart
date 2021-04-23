@@ -1,7 +1,7 @@
 class Agent {
-  String anchorId, agentId;
-  double latitude, longitude;
-  String dateRegistered,
+  String? anchorId, agentId;
+  double? latitude, longitude;
+  String? dateRegistered,
       dateUpdated,
       externalAccountId,
       stellarAccountId,
@@ -11,8 +11,8 @@ class Agent {
       password,
       url,
       secretSeed;
-  bool fakeImage;
-  PersonalKYCFields personalKYCFields;
+  bool? fakeImage;
+  PersonalKYCFields? personalKYCFields;
 
   Agent(
       this.anchorId,
@@ -71,14 +71,14 @@ class Agent {
     map['password'] = password;
     map['secretSeed'] = secretSeed;
     map['personalKYCFields'] =
-        personalKYCFields == null ? null : personalKYCFields.toJson();
+        personalKYCFields == null ? null : personalKYCFields!.toJson();
 
     return map;
   }
 }
 
 class PersonalKYCFields {
-  String lastName,
+  String? lastName,
       firstName,
       mobileNumber,
       emailAddress,
@@ -90,7 +90,7 @@ class PersonalKYCFields {
 
 //  String id_type, id_country_code, id_issue_date, id_number, language_code, tax_id, tax_id_name;
 //
-  String photo_proof_residence,
+  String? photo_proof_residence,
       photo_id_front,
       photo_id_back,
       notary_approval_of_photo_id,
@@ -138,6 +138,6 @@ class PersonalKYCFields {
   }
 
   String getFullName() {
-    return firstName + " " + lastName;
+    return firstName! + " " + lastName!;
   }
 }

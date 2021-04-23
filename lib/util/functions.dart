@@ -12,10 +12,10 @@ bool isBusy = false;
 ///Global key to help navigate from anywhere the app;
 GlobalKey<NavigatorState> navigatorKey = GlobalKey();
 
-List<Color> _colors = [];
+List<Color?> _colors = [];
 Random _rand = Random(new DateTime.now().millisecondsSinceEpoch);
 
-Color getRandomColor() {
+Color? getRandomColor() {
   _colors.clear();
   _colors.add(Colors.blue[600]);
   _colors.add(Colors.pink);
@@ -54,7 +54,7 @@ Color getRandomColor() {
   return _colors.elementAt(index);
 }
 
-Color getRandomPastelColor() {
+Color? getRandomPastelColor() {
   _colors.clear();
   _colors.add(Colors.blue.shade50);
   _colors.add(Colors.grey.shade50);
@@ -568,15 +568,15 @@ int getIntDate(String date, BuildContext context) {
   }
 }
 
-String getFormattedDateHourMinute({DateTime date, BuildContext context}) {
+String getFormattedDateHourMinute({DateTime? date, BuildContext? context}) {
   try {
     if (context == null) {
       var dateFormat = DateFormat('HH:mm');
-      return dateFormat.format(date);
+      return dateFormat.format(date!);
     } else {
       Locale myLocale = Localizations.localeOf(context);
       var dateFormat = DateFormat('HH:mm', myLocale.toString());
-      return dateFormat.format(date);
+      return dateFormat.format(date!);
     }
   } catch (e) {
     print(e);
@@ -688,7 +688,7 @@ String getFormattedDateHourMinSec(String date) {
   }
 }
 
-String getFormattedDateHourMinuteSecond() {
+String? getFormattedDateHourMinuteSecond() {
   var format = new DateFormat.Hms();
   try {
     DateTime d = DateTime.now();
@@ -699,7 +699,7 @@ String getFormattedDateHourMinuteSecond() {
 
 String getFormattedNumber(int number, BuildContext context) {
   Locale myLocale = Localizations.localeOf(context);
-  var val = myLocale.languageCode + '_' + myLocale.countryCode;
+  var val = myLocale.languageCode + '_' + myLocale.countryCode!;
   final oCcy = new NumberFormat("###,###,###,###,##0", val);
 
   return oCcy.format(number);
@@ -707,7 +707,7 @@ String getFormattedNumber(int number, BuildContext context) {
 
 String getFormattedDouble(double number, BuildContext context) {
   Locale myLocale = Localizations.localeOf(context);
-  var val = myLocale.languageCode + '_' + myLocale.countryCode;
+  var val = myLocale.languageCode + '_' + myLocale.countryCode!;
   final oCcy = new NumberFormat("###,###,###,###,##0.0", val);
 
   return oCcy.format(number);
@@ -716,7 +716,7 @@ String getFormattedDouble(double number, BuildContext context) {
 String getFormattedAmount(String amount, BuildContext context) {
   assert(amount != null);
   Locale myLocale = Localizations.localeOf(context);
-  var val = myLocale.languageCode + '_' + myLocale.countryCode;
+  var val = myLocale.languageCode + '_' + myLocale.countryCode!;
   //print('getFormattedAmount ----------- locale is  $val');
   final oCcy = new NumberFormat("###,###,###,###,##0.00", val);
   try {

@@ -7,8 +7,8 @@
 
  */
 class StellarFiatPaymentResponse {
-  String anchorId, sourceAccount;
-  String date,
+  String? anchorId, sourceAccount;
+  String? date,
       assetCode,
       destinationAccount,
       paymentRequestId,
@@ -16,8 +16,8 @@ class StellarFiatPaymentResponse {
       amount,
       loanId,
       clientId;
-  bool success;
-  int ledger;
+  bool? success;
+  int? ledger;
 
   StellarFiatPaymentResponse(
       {this.anchorId,

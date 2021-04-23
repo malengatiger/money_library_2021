@@ -25,7 +25,7 @@ class Auth {
     if (_auth.currentUser == null) {
       throw Exception('User not authenticated');
     }
-    var token = await _auth.currentUser.getIdToken();
+    var token = await _auth.currentUser!.getIdToken();
     p('😡 😡 😡 Auth: getAuthToken: Token: 😡 😡 😡 $token 😡 😡 😡');
     return token;
   }
@@ -33,20 +33,20 @@ class Auth {
   static Future<UserCredential> signInAdmin() async {
     p('😡 😡 😡 Auth: Getting email and password from environment : 😡 😡 😡 ');
     await DotEnv.load(fileName: '.env');
-    var email = DotEnv.env['email'];
-    var pswd = DotEnv.env['password'];
+    var email = DotEnv.env['email']!;
+    var pswd = DotEnv.env['password']!;
     var cred =
         await _auth.signInWithEmailAndPassword(email: email, password: pswd);
     if (cred.user == null) {
       p('Grenade blew up! 👿👿👿 cred not found 👿👿👿');
       throw Exception('Firebase admin user unavailable: $email');
     }
-    p('🦋🦋🦋🦋🦋🦋 Auth: 🦋🦋🦋 signInAdmin is all OK! User logged in: 🦋🦋🦋 ${cred.user.email} 🦋🦋🦋');
+    p('🦋🦋🦋🦋🦋🦋 Auth: 🦋🦋🦋 signInAdmin is all OK! User logged in: 🦋🦋🦋 ${cred.user!.email} 🦋🦋🦋');
     return cred;
   }
 
   static Future<AnchorUser> signInAnchor(
-      {String email, String password}) async {
+      {required String email, required String password}) async {
     p('$bb Signing in as Anchor User ... $email');
     var result = await _auth.signInWithEmailAndPassword(
         email: email, password: password);
@@ -54,37 +54,37 @@ class Auth {
       throw Exception("Sign In Failed");
     }
 
-    var anchorUser = await NetUtil.getAnchorUser(result.user.uid);
+    var anchorUser = await NetUtil.getAnchorUser(result.user!.uid);
     var anchor = await NetUtil.getAnchor(anchorUser.anchorId);
     await Prefs.saveAnchor(anchor);
     await Prefs.saveAnchorUser(anchorUser);
 
-    p('$bb getting Anchor User from firestore auth :...uid: ${result.user.uid}');
+    p('$bb getting Anchor User from firestore auth :...uid: ${result.user!.uid}');
 
     return anchorUser;
   }
 
-  static Future<Agent> signInAgent({String email, String password}) async {
+  static Future<Agent> signInAgent({required String email, required String password}) async {
     p('$bb  Agent Sign in started ......');
     var result = await _auth.signInWithEmailAndPassword(
         email: email, password: password);
     if (result.user == null) {
       throw Exception("Sign In Failed");
     }
-    Agent agent = await NetUtil.getAgent(result.user.uid);
+    Agent agent = await NetUtil.getAgent(result.user!.uid);
     await NetUtil.getAnchor(agent.anchorId);
 
     return agent;
   }
 
-  static Future<Client> signInClient({String email, String password}) async {
+  static Future<Client> signInClient({required String email, required String password}) async {
     p('$bb signInClientSign in started ......');
     var result = await _auth.signInWithEmailAndPassword(
         email: email, password: password);
     if (result.user == null) {
       throw Exception("Sign In Failed");
     }
-    Client client = await NetUtil.getClient(result.user.uid);
+    Client client = await NetUtil.getClient(result.user!.uid);
     await NetUtil.getAnchor(client.anchorId);
 
     return client;

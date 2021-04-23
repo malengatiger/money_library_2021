@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:money_library_2021/models/stokvel.dart';
 
@@ -13,7 +15,7 @@ class ListAPI {
     querySnapshot.docs.forEach((doc) {
       mList.add(Stokvel.fromJson(doc.data()));
     });
-    return mList;
+    return mList as FutureOr<List<Stokvel>>;
   }
 
   static Future<List<Stokvel>> getStokvels() async {
@@ -23,10 +25,10 @@ class ListAPI {
       mList.add(Stokvel.fromJson(doc.data()));
     });
     mList.sort((a, b) => a.name.compareTo(b.name));
-    return mList;
+    return mList as FutureOr<List<Stokvel>>;
   }
 
-  static Future<Stokvel> getStokvelById(String stokvelId) async {
+  static Future<Stokvel?> getStokvelById(String stokvelId) async {
     var querySnapshot = await _firestore
         .collection('stokvels')
         .where('stokvelId', isEqualTo: stokvelId)
@@ -57,7 +59,7 @@ class ListAPI {
     querySnapshot.docs.forEach((doc) {
       mList.add(Invitation.fromJson(doc.data()));
     });
-    return mList;
+    return mList as FutureOr<List<Invitation>>;
   }
 
   static Future<List<Member>> getStokvelMembers(String stokvelId) async {
@@ -70,15 +72,16 @@ class ListAPI {
       mList.add(Member.fromJson(doc.data()));
     });
 
-    return mList;
+    return mList as FutureOr<List<Member>>;
   }
 
-  static Future<String> getStokvelSeed(String stokvelId) async {
-    var cred = await getStokvelCredential(stokvelId);
+  static Future<String?> getStokvelSeed(String stokvelId) async {
+    var cred =
+        await (getStokvelCredential(stokvelId) as FutureOr<StokkieCredential>);
     return cred.cryptKey; //makerBloc.getDecryptedSeed(cred);
   }
 
-  static Future<StokkieCredential> getStokvelCredential(
+  static Future<StokkieCredential?> getStokvelCredential(
       String stokvelId) async {
     var querySnapshot = await _firestore
         .collection('creds')
@@ -97,7 +100,7 @@ class ListAPI {
     return null;
   }
 
-  static Future<StokkieCredential> getMemberCredential(String memberId) async {
+  static Future<StokkieCredential?> getMemberCredential(String memberId) async {
     var querySnapshot = await _firestore
         .collection('creds')
         .where('memberId', isEqualTo: memberId)
@@ -115,7 +118,7 @@ class ListAPI {
     return null;
   }
 
-  static Future<StokvelGoal> getStokvelGoalById(String stokvelGoalId) async {
+  static Future<StokvelGoal?> getStokvelGoalById(String stokvelGoalId) async {
     var querySnapshot = await _firestore
         .collection('stokvelGoals')
         .where('stokvelGoalId', isEqualTo: stokvelGoalId)
@@ -143,7 +146,7 @@ class ListAPI {
       mList.add(StokvelGoal.fromJson(doc.data()));
     });
 
-    return mList;
+    return mList as FutureOr<List<StokvelGoal>>;
   }
 
   static Future<List<StokvelPayment>> getStokvelPayments(
@@ -158,7 +161,7 @@ class ListAPI {
       mList.add(StokvelPayment.fromJson(doc.data()));
     });
 
-    return mList;
+    return mList as FutureOr<List<StokvelPayment>>;
   }
 
   static Future<List<MemberPayment>> getMemberPaymentsMade(
@@ -173,7 +176,7 @@ class ListAPI {
     querySnapshot.docs.forEach((doc) {
       mList.add(MemberPayment.fromJson(doc.data()));
     });
-    return mList;
+    return mList as FutureOr<List<MemberPayment>>;
   }
 
   static Future<List<MemberPayment>> getMemberPaymentsReceived(
@@ -188,10 +191,10 @@ class ListAPI {
     querySnapshot.docs.forEach((doc) {
       mList.add(MemberPayment.fromJson(doc.data()));
     });
-    return mList;
+    return mList as FutureOr<List<MemberPayment>>;
   }
 
-  static Future<Member> getMember(String memberId) async {
+  static Future<Member?> getMember(String memberId) async {
     var querySnapshot = await _firestore
         .collection('members')
         .where('memberId', isEqualTo: memberId)

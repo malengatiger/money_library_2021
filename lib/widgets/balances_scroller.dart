@@ -8,7 +8,7 @@ class BalancesScroller extends StatelessWidget {
   final StellarAccountBag bag;
 
   const BalancesScroller(
-      {Key key, @required this.direction, @required this.bag})
+      {Key? key, required this.direction, required this.bag})
       : super(key: key);
   @override
   Widget build(BuildContext context) {
@@ -24,14 +24,14 @@ class BalancesScroller extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: ListView.builder(
-          itemCount: bag == null ? 0 : bag.balances.length,
+          itemCount: bag == null ? 0 : bag.balances!.length,
           scrollDirection: direction,
           itemBuilder: (context, index) {
             var currency;
-            if (bag.balances.elementAt(index).assetCode == null) {
+            if (bag.balances!.elementAt(index).assetCode == null) {
               currency = 'XLM';
             } else {
-              currency = bag.balances.elementAt(index).assetCode;
+              currency = bag.balances!.elementAt(index).assetCode;
             }
             var imagePath = CurrencyIcons.getCurrencyImagePath(currency);
             return Padding(
@@ -57,7 +57,7 @@ class BalancesScroller extends StatelessWidget {
                   ),
                   Text(
                     getFormattedAmount(
-                        bag.balances.elementAt(index).balance, context),
+                        bag.balances!.elementAt(index).balance!, context),
                     style: Styles.tealBoldSmall,
                   ),
                 ],

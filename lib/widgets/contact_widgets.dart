@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:money_library_2021/widgets/avatar.dart';
 
 class EmailWidget extends StatelessWidget {
-  final String emailAddress;
+  final String? emailAddress;
 
-  const EmailWidget({Key key, this.emailAddress}) : super(key: key);
+  const EmailWidget({Key? key, this.emailAddress}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -20,7 +20,7 @@ class EmailWidget extends StatelessWidget {
                   icon: Icon(Icons.email),
                 ),
               ),
-              Expanded(child: Text(emailAddress))
+              Expanded(child: Text(emailAddress!))
             ],
           ),
         ),
@@ -30,9 +30,9 @@ class EmailWidget extends StatelessWidget {
 }
 
 class PhoneWidget extends StatelessWidget {
-  final String phoneNumber;
+  final String? phoneNumber;
 
-  const PhoneWidget({Key key, this.phoneNumber}) : super(key: key);
+  const PhoneWidget({Key? key, this.phoneNumber}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -51,7 +51,7 @@ class PhoneWidget extends StatelessWidget {
                   ),
                 ),
               ),
-              Text(phoneNumber)
+              Text(phoneNumber!)
             ],
           ),
         ),

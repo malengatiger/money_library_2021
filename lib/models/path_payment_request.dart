@@ -6,8 +6,8 @@ String sourceAccount,  destinationAccount;
 
  */
 class PathPaymentRequest {
-  String anchorId, sourceAccount, pathPaymentRequestId;
-  String date,
+  String? anchorId, sourceAccount, pathPaymentRequestId;
+  String? date,
       dateUpdated,
       destinationAccount,
       sourceAssetCode,
@@ -15,7 +15,7 @@ class PathPaymentRequest {
       sendAmount,
       destinationMin,
       token;
-  bool success;
+  bool? success;
 
   PathPaymentRequest(
       {this.anchorId,

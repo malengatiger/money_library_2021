@@ -70,27 +70,27 @@ class AgentBloc {
   FirebaseAuth _auth = FirebaseAuth.instance;
 
   List<Agent> _agents = [];
-  Anchor _anchor;
-  AnchorUser _anchorUser;
+  Anchor? _anchor;
+  AnchorUser? _anchorUser;
   static const cc = '🌼 🌼 🌼 🌼 🌼 🌼 AgentBloc: ';
 
-  Future<Anchor> getAnchor() async {
+  Future<Anchor?> getAnchor() async {
     _anchor = await Prefs.getAnchor();
     if (_anchor != null) {
-      getAgents(anchorId: _anchor.anchorId, refresh: false);
+      getAgents(anchorId: _anchor!.anchorId, refresh: false);
     }
-    if (_anchor.distributionStellarAccount == null) {
+    if (_anchor!.distributionStellarAccount == null) {
       p('Anchor is missing distribution account :');
-      _anchor = await NetUtil.getAnchor(_anchor.anchorId);
-      p('${_anchor.toJson()}');
+      _anchor = await NetUtil.getAnchor(_anchor!.anchorId);
+      p('${_anchor!.toJson()}');
     }
     return _anchor;
   }
 
-  Future<StellarAccountBag> sendMoneyToAgent(
-      {@required Agent agent,
-      @required String amount,
-      @required String assetCode}) async {
+  Future<StellarAccountBag?> sendMoneyToAgent(
+      {required Agent agent,
+      required String amount,
+      required String assetCode}) async {
     assert(amount != null);
     assert(assetCode != null);
     var fundRequest = AgentFundingRequest(
@@ -99,7 +99,7 @@ class AgentBloc {
         date: DateTime.now().toIso8601String(),
         agentId: agent.agentId,
         assetCode: assetCode,
-        userId: _anchorUser.userId);
+        userId: _anchorUser!.userId);
     p('agentBloc:  🏈  🏈  🏈 sendMoneyToAgent ... check asset code is not null: ${fundRequest.toJson()}');
 
     var result =
@@ -109,13 +109,13 @@ class AgentBloc {
     return await getBalances(accountId: agent.stellarAccountId, refresh: true);
   }
 
-  Future<AnchorUser> getAnchorUser() async {
+  Future<AnchorUser?> getAnchorUser() async {
     _anchorUser = await Prefs.getAnchorUser();
     return _anchorUser;
   }
 
   Future<List<PathPaymentRequest>> getPathPaymentRequestsByAnchor(
-      {String anchorId, String fromDate, String toDate, bool refresh}) async {
+      {String? anchorId, String? fromDate, String? toDate, required bool refresh}) async {
     p('$cc getPathPaymentRequestsByAnchor: anchorId: $anchorId refresh: $refresh');
 
     if (refresh) {
@@ -136,7 +136,7 @@ class AgentBloc {
   }
 
   Future<List<PathPaymentRequest>> getPathPaymentRequestsBySourceAccount(
-      {String accountId, bool refresh = false}) async {
+      {String? accountId, bool refresh = false}) async {
     _pathPaymentRequests =
         await AnchorLocalDB.getPathPaymentRequestsBySourceAccount(accountId);
     if (refresh || _pathPaymentRequests.isEmpty) {
@@ -149,7 +149,7 @@ class AgentBloc {
   }
 
   Future<List<PathPaymentRequest>> getPathPaymentRequestsByDestinationAccount(
-      {String accountId, bool refresh = false}) async {
+      {String? accountId, bool refresh = false}) async {
     _pathPaymentRequests =
         await AnchorLocalDB.getPathPaymentRequestsByDestinationAccount(
             accountId);
@@ -163,7 +163,7 @@ class AgentBloc {
   }
 
   Future<List<StellarFiatPaymentResponse>> getFiatPaymentResponsesByAnchor(
-      {String anchorId, String fromDate, String toDate, bool refresh}) async {
+      {String? anchorId, String? fromDate, String? toDate, required bool refresh}) async {
     p('$cc getFiatPaymentResponsesByAnchor: anchorId: $anchorId $cc  refresh: $refresh');
 
     if (refresh) {
@@ -186,7 +186,7 @@ class AgentBloc {
 
   Future<List<StellarFiatPaymentResponse>>
       getFiatPaymentResponsesBySourceAccount(
-          {String accountId, bool refresh}) async {
+          {String? accountId, required bool refresh}) async {
     if (refresh) {
       _fiatPaymentResponses =
           await NetUtil.getFiatPaymentResponsesBySourceAccount(accountId);
@@ -205,7 +205,7 @@ class AgentBloc {
 
   Future<List<StellarFiatPaymentResponse>>
       getFiatPaymentResponsesByDestinationAccount(
-          {String accountId, bool refresh}) async {
+          {String? accountId, required bool refresh}) async {
     _fiatPaymentResponses =
         await AnchorLocalDB.getFiatPaymentResponsesByDestinationAccount(
             accountId);
@@ -218,17 +218,17 @@ class AgentBloc {
     return _fiatPaymentResponses;
   }
 
-  Future<List<Agent>> getAgents({String anchorId, bool refresh}) async {
+  Future<List<Agent>> getAgents({String? anchorId, required bool refresh}) async {
     try {
       p("$cc refreshing ... getAgents .... 💧💧 refresh: $refresh");
       _agents.clear();
       if (refresh) {
-        _agents = await _readAgentsFromDatabase(anchorId);
+        _agents = await (_readAgentsFromDatabase(anchorId) as FutureOr<List<Agent>>);
       } else {
         _agents = await AnchorLocalDB.getAgents();
         p('$cc 🌿 🌿 🌿 Agents found locally : 🎁  ${_agents.length} 🎁 ');
         if (_agents.isEmpty) {
-          _agents = await _readAgentsFromDatabase(anchorId);
+          _agents = await (_readAgentsFromDatabase(anchorId) as FutureOr<List<Agent>>);
           p('$cc 🌿 🌿 🌿 Agents found remotely: 🎁  ${_agents.length} 🎁 ');
         }
         _agentController.sink.add(_agents);
@@ -245,7 +245,7 @@ class AgentBloc {
     return _agents;
   }
 
-  Future _readAgentsFromDatabase(String anchorId) async {
+  Future _readAgentsFromDatabase(String? anchorId) async {
     p('$cc 🌿 🌿 🌿 _readAgentsFromDatabase : 🎁 ');
     _agents = await NetUtil.getAgents(anchorId);
     _agentController.sink.add(_agents);
@@ -253,7 +253,7 @@ class AgentBloc {
   }
 
   Future<List<Client>> getAgentClients(
-      {String agentId, bool refresh = false}) async {
+      {String? agentId, bool refresh = false}) async {
     try {
       p("🔵 🔵 🔵 🔵 Getting agents clients from local or remote db ... agentId: $agentId");
       if (refresh) {
@@ -277,7 +277,7 @@ class AgentBloc {
     return _clients;
   }
 
-  Future<List<Client>> getAnchorClients({String anchorId, bool refresh}) async {
+  Future<List<Client>> getAnchorClients({String? anchorId, required bool refresh}) async {
     try {
       p("🔵 🔵 🔵 🔵 Getting anchor clients from local or remote db ... anchorId: $anchorId");
       if (refresh) {
@@ -301,23 +301,23 @@ class AgentBloc {
     return _clients;
   }
 
-  Future<List<Client>> _getRemoteClients(String agentId) async {
+  Future<List<Client>> _getRemoteClients(String? agentId) async {
     p('🔵 🔵 🔵 🔵 Getting agents clients from REMOTE database ...');
     _clients = await NetUtil.getAgentClients(agentId);
     _clientController.sink.add(_clients);
     return _clients;
   }
 
-  Future<List<Client>> _getRemoteAnchorClients(String anchorId) async {
+  Future<List<Client>> _getRemoteAnchorClients(String? anchorId) async {
     p('🔵 🔵 🔵 🔵 Getting anchor clients from REMOTE database ...');
     _clients = await NetUtil.getAnchorClients(anchorId);
     _clientController.sink.add(_clients);
     return _clients;
   }
 
-  Future<StellarAccountBag> getBalances(
-      {String accountId, bool refresh}) async {
-    StellarAccountBag bag;
+  Future<StellarAccountBag?> getBalances(
+      {String? accountId, required bool refresh}) async {
+    StellarAccountBag? bag;
     try {
       if (refresh) {
         p('🍎 AgentBloc: NetUtil.getAccountBalances .... $accountId ..... ');
@@ -332,7 +332,7 @@ class AgentBloc {
       _balances.clear();
       if (bag != null) {
         p('🌿 🌿 🌿 Balances found on database : 🎁 in stream: '
-            '${bag.balances.length} 🎁 ');
+            '${bag.balances!.length} 🎁 ');
         AnchorLocalDB.addBalance(bag: bag, accountId: accountId);
         _balances.add(bag);
         _balancesController.sink.add(_balances);

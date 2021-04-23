@@ -9,23 +9,23 @@
 import 'package:flutter/material.dart';
 
 class PaymentRequest {
-  String anchorId, agentId;
-  String clientId, loanId, destinationAccount;
-  String sourceAccount;
-  String amount;
-  String date, seed, assetCode;
+  String? anchorId, agentId;
+  String? clientId, loanId, destinationAccount;
+  String? sourceAccount;
+  String? amount;
+  String? date, seed, assetCode;
 
   PaymentRequest(
-      {@required this.anchorId,
+      {required this.anchorId,
       this.agentId,
       this.clientId,
       this.loanId,
-      @required this.date,
-      @required this.seed,
-      @required this.assetCode,
-      @required this.amount,
-      @required this.destinationAccount,
-      @required this.sourceAccount}); //
+      required this.date,
+      required this.seed,
+      required this.assetCode,
+      required this.amount,
+      required this.destinationAccount,
+      required this.sourceAccount}); //
   //
 
   PaymentRequest.fromJson(Map data) {
@@ -68,17 +68,17 @@ class AgentFundingRequest {
             date, anchorId,
             agentId;
    */
-  String anchorId, agentId, userId;
-  String amount;
-  String date, assetCode;
+  String? anchorId, agentId, userId;
+  String? amount;
+  String? date, assetCode;
 
   AgentFundingRequest(
-      {@required this.anchorId,
-      @required this.agentId,
-      @required this.date,
-      @required this.assetCode,
-      @required this.amount,
-      @required this.userId}); //
+      {required this.anchorId,
+      required this.agentId,
+      required this.date,
+      required this.assetCode,
+      required this.amount,
+      required this.userId}); //
   //
 
   AgentFundingRequest.fromJson(Map data) {

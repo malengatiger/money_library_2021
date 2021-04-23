@@ -9,10 +9,10 @@ class OwzoPaymentRequest {
      String TokenProfileId, Token;
 
    */
-  String siteCode, countryCode, currencyCode, customer;
-  double amount;
-  bool registerTokenProfile, isTest;
-  String successUrl,
+  String? siteCode, countryCode, currencyCode, customer;
+  double? amount;
+  bool? registerTokenProfile, isTest;
+  String? successUrl,
       cancelUrl,
       notifyUrl,
       transactionReference,
