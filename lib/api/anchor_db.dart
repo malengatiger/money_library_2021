@@ -65,6 +65,13 @@ class AnchorLocalDB {
 2021-04-17 04:09:38.527 30015-30088/com.boha.money_admin_2021 I/flutter: AnchorLocalDB: 🦠🦠🦠🦠🦠  🥬 Transactions retrieved from local Hive: 🍎 102
 2021-04-17 04:09:38.527 30015-30088/com.boha.money_admin_2021 I/flutter: AgentBloc: 🎁 🎁 🎁  transactions found: 102
  */
+  static Future addPathPaymentRequests(
+      List<PathPaymentRequest> requests) async {
+    requests.forEach((element) async {
+      await addPathPaymentRequest(element);
+    });
+  }
+
   static Future addPathPaymentRequest(PathPaymentRequest request) async {
     await _connectLocalDB();
     pathpaymentBox.put(request.pathPaymentRequestId, request.toJson());
@@ -73,13 +80,20 @@ class AnchorLocalDB {
         '${pathpaymentBox.keys.length} records ${request.toJson()}');
   }
 
+  static Future addStellarFiatPaymentResponses(
+      List<StellarFiatPaymentResponse> responses) async {
+    responses.forEach((element) async {
+      await addStellarFiatPaymentResponse(element);
+    });
+  }
+
   static Future addStellarFiatPaymentResponse(
       StellarFiatPaymentResponse response) async {
     await _connectLocalDB();
     fiatPaymentBox.put(response.paymentRequestId, response.toJson());
 
     p('$aa StellarFiatPaymentResponse added or changed: 🍎 '
-        '${pathpaymentBox.keys.length} records ${response.toJson()}');
+        '${fiatPaymentBox.keys.length} records ${response.toJson()}');
   }
 
   static Future addPayment(PaymentDTO payment) async {
@@ -137,7 +151,7 @@ class AnchorLocalDB {
           {String anchorId, String fromDate, String toDate}) async {
     await _connectLocalDB();
     List<StellarFiatPaymentResponse> mList = [];
-    var values = pathpaymentBox.values;
+    var values = fiatPaymentBox.values;
 
     values.forEach((element) {
       var m = StellarFiatPaymentResponse.fromJson(element);
@@ -152,7 +166,8 @@ class AnchorLocalDB {
       }
     });
 
-    p('$aa 🥬 StellarFiatPaymentResponses retrieved from local Hive: 🍎 ${mList.length}');
+    p('$aa 🥬 StellarFiatPaymentResponses retrieved from local Hive: 🍎 '
+        '${mList.length}');
     return mList;
   }
 

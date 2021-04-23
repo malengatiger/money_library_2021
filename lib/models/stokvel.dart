@@ -270,7 +270,7 @@ class StokkieCredentials {
   StokkieCredentials(this.credentials);
 
   StokkieCredentials.fromJson(Map map) {
-    credentials = List();
+    credentials = [];
     if (map['credentials'] != null) {
       List mm = map['credentials'];
       mm.forEach((m) {
@@ -300,7 +300,7 @@ class Stokvels {
   Stokvels(this.stokvels);
 
   Stokvels.fromJson(Map map) {
-    stokvels = List();
+    stokvels = [];
     if (map['stokvels'] != null) {
       List mm = map['stokvels'];
       mm.forEach((m) {
@@ -327,7 +327,7 @@ class Members {
   Members(this.members);
 
   Members.fromJson(Map map) {
-    members = List();
+    members = [];
     if (map['members'] != null) {
       List mm = map['members'];
       mm.forEach((m) {
@@ -354,7 +354,7 @@ class MemberPayments {
   MemberPayments(this.memberPayments);
 
   MemberPayments.fromJson(Map map) {
-    memberPayments = List();
+    memberPayments = [];
     if (map['memberPayments'] != null) {
       List mm = map['memberPayments'];
       mm.forEach((m) {
@@ -380,7 +380,7 @@ class StokvelPayments {
   StokvelPayments(this.stokvelPayments);
 
   StokvelPayments.fromJson(Map map) {
-    stokvelPayments = List();
+    stokvelPayments = [];
     if (map['stokvelPayments'] != null) {
       List mm = map['stokvelPayments'];
       mm.forEach((m) {
@@ -432,21 +432,21 @@ class StokvelGoal {
     targetDate = map['targetDate'];
     isActive = map['isActive'];
     //
-    payments = List<StokvelPayment>();
+    payments = [];
     if (map['payments'] != null) {
       List mList = map['payments'];
       mList.forEach((m) {
         payments.add(StokvelPayment.fromJson(m));
       });
     }
-    imageUrls = List<String>();
+    imageUrls = [];
     if (map['imageUrls'] != null) {
       List mList = map['imageUrls'];
       mList.forEach((u) {
         imageUrls.add(u as String);
       });
     }
-    beneficiaries = List<Member>();
+    beneficiaries = [];
     if (map['beneficiaries'] != null) {
       List mList = map['beneficiaries'];
       mList.forEach((m) {
@@ -467,7 +467,7 @@ class StokvelGoal {
     beneficiaries.forEach((p) {
       bList.add(p.toJson());
     });
-    var uList = List<String>();
+    var uList = [];
     imageUrls.forEach((p) {
       uList.add(p);
     });

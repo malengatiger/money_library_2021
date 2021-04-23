@@ -128,9 +128,9 @@ class NetUtil {
     List<StellarFiatPaymentResponse> list = [];
     for (var value in resp) {
       var tx = StellarFiatPaymentResponse.fromJson(value);
-      await AnchorLocalDB.addStellarFiatPaymentResponse(tx);
       list.add(tx);
     }
+    await AnchorLocalDB.addStellarFiatPaymentResponses(list);
 
     return list;
   }

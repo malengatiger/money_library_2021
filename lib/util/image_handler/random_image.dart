@@ -3,7 +3,7 @@ import 'dart:math';
 import '../util.dart';
 
 class RandomImage {
-  static List<String> images = List();
+  static List<String> images = [];
   static Random _random = Random(DateTime.now().millisecondsSinceEpoch);
   RandomImage() {
     p('RandomImage constructor 🔆 🔆 🔆 🔆 ');
@@ -14,7 +14,7 @@ class RandomImage {
     if (count > images.length) {
       throw Exception("Not enough images to satisfy your needs");
     }
-    var  list = List<String>();
+    var list = [];
     for (var i = 0; i < count; i++) {
       list.add(images[i]);
     }

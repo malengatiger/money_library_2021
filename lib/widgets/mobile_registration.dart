@@ -220,9 +220,7 @@ class _RegistrationMobileState extends State<RegistrationMobile>
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-                      RaisedButton(
-                        color: Colors.teal[300],
-                        elevation: 8,
+                      ElevatedButton(
                         child: Padding(
                           padding: const EdgeInsets.all(16.0),
                           child: Text(

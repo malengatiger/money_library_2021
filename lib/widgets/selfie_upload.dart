@@ -156,9 +156,7 @@ class _SelfieUploadState extends State<SelfieUpload> {
                             radius: 300,
                             fromNetwork: false),
                     Spacer(),
-                    RaisedButton(
-                      color: Colors.pink[300],
-                      elevation: 4,
+                    ElevatedButton(
                       child: Padding(
                         padding: const EdgeInsets.all(16.0),
                         child: Text(

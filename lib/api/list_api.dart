@@ -9,7 +9,7 @@ class ListAPI {
         .collection('stokvels')
         .where('adminMember.memberId', isEqualTo: memberId)
         .get();
-    var mList = List<Stokvel>();
+    var mList = [];
     querySnapshot.docs.forEach((doc) {
       mList.add(Stokvel.fromJson(doc.data()));
     });
@@ -18,7 +18,7 @@ class ListAPI {
 
   static Future<List<Stokvel>> getStokvels() async {
     var querySnapshot = await _firestore.collection('stokvels').get();
-    var mList = List<Stokvel>();
+    var mList = [];
     querySnapshot.docs.forEach((doc) {
       mList.add(Stokvel.fromJson(doc.data()));
     });
@@ -31,7 +31,7 @@ class ListAPI {
         .collection('stokvels')
         .where('stokvelId', isEqualTo: stokvelId)
         .get();
-    var mList = List<Stokvel>();
+    var mList = [];
     var stokvel;
     ;
     querySnapshot.docs.forEach((doc) {
@@ -53,7 +53,7 @@ class ListAPI {
         .collection('invitations')
         .where('email', isEqualTo: email)
         .get();
-    var mList = List<Invitation>();
+    var mList = [];
     querySnapshot.docs.forEach((doc) {
       mList.add(Invitation.fromJson(doc.data()));
     });
@@ -65,7 +65,7 @@ class ListAPI {
         .collection('members')
         .where('stokvelIds', arrayContains: stokvelId)
         .get();
-    var mList = List<Member>();
+    var mList = [];
     querySnapshot.docs.forEach((doc) {
       mList.add(Member.fromJson(doc.data()));
     });
@@ -75,7 +75,7 @@ class ListAPI {
 
   static Future<String> getStokvelSeed(String stokvelId) async {
     var cred = await getStokvelCredential(stokvelId);
-    return null; //makerBloc.getDecryptedSeed(cred);
+    return cred.cryptKey; //makerBloc.getDecryptedSeed(cred);
   }
 
   static Future<StokkieCredential> getStokvelCredential(
@@ -85,7 +85,7 @@ class ListAPI {
         .where('stokvelId', isEqualTo: stokvelId)
         .limit(1)
         .get();
-    var mList = List<StokkieCredential>();
+    var mList = [];
     querySnapshot.docs.forEach((doc) {
       mList.add(StokkieCredential.fromJson(doc.data()));
     });
@@ -103,7 +103,7 @@ class ListAPI {
         .where('memberId', isEqualTo: memberId)
         .limit(1)
         .get();
-    var mList = List<StokkieCredential>();
+    var mList = [];
     querySnapshot.docs.forEach((doc) {
       mList.add(StokkieCredential.fromJson(doc.data()));
     });
@@ -121,7 +121,7 @@ class ListAPI {
         .where('stokvelGoalId', isEqualTo: stokvelGoalId)
         .limit(1)
         .get();
-    var mList = List<StokvelGoal>();
+    var mList = [];
     querySnapshot.docs.forEach((doc) {
       mList.add(StokvelGoal.fromJson(doc.data()));
     });
@@ -138,7 +138,7 @@ class ListAPI {
         .where('stokvel.stokvelId', isEqualTo: stokvelId)
         .limit(PAYMENT_LIST_LIMIT)
         .get();
-    var mList = List<StokvelGoal>();
+    var mList = [];
     querySnapshot.docs.forEach((doc) {
       mList.add(StokvelGoal.fromJson(doc.data()));
     });
@@ -153,7 +153,7 @@ class ListAPI {
         .where('stokvel.stokvelId', isEqualTo: stokvelId)
         .limit(PAYMENT_LIST_LIMIT)
         .get();
-    var mList = List<StokvelPayment>();
+    var mList = [];
     querySnapshot.docs.forEach((doc) {
       mList.add(StokvelPayment.fromJson(doc.data()));
     });
@@ -169,7 +169,7 @@ class ListAPI {
         .where('fromMember.memberId', isEqualTo: memberId)
         .limit(PAYMENT_LIST_LIMIT)
         .get();
-    var mList = List<MemberPayment>();
+    var mList = [];
     querySnapshot.docs.forEach((doc) {
       mList.add(MemberPayment.fromJson(doc.data()));
     });
@@ -184,7 +184,7 @@ class ListAPI {
         .where('toMember.memberId', isEqualTo: memberId)
         .limit(PAYMENT_LIST_LIMIT)
         .get();
-    var mList = List<MemberPayment>();
+    var mList = [];
     querySnapshot.docs.forEach((doc) {
       mList.add(MemberPayment.fromJson(doc.data()));
     });
@@ -198,7 +198,7 @@ class ListAPI {
         .limit(1)
         .get();
 
-    var mList = List<Member>();
+    var mList = [];
     querySnapshot.docs.forEach((doc) {
       mList.add(Member.fromJson(doc.data()));
     });

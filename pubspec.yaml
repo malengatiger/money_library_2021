@@ -12,34 +12,33 @@ dependencies:
     sdk: flutter
 
   cupertino_icons: ^1.0.2
-  firebase_auth: ^1.1.0
-  firebase_core: ^1.0.3
-  firebase_messaging: ^9.1.1
-  cloud_firestore: ^1.0.5
-  hive: ^2.0.3
-
-  responsive_builder:
-  shared_preferences:
-  intl:
+  firebase_auth: ^1.1.1
+  firebase_core: ^1.0.4
+  firebase_messaging: ^9.1.2
+  cloud_firestore: ^1.0.6
+  hive: ^2.0.4
+  responsive_builder: ^0.4.1
+  shared_preferences: ^2.0.5
+  intl: ^0.17.0
   http: ^0.13.1
-  uuid:
-  flutter_dotenv:
-  animations:
-  page_transition:
-  google_fonts:
-  cached_network_image:
-  image_picker:
-  qrscan:
-  circular_profile_avatar:
-  autocomplete_textfield:
-  qr_flutter:
-  dots_indicator:
-  file_picker:
-  url_launcher:
-  introduction_screen:
-  oauth2_client: ^2.0.1
-  uni_links: ^0.4.0
-  syncfusion_flutter_charts: ^19.1.56
+  uuid: ^3.0.4
+  flutter_dotenv: ^4.0.0-nullsafety.0
+  animations: ^2.0.0
+  page_transition: ^2.0.1-nullsafety.0
+  google_fonts: ^2.0.0
+  cached_network_image: ^3.0.0
+  image_picker: ^0.7.4
+  qrscan: ^0.3.1
+  circular_profile_avatar: ^2.0.1-nullsafety
+  qr_flutter: ^4.0.0
+  dots_indicator: ^2.0.0
+  file_picker: ^3.0.1
+  url_launcher: ^6.0.3
+  introduction_screen: ^2.1.0
+  oauth2_client: ^2.1.0
+  uni_links2: ^0.6.0+2
+  syncfusion_flutter_charts: ^19.1.57+1
+  flutter_deep_linking: ^0.2.1
 
 dev_dependencies:
   flutter_test:

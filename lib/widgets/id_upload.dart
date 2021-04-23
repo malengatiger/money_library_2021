@@ -169,9 +169,7 @@ class _IDUploadState extends State<IDUpload> {
                             width: 320,
                           ),
                     Spacer(),
-                    RaisedButton(
-                      color: Colors.pink[300],
-                      elevation: 4,
+                    ElevatedButton(
                       child: Padding(
                         padding: const EdgeInsets.all(16.0),
                         child: Text(
@@ -216,9 +214,7 @@ class _IDUploadState extends State<IDUpload> {
                             width: 320,
                           ),
                     Spacer(),
-                    RaisedButton(
-                      color: Colors.indigo[300],
-                      elevation: 4,
+                    ElevatedButton(
                       child: Padding(
                         padding: const EdgeInsets.all(16.0),
                         child: Text(

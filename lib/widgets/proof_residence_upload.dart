@@ -150,9 +150,7 @@ class _ProofOfResidenceUploadState extends State<ProofOfResidenceUpload> {
                           )
                         : Image.file(_proofOfResidenceFile),
                     Spacer(),
-                    RaisedButton(
-                      color: Colors.pink[300],
-                      elevation: 4,
+                    ElevatedButton(
                       child: Text(
                         'Upload Proof Of Residence',
                         style: Styles.whiteSmall,

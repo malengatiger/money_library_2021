@@ -9,7 +9,6 @@ import 'package:money_library_2021/util/util.dart';
 //We are going to use the google client for this example...
 import 'package:oauth2_client/google_oauth2_client.dart';
 import 'package:oauth2_client/oauth2_helper.dart';
-import 'package:uni_links/uni_links.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class StitchPaymentPage extends StatefulWidget {
@@ -25,16 +24,24 @@ class _StitchPaymentPageState extends State<StitchPaymentPage>
   var url = 'https://secure.stitch.money/connect/authorize';
   var clientId = 'test-3e463858-6832-49f3-a598-b2e4a9e14113';
   String paymentRequestResponse;
-
+  // var _type = UniLinksType.string;
   StreamSubscription _sub;
+// Platform messages are asynchronous, so we initialize in an async method.
+//   Future<void> initPlatformState() async {
+//     if (_type == UniLinksType.string) {
+//       await initPlatformStateForStringUniLinks();
+//     } else {
+//       await initPlatformStateForUriUniLinks();
+//     }
+//   }
 
   Future<Null> initUniLinks() async {
     p('$mm .............. listening to uniLinks stream');
-    _sub = getLinksStream().listen((String link) {
-      p('$mm listen fired: $link');
-    }, onError: (err) {
-      p(err);
-    });
+    // _sub = getLinksStream().listen((String link) {
+    //   p('$mm listen fired: $link');
+    // }, onError: (err) {
+    //   p(err);
+    // });
     _sub.onData((data) {
       p('$mm LinksStream subscription onData fired: $data');
       // https://blackox-anchor-cgquhgy5vq-ew.a.run.app/anchor/api/v1/receiveStitchPaymentRequestResponse?id=cGF5cmVxLzRjMmU3NmRkLTg2ZWUtNGM5NC1iZmNhLWIwMWQ1ZDlhMzRhZg%3d%3d&status=complete
@@ -219,9 +226,7 @@ class _StitchPaymentPageState extends State<StitchPaymentPage>
                                 SizedBox(
                                   height: 40,
                                 ),
-                                RaisedButton(
-                                  elevation: 16,
-                                  color: Colors.indigo[400],
+                                ElevatedButton(
                                   onPressed: _getPaymentRequestURL,
                                   child: Padding(
                                     padding: const EdgeInsets.all(12.0),

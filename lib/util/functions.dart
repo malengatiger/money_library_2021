@@ -6,13 +6,13 @@ import 'package:intl/intl.dart';
 
 import 'util.dart';
 
-List<String> logs = List();
+List<String> logs = [];
 bool isBusy = false;
 
 ///Global key to help navigate from anywhere the app;
 GlobalKey<NavigatorState> navigatorKey = GlobalKey();
 
-List<Color> _colors = List();
+List<Color> _colors = [];
 Random _rand = Random(new DateTime.now().millisecondsSinceEpoch);
 
 Color getRandomColor() {
