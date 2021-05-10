@@ -17,6 +17,7 @@ dependencies:
   firebase_messaging: ^9.1.2
   cloud_firestore: ^1.0.6
   hive: ^2.0.4
+  hive_flutter: ^1.0.0
   responsive_builder: ^0.4.1
   shared_preferences: ^2.0.5
   intl: ^0.17.0
@@ -29,20 +30,23 @@ dependencies:
   cached_network_image: ^3.0.0
   image_picker: ^0.7.4
   qrscan: ^0.3.1
-  circular_profile_avatar: ^2.0.1-nullsafety
+  circular_profile_avatar: ^2.0.0
   qr_flutter: ^4.0.0
   dots_indicator: ^2.0.0
   file_picker: ^3.0.1
   url_launcher: ^6.0.3
   introduction_screen: ^2.1.0
   oauth2_client: ^2.1.0
-  uni_links2: ^0.6.0+2
+#  uni_links2: ^0.6.0+2
   syncfusion_flutter_charts: ^19.1.57+1
   flutter_deep_linking: ^0.2.1
+  uni_links: ^0.5.1
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  build_runner: ^2.0.1
+  hive_generator: ^1.1.0
 
 flutter:
 

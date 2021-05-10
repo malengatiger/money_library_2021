@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:money_library_2021/api/net.dart';
 import 'package:money_library_2021/models/stitch/models.dart';
 import 'package:money_library_2021/util/functions.dart';
@@ -9,6 +10,7 @@ import 'package:money_library_2021/util/util.dart';
 //We are going to use the google client for this example...
 import 'package:oauth2_client/google_oauth2_client.dart';
 import 'package:oauth2_client/oauth2_helper.dart';
+import 'package:uni_links/uni_links.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class StitchPaymentPage extends StatefulWidget {
@@ -24,50 +26,54 @@ class _StitchPaymentPageState extends State<StitchPaymentPage>
   var url = 'https://secure.stitch.money/connect/authorize';
   var clientId = 'test-3e463858-6832-49f3-a598-b2e4a9e14113';
   String? paymentRequestResponse;
-  // var _type = UniLinksType.string;
-  late StreamSubscription _sub;
-// Platform messages are asynchronous, so we initialize in an async method.
-//   Future<void> initPlatformState() async {
-//     if (_type == UniLinksType.string) {
-//       await initPlatformStateForStringUniLinks();
-//     } else {
-//       await initPlatformStateForUriUniLinks();
-//     }
-//   }
+  // ignore: cancel_subscriptions
+  StreamSubscription? _sub;
 
-  Future<Null> initUniLinks() async {
-    p('$mm .............. listening to uniLinks stream');
-    // _sub = getLinksStream().listen((String link) {
-    //   p('$mm listen fired: $link');
-    // }, onError: (err) {
-    //   p(err);
-    // });
-    _sub.onData((data) {
-      p('$mm LinksStream subscription onData fired: $data');
-      // https://blackox-anchor-cgquhgy5vq-ew.a.run.app/anchor/api/v1/receiveStitchPaymentRequestResponse?id=cGF5cmVxLzRjMmU3NmRkLTg2ZWUtNGM5NC1iZmNhLWIwMWQ1ZDlhMzRhZg%3d%3d&status=complete
-      String mData = data as String;
-      int i = mData.indexOf("=");
-      int j = mData.indexOf("&");
-      paymentId = mData.substring(i + 1, j);
-      p('$mm paymentId: $paymentId $mm');
-      //
-      var index = mData.lastIndexOf('=');
-      if (index > 0) {
-        paymentStatus = mData.substring(index + 1);
-        p('$mm paymentStatus: $paymentStatus $mm');
-      }
-      _sendPaymentStatus();
-      if (mounted) {
-        p('$mm .............. setting state .........');
-        setState(() {});
-      }
-      //todo - send this id and status to backend - write ZARK to user account
-    });
-    _sub.onDone(() {
-      p('$mm sub onDone ....');
-    });
+  @override
+  void initState() {
+    _controller = AnimationController(vsync: this);
+    super.initState();
+    initUniLinks();
+  }
 
-    // NOTE: Don't forget to call _sub.cancel() in dispose()
+  Future<void> initUniLinks() async {
+    // Platform messages may fail, so we use a try/catch PlatformException.
+    try {
+      final initialLink = await getInitialLink();
+      p('$mm initUniLinks: initialLink? what the fuck is this?? : $initialLink');
+      // Parse the link and warn the user, if it is not correct,
+      // but keep in mind it could be `null`.
+      // Attach a listener to the stream
+      _sub = linkStream.listen((String? link) {
+        // Parse the link and warn the user, if it is not correct
+        p('$mm LinksStream subscription listen fired: $link');
+        // https://blackox-anchor-cgquhgy5vq-ew.a.run.app/anchor/api/v1/receiveStitchPaymentRequestResponse?id=cGF5cmVxLzRjMmU3NmRkLTg2ZWUtNGM5NC1iZmNhLWIwMWQ1ZDlhMzRhZg%3d%3d&status=complete
+        String mData = link as String;
+        int i = mData.indexOf("=");
+        int j = mData.indexOf("&");
+        paymentId = mData.substring(i + 1, j);
+        p('$mm paymentId: $paymentId $mm');
+        //
+        var index = mData.lastIndexOf('=');
+        if (index > 0) {
+          paymentStatus = mData.substring(index + 1);
+          p('$mm paymentStatus: $paymentStatus $mm');
+        }
+        _sendPaymentStatus();
+        if (mounted) {
+          p('$mm .............. setting state .........');
+          setState(() {});
+        }
+        //todo - send this id and status to backend - write ZARK to user account
+      }, onError: (err) {
+        // Handle exception by warning the user their action did not succeed
+      });
+
+      // NOTE: Don't forget to call _sub.cancel() in dispose()
+    } on PlatformException {
+      p('$mm PlatformException: Handle exception by warning the user their action did not succeed');
+      // return?
+    }
   }
 
   void _sendPaymentStatus() async {
@@ -81,15 +87,9 @@ class _StitchPaymentPageState extends State<StitchPaymentPage>
 
     p('$mm sending StitchPaymentStatusRecord .... ${rec.toJson()}');
     String? stitchResponseJSON = await (NetUtil.post(
-        apiRoute: 'addStablecoinToAccount', bag: rec.toJson()) as FutureOr<String?>);
+        apiRoute: 'addStablecoinToAccount',
+        bag: rec.toJson()) as FutureOr<String?>);
     p('$mm addStablecoinToAccount response: $stitchResponseJSON');
-  }
-
-  @override
-  void initState() {
-    _controller = AnimationController(vsync: this);
-    super.initState();
-    initUniLinks();
   }
 
   static const mm = 'StitchPage: 🌺 🌺 🌺 ';
@@ -101,20 +101,22 @@ class _StitchPaymentPageState extends State<StitchPaymentPage>
   @override
   void dispose() {
     _controller.dispose();
-    _sub.cancel();
+    _sub!.cancel();
     super.dispose();
   }
 
   void _getPaymentRequestURL() async {
-    p('$mm ........ _getPaymentRequestURL from Stitch ...');
+    p('\n\n$mm ........ _getPaymentRequestURL from Stitch ... $mm');
     setState(() {
       busy = true;
     });
     try {
-      Map<String, dynamic> stitchResponseJSON = await (NetUtil.getWithNoAuth(
-          apiRoute:
-              'createPaymentRequest?amount=${amtController.text}&currency=ZAR&reference=${referenceController.text}',
-          mTimeOut: 90000) as FutureOr<Map<String, dynamic>>);
+      var mUrl =
+          'createPaymentRequest?amount=${amtController.text}&currency=ZAR&reference=${referenceController.text}';
+      p('$mm mUrl: $mUrl');
+
+      Map<String, dynamic> stitchResponseJSON =
+          await (NetUtil.getWithNoAuth(apiRoute: mUrl, mTimeOut: 90000));
       StitchResponse stitchResponse =
           StitchResponse.fromJson(stitchResponseJSON);
 

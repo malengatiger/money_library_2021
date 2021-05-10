@@ -6,7 +6,9 @@ class Anchor {
       countryCode,
       anchorCurrencyCode,
       assetCode;
-  Account? baseStellarAccount, issuingStellarAccount, distributionStellarAccount;
+  Account? baseStellarAccount,
+      issuingStellarAccount,
+      distributionStellarAccount;
   AnchorUser? anchorUser;
   String? date;
   List<Asset>? assets;

@@ -5,31 +5,50 @@ String sourceAccount,  destinationAccount;
     boolean success;
 
  */
-class PathPaymentRequest {
-  String? anchorId, sourceAccount, pathPaymentRequestId;
-  String? date,
-      dateUpdated,
-      destinationAccount,
-      sourceAssetCode,
-      destinationAssetCode,
-      sendAmount,
-      destinationMin,
-      token;
-  bool? success;
+import 'package:hive/hive.dart';
+
+part 'path_payment_request.g.dart';
+
+@HiveType(typeId: 0)
+class PathPaymentRequest extends HiveObject {
+  @HiveField(0)
+  late String? anchorId;
+  @HiveField(1)
+  late String? sourceAccount;
+  @HiveField(2)
+  late String? pathPaymentRequestId;
+  @HiveField(3)
+  late String? date;
+  @HiveField(4)
+  late String? dateUpdated;
+  @HiveField(5)
+  late String? destinationAccount;
+  @HiveField(6)
+  late String? sourceAssetCode;
+  @HiveField(7)
+  late String? destinationAssetCode;
+  @HiveField(8)
+  late String? sendAmount;
+  @HiveField(9)
+  late String? destinationMin;
+  @HiveField(10)
+  late String? token;
+  @HiveField(11)
+  late bool? success;
 
   PathPaymentRequest(
-      {this.anchorId,
-      this.sourceAccount,
-      this.date,
-      this.dateUpdated,
-      this.destinationAccount,
-      this.sourceAssetCode,
-      this.destinationAssetCode,
-      this.sendAmount,
-      this.destinationMin,
-      this.token,
-      this.pathPaymentRequestId,
-      this.success});
+      {required this.anchorId,
+      required this.sourceAccount,
+      required this.date,
+      required this.dateUpdated,
+      required this.destinationAccount,
+      required this.sourceAssetCode,
+      required this.destinationAssetCode,
+      required this.sendAmount,
+      required this.destinationMin,
+      required this.token,
+      required this.pathPaymentRequestId,
+      required this.success});
 
   PathPaymentRequest.fromJson(Map data) {
     this.anchorId = data['anchorId'];

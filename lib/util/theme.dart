@@ -74,7 +74,8 @@ class ThemeUtil {
     } else {
       index = themeIndex;
     }
-    return _themes.elementAt(index!);
+
+    return _themes.elementAt(index);
   }
 
   static int getThemeCount() {

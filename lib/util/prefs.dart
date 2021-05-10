@@ -149,8 +149,7 @@ class Prefs {
     }
     var jx = json.decode(string);
     var name = new Anchor.fromJson(jx);
-    print(
-        "🌽 🌽 🌽 Prefs.getAnchor 🧩🧩🧩🧩 ......ANCHOR:  🧩 ${name.name} retrieved 🧩");
+    p("🌽 🌽 🌽 Prefs.getAnchor 🧩🧩🧩🧩 ......ANCHOR:  🧩 ${name.name} retrieved 🧩");
     return name;
   }
 

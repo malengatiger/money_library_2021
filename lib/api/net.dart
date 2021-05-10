@@ -127,10 +127,9 @@ class NetUtil {
       getFiatPaymentResponsesByAnchor(
           {String? anchorId, String? fromDate, String? toDate}) async {
     p('$bb $bb  getFiatPaymentResponsesByAnchor starting ....');
-    List resp = await (get(
-            apiRoute:
-                "getFiatPaymentResponsesByAnchor?anchorId=$anchorId&fromDate=$fromDate&toDate=$toDate")
-        as FutureOr<List<dynamic>>);
+    List resp = await get(
+        apiRoute:
+            "getFiatPaymentResponsesByAnchor?anchorId=$anchorId&fromDate=$fromDate&toDate=$toDate");
     List<StellarFiatPaymentResponse> list = [];
     for (var value in resp) {
       var tx = StellarFiatPaymentResponse.fromJson(value);
@@ -246,10 +245,9 @@ class NetUtil {
   static Future<List<PathPaymentRequest>> getPathPaymentRequestsByAnchor(
       {String? anchorId, String? fromDate, String? toDate}) async {
     p('$bb $bb  getPathPaymentRequestsByAnchor starting ....');
-    List resp = await (get(
-            apiRoute:
-                "getPathPaymentRequestsByAnchor?anchorId=$anchorId&fromDate=$fromDate&toDate=$toDate")
-        as FutureOr<List<dynamic>>);
+    List resp = await get(
+        apiRoute:
+            "getPathPaymentRequestsByAnchor?anchorId=$anchorId&fromDate=$fromDate&toDate=$toDate");
     List<PathPaymentRequest> list = [];
     for (var value in resp) {
       var tx = PathPaymentRequest.fromJson(value);
@@ -358,7 +356,7 @@ class NetUtil {
   }
 
   static Future post({required String apiRoute, required Map bag}) async {
-    var url = await (getBaseUrl() as FutureOr<String>);
+    var url = await getBaseUrl();
     String token = 'availableNot';
     try {
       token = await Auth.getAuthToken();
@@ -370,7 +368,7 @@ class NetUtil {
       'Content-Type': 'application/json'
     };
     var dur = Duration(seconds: timeOutInSeconds);
-    apiRoute = url + apiRoute;
+    if (url != null) apiRoute = url + apiRoute;
     print('$bb: POST:  ................................... 🔵 '
         '🔆 calling backend: 💙 $apiRoute 💙');
     var mBag;
@@ -409,13 +407,13 @@ class NetUtil {
   }
 
   static Future get({required String apiRoute}) async {
-    var url = await (getBaseUrl() as FutureOr<String>);
+    var url = await getBaseUrl();
     var token = await Auth.getAuthToken();
     var mHeaders = {
       'Authorization': 'Bearer $token',
       'Content-Type': 'application/json'
     };
-    apiRoute = url + apiRoute;
+    if (url != null) apiRoute = url + apiRoute;
     p('$bb GET:  🔵 '
         '🔆 .................. calling backend: 💙 $apiRoute  💙');
     var start = DateTime.now();
@@ -448,14 +446,15 @@ class NetUtil {
 
   static Future getWithNoAuth(
       {required String apiRoute, required int mTimeOut}) async {
-    var url = await (getBaseUrl() as FutureOr<String>);
+    var url = await getBaseUrl();
     var mHeaders = {'Content-Type': 'application/json'};
-    apiRoute = url + apiRoute;
+    apiRoute = '$url$apiRoute';
     p('$bb getWithNoAuth:  🔆 calling backend:  ............apiRoute: 💙 '
         '$apiRoute  💙');
     var start = DateTime.now();
     try {
-      var uriResponse = await client.get(Uri.parse(url), headers: mHeaders);
+      var uriResponse =
+          await client.get(Uri.parse(apiRoute), headers: mHeaders);
       var end = DateTime.now();
       p('$bb RESPONSE: 💙 status: ${uriResponse.statusCode} 💙 body: ${uriResponse.body}');
       if (uriResponse.statusCode == 200) {

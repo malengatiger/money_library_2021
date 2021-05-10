@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:hive/hive.dart';
 import 'package:money_library_2021/models/agent.dart';
 import 'package:money_library_2021/models/client.dart';
@@ -21,11 +20,11 @@ class AnchorLocalDB {
   static late Box balanceBox;
   static late Box loanApplicationBox;
   static late Box fiatPaymentBox;
-  static late Box pathpaymentBox;
+  static late Box pathPaymentBox;
 
-  static const aa = ' 🔵 🔵 🔵 🔵 🔵 AnchorLocalDB: ';
+  static const aa = '🔵 🔵 🔵 🔵 🔵 AnchorLocalDB(Hive): ';
 
-  static Future _connectLocalDB() async {
+  static Future initializeHive() async {
     if (agentBox == null) {
       p('$aa Connecting to Hive, getting document directory on device ... ');
 
@@ -51,10 +50,11 @@ class AnchorLocalDB {
       fiatPaymentBox = await Hive.openBox("fiatPaymentBox");
       p('$aa Hive fiatPaymentBox:  🔵  ....fiatPaymentBox.isOpen: ${fiatPaymentBox.isOpen}');
 
-      pathpaymentBox = await Hive.openBox("pathpaymentBox");
-      p('$aa Hive pathpaymentBox:  🔵  ....pathpaymentBox.isOpen: ${pathpaymentBox.isOpen}');
+      pathPaymentBox = await Hive.openBox("pathpaymentBox");
+      p('$aa Hive pathpaymentBox:  🔵  ....pathpaymentBox.isOpen: ${pathPaymentBox.isOpen}');
 
       p('$aa Hive local data ready to rumble ....$aa');
+      return '$aa Hive Initaialized OK';
     }
   }
 
@@ -73,11 +73,11 @@ class AnchorLocalDB {
   }
 
   static Future addPathPaymentRequest(PathPaymentRequest request) async {
-    await _connectLocalDB();
-    pathpaymentBox.put(request.pathPaymentRequestId, request.toJson());
+    await initializeHive();
+    pathPaymentBox.put(request.pathPaymentRequestId, request.toJson());
 
     p('$aa PathPaymentRequest added or changed: 🍎 '
-        '${pathpaymentBox.keys.length} records ${request.toJson()}');
+        '${pathPaymentBox.keys.length} records ${request.toJson()}');
   }
 
   static Future addStellarFiatPaymentResponses(
@@ -89,7 +89,7 @@ class AnchorLocalDB {
 
   static Future addStellarFiatPaymentResponse(
       StellarFiatPaymentResponse response) async {
-    await _connectLocalDB();
+    await initializeHive();
     fiatPaymentBox.put(response.paymentRequestId, response.toJson());
 
     p('$aa StellarFiatPaymentResponse added or changed: 🍎 '
@@ -97,27 +97,27 @@ class AnchorLocalDB {
   }
 
   static Future addPayment(PaymentDTO payment) async {
-    await _connectLocalDB();
+    await initializeHive();
     fiatPaymentBox.put(payment.created_at, payment.toJson());
     p('$aa Payment added or changed: 🍎 '
         '${fiatPaymentBox.keys.length} records ${payment.toJson()}');
   }
 
   static Future addAgent(Agent agent) async {
-    await _connectLocalDB();
+    await initializeHive();
     agentBox!.put(agent.agentId, agent.toJson());
     // p('$aa Agent added or changed: '
     //     '${agentBox.keys.length} records ${agent.toJson()}');
   }
 
   static Future addClient(Client client) async {
-    await _connectLocalDB();
+    await initializeHive();
     clientBox.put(client.clientId, client.toJson());
     // p('$aa Client added: ${client.toJson()}');
   }
 
   static Future<List<PaymentDTO>> getPayments() async {
-    await _connectLocalDB();
+    await initializeHive();
     List<PaymentDTO> mList = [];
     var values = fiatPaymentBox.values;
 
@@ -131,9 +131,9 @@ class AnchorLocalDB {
 
   static Future<List<PathPaymentRequest>> getPathPaymentRequestsBySourceAccount(
       String? accountId) async {
-    await _connectLocalDB();
+    await initializeHive();
     List<PathPaymentRequest> mList = [];
-    var values = pathpaymentBox.values;
+    var values = pathPaymentBox.values;
 
     values.forEach((element) {
       var m = PathPaymentRequest.fromJson(element);
@@ -149,7 +149,7 @@ class AnchorLocalDB {
   static Future<List<StellarFiatPaymentResponse>>
       getFiatPaymentResponsesByAnchor(
           {String? anchorId, String? fromDate, String? toDate}) async {
-    await _connectLocalDB();
+    await initializeHive();
     List<StellarFiatPaymentResponse> mList = [];
     var values = fiatPaymentBox.values;
 
@@ -173,9 +173,9 @@ class AnchorLocalDB {
 
   static Future<List<StellarFiatPaymentResponse>>
       getFiatPaymentResponsesByAsset(String assetCode) async {
-    await _connectLocalDB();
+    await initializeHive();
     List<StellarFiatPaymentResponse> mList = [];
-    var values = pathpaymentBox.values;
+    var values = pathPaymentBox.values;
 
     values.forEach((element) {
       var m = StellarFiatPaymentResponse.fromJson(element);
@@ -190,9 +190,9 @@ class AnchorLocalDB {
 
   static Future<List<StellarFiatPaymentResponse>>
       getFiatPaymentResponsesBySourceAccount(String? accountId) async {
-    await _connectLocalDB();
+    await initializeHive();
     List<StellarFiatPaymentResponse> mList = [];
-    var values = pathpaymentBox.values;
+    var values = pathPaymentBox.values;
 
     values.forEach((element) {
       var m = StellarFiatPaymentResponse.fromJson(element);
@@ -207,9 +207,9 @@ class AnchorLocalDB {
 
   static Future<List<StellarFiatPaymentResponse>>
       getFiatPaymentResponsesByDestinationAccount(String? accountId) async {
-    await _connectLocalDB();
+    await initializeHive();
     List<StellarFiatPaymentResponse> mList = [];
-    var values = pathpaymentBox.values;
+    var values = pathPaymentBox.values;
 
     values.forEach((element) {
       var m = StellarFiatPaymentResponse.fromJson(element);
@@ -224,9 +224,9 @@ class AnchorLocalDB {
 
   static Future<List<PathPaymentRequest>> getPathPaymentRequestsByAnchor(
       {String? anchorId, String? fromDate, String? toDate}) async {
-    await _connectLocalDB();
+    await initializeHive();
     List<PathPaymentRequest> mList = [];
-    var values = pathpaymentBox.values;
+    var values = pathPaymentBox.values;
 
     values.forEach((element) {
       var m = PathPaymentRequest.fromJson(element);
@@ -247,9 +247,9 @@ class AnchorLocalDB {
 
   static Future<List<PathPaymentRequest>>
       getPathPaymentRequestsByDestinationAccount(String? accountId) async {
-    await _connectLocalDB();
+    await initializeHive();
     List<PathPaymentRequest> mList = [];
-    var values = pathpaymentBox.values;
+    var values = pathPaymentBox.values;
 
     values.forEach((element) {
       var m = PathPaymentRequest.fromJson(element);
@@ -264,9 +264,9 @@ class AnchorLocalDB {
 
   static Future<List<StellarFiatPaymentResponse>>
       getFiatPaymentRequestsByDestinationAccount(String accountId) async {
-    await _connectLocalDB();
+    await initializeHive();
     List<StellarFiatPaymentResponse> mList = [];
-    var values = pathpaymentBox.values;
+    var values = pathPaymentBox.values;
 
     values.forEach((element) {
       var m = StellarFiatPaymentResponse.fromJson(element);
@@ -280,7 +280,7 @@ class AnchorLocalDB {
   }
 
   static Future<List<Agent>> getAgents() async {
-    await _connectLocalDB();
+    await initializeHive();
     List<Agent> mList = [];
     var values = agentBox!.values;
 
@@ -294,7 +294,7 @@ class AnchorLocalDB {
 
   //
   static Future<List<Client>> getClientsByAgent(String? agentId) async {
-    await _connectLocalDB();
+    await initializeHive();
     List<Client> clientList = await getAllClients();
 
     clientList.forEach((client) {
@@ -310,7 +310,7 @@ class AnchorLocalDB {
   }
 
   static Future<List<Client>> getAllClients() async {
-    await _connectLocalDB();
+    await initializeHive();
     List<Client> clientList = [];
     List values = clientBox.values.toList();
     values.forEach((element) {
@@ -322,21 +322,21 @@ class AnchorLocalDB {
   }
 
   static Future<Client> getClient(String clientId) async {
-    await _connectLocalDB();
+    await initializeHive();
     var map = clientBox.get(clientId);
     return Client.fromJson(map);
   }
 
   static Future addBalance(
       {required String? accountId, required StellarAccountBag bag}) async {
-    await _connectLocalDB();
+    await initializeHive();
     balanceBox.put(accountId, bag.toJson());
     p('$aa 🍎 addBalance: 🌼 ${bag.balances!.length} added... 🔵 🔵 ');
     return 0;
   }
 
   static Future<StellarAccountBag?> getLastBalances(String? accountId) async {
-    await _connectLocalDB();
+    await initializeHive();
     var bal = balanceBox.get(accountId);
     if (bal == null) {
       return null;
@@ -353,7 +353,7 @@ class AnchorLocalDB {
   }
 
   static Future<List<StellarAccountBag>> getAllBalances() async {
-    await _connectLocalDB();
+    await initializeHive();
     List<StellarAccountBag> mList = [];
     balanceBox.values.forEach((element) {
       var bal = StellarAccountBag.fromJson(element);
@@ -365,13 +365,13 @@ class AnchorLocalDB {
 
   static Future addLoanApplication(
       {required LoanApplication loanApplication}) async {
-    await _connectLocalDB();
+    await initializeHive();
     loanApplicationBox.put(loanApplication.loanId, loanApplication.toJson());
     return 0;
   }
 
   static Future<Agent> getAgentById(String agentId) async {
-    await _connectLocalDB();
+    await initializeHive();
     var data = agentBox!.get(agentId);
     return Agent.fromJson(data);
   }

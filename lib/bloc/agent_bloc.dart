@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter/material.dart';
 import 'package:money_library_2021/api/anchor_db.dart';
 import 'package:money_library_2021/api/net.dart';
 import 'package:money_library_2021/models/agent.dart';
@@ -115,8 +114,11 @@ class AgentBloc {
   }
 
   Future<List<PathPaymentRequest>> getPathPaymentRequestsByAnchor(
-      {String? anchorId, String? fromDate, String? toDate, required bool refresh}) async {
-    p('$cc getPathPaymentRequestsByAnchor: anchorId: $anchorId refresh: $refresh');
+      {String? anchorId,
+      String? fromDate,
+      String? toDate,
+      required bool refresh}) async {
+    p('$cc ............ getPathPaymentRequestsByAnchor: anchorId: $anchorId refresh: $refresh');
 
     if (refresh) {
       _pathPaymentRequests = await NetUtil.getPathPaymentRequestsByAnchor(
@@ -131,7 +133,7 @@ class AgentBloc {
     }
 
     _pathPaymentController.sink.add(_pathPaymentRequests);
-    p('$cc getPathPaymentRequestsByAnchor found: ${_pathPaymentRequests.length}');
+    p('$cc ........................... getPathPaymentRequestsByAnchor found: ${_pathPaymentRequests.length}');
     return _pathPaymentRequests;
   }
 
@@ -163,7 +165,10 @@ class AgentBloc {
   }
 
   Future<List<StellarFiatPaymentResponse>> getFiatPaymentResponsesByAnchor(
-      {String? anchorId, String? fromDate, String? toDate, required bool refresh}) async {
+      {String? anchorId,
+      String? fromDate,
+      String? toDate,
+      required bool refresh}) async {
     p('$cc getFiatPaymentResponsesByAnchor: anchorId: $anchorId $cc  refresh: $refresh');
 
     if (refresh) {
@@ -218,17 +223,20 @@ class AgentBloc {
     return _fiatPaymentResponses;
   }
 
-  Future<List<Agent>> getAgents({String? anchorId, required bool refresh}) async {
+  Future<List<Agent>> getAgents(
+      {String? anchorId, required bool refresh}) async {
     try {
       p("$cc refreshing ... getAgents .... 💧💧 refresh: $refresh");
       _agents.clear();
       if (refresh) {
-        _agents = await (_readAgentsFromDatabase(anchorId) as FutureOr<List<Agent>>);
+        _agents =
+            await (_readAgentsFromDatabase(anchorId) as FutureOr<List<Agent>>);
       } else {
         _agents = await AnchorLocalDB.getAgents();
         p('$cc 🌿 🌿 🌿 Agents found locally : 🎁  ${_agents.length} 🎁 ');
         if (_agents.isEmpty) {
-          _agents = await (_readAgentsFromDatabase(anchorId) as FutureOr<List<Agent>>);
+          _agents = await (_readAgentsFromDatabase(anchorId)
+              as FutureOr<List<Agent>>);
           p('$cc 🌿 🌿 🌿 Agents found remotely: 🎁  ${_agents.length} 🎁 ');
         }
         _agentController.sink.add(_agents);
@@ -277,7 +285,8 @@ class AgentBloc {
     return _clients;
   }
 
-  Future<List<Client>> getAnchorClients({String? anchorId, required bool refresh}) async {
+  Future<List<Client>> getAnchorClients(
+      {String? anchorId, required bool refresh}) async {
     try {
       p("🔵 🔵 🔵 🔵 Getting anchor clients from local or remote db ... anchorId: $anchorId");
       if (refresh) {
